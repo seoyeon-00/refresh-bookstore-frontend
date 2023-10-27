@@ -1,0 +1,44 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&display=swap");
+
+body {
+  font-family: "Noto Sans KR", sans-serif;
+}
+
+@keyframes move1 {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(-100%, -20%);
+  }
+}
+
+@keyframes move2 {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(120%, 50%);
+  }
+}
+
+@keyframes move3 {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(20%, 10%);
+  }
+}
+
+@keyframes move4 {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(-20%, -20%);
+  }
+}
