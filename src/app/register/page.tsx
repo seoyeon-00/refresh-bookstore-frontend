@@ -48,9 +48,12 @@ const RegisterPage = () => {
     address: "",
     zonecode: "",
   });
+
+  const [authEmail, setAuthEmail] = useState<boolean>(false);
   const [emailCheck, setEmailCheck] = useState<boolean>(false);
 
   const emailInput = React.useRef<HTMLInputElement>(null);
+  const emailCheckInput = React.useRef<HTMLInputElement>(null);
   const nameInput = React.useRef<HTMLInputElement>(null);
   const passwordInput = React.useRef<HTMLInputElement>(null);
   const passwordConfirmInput = React.useRef<HTMLInputElement>(null);
@@ -354,8 +357,38 @@ const RegisterPage = () => {
 
       await response.json();
       toast.success("전송 완료! 인증을 진행해주세요.");
+      setAuthEmail(true);
     } catch (error) {
       console.error(error);
+    }
+  };
+
+  // 이메일 인증 확인
+  const authEmailCheckHander = async (
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    event.preventDefault();
+    const data = {
+      email: emailCheckInput.current
+        ? emailCheckInput.current.value
+        : "no email certification number",
+    };
+
+    try {
+      const response = await fetch("/api/certify/check", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      await response.json();
+      toast.success("인증 완료!");
+      setAuthEmail(false);
+    } catch (error) {
+      console.error(error);
+      toast.error("인증 실패. 다시 인증해주세요.");
     }
   };
 
@@ -421,6 +454,26 @@ const RegisterPage = () => {
                   이메일 인증
                 </button>
               </div>
+            </div>
+            <div className="mt-3">
+              {authEmail ? (
+                <div className="flex flex-row justify-between gap-2">
+                  <div className="w-[70%]">
+                    <input
+                      ref={emailCheckInput}
+                      className={`w-full h-[30px] border-b border-black text-xl outline-none`}
+                      placeholder="인증번호를 입력해주세요."
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={(event) => authEmailCheckHander(event)}
+                    className="w-[30%] bg-point text-white font-bold text-sm cursor-pointer"
+                  >
+                    인증하기
+                  </button>
+                </div>
+              ) : null}
             </div>
             <div className="text-xs text-red">
               {inputCheck.email.status === "wrong" ? (
