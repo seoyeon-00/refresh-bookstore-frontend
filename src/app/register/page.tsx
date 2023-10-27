@@ -5,6 +5,7 @@ import Post from "@/components/Common/Post";
 import { postCodePopupStore } from "@/stores";
 import autoHyphen from "@/utils/autoHyphen";
 import React, { FormEvent, useEffect, useState } from "react";
+import { toast } from "react-hot-toast";
 import { useRecoilState } from "recoil";
 
 const RegisterPage = () => {
@@ -47,6 +48,7 @@ const RegisterPage = () => {
     address: "",
     zonecode: "",
   });
+  const [emailCheck, setEmailCheck] = useState<boolean>(false);
 
   const emailInput = React.useRef<HTMLInputElement>(null);
   const nameInput = React.useRef<HTMLInputElement>(null);
@@ -332,6 +334,31 @@ const RegisterPage = () => {
     }
   };
 
+  // 이메일 인증메일 전송
+  const authEmailHander = async (
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    event.preventDefault();
+    const data = {
+      email: emailInput.current ? emailInput.current.value : "no email",
+    };
+
+    try {
+      const response = await fetch("/api/certify/email", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      await response.json();
+      toast.success("전송 완료! 인증을 진행해주세요.");
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <div className="w-full h-auto flex flex-col justify-start items-center">
       <div className="w-[80%] h-[80px] mt-10 font-black text-3xl text-dark_green flex flex-col justify-center items-end ">
@@ -376,12 +403,25 @@ const RegisterPage = () => {
           )}
 
           <div className="w-[65%] flex flex-col justify-start">
-            <input
-              ref={emailInput}
-              className={`w-full h-[30px] border-b border-black text-xl outline-none`}
-              onChange={(e) => checkEmail(e)}
-              placeholder="이메일을 입력해주세요."
-            />
+            <div className="flex flex-row justify-between gap-2">
+              <div className="w-[70%]">
+                <input
+                  ref={emailInput}
+                  className={`w-full h-[30px] border-b border-black text-xl outline-none`}
+                  onChange={(e) => checkEmail(e)}
+                  placeholder="이메일을 입력해주세요."
+                />
+              </div>
+              <div className="bg-point px-4 w-[30%] bold text-center cursor-pointer">
+                <button
+                  onClick={(event) => authEmailHander(event)}
+                  className="text-white font-bold text-sm"
+                  type="button"
+                >
+                  이메일 인증
+                </button>
+              </div>
+            </div>
             <div className="text-xs text-red">
               {inputCheck.email.status === "wrong" ? (
                 <div className="text-xs text-red flex flex-row items-center">

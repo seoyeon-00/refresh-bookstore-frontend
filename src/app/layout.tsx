@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import Header from "../layout/Header";
 import Footer from "../layout/Footer";
 import RecoilRootWrapper from "../providers/RecoilRootWrapper";
+import ToasterProvider from "@/providers/ToasterProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,6 +20,7 @@ export default function RootLayout({
   return (
     <html>
       <body>
+        <ToasterProvider />
         <RecoilRootWrapper>
           <Header />
           <div className={"max-w-[1024px] h-auto m-auto min-h-[70vh]"}>
