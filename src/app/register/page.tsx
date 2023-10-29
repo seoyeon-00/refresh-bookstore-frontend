@@ -90,7 +90,17 @@ const RegisterPage = () => {
         passwordConfirmInput.current.style.borderBottomColor = "red";
       }
     }
-  }, [inputCheck.password]);
+
+    if (emailCheck) {
+      setInputCheck((prevState) => ({
+        ...prevState,
+        email: { ...prevState.email, status: "correct" },
+      }));
+      if (emailInput.current) {
+        emailInput.current.style.borderBottomColor = "#1DC078";
+      }
+    }
+  }, [inputCheck.password, emailCheck]);
 
   const checkName = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputCheck((prevState) => ({
@@ -134,10 +144,10 @@ const RegisterPage = () => {
     } else if (emailPattern.test(e.target.value)) {
       setInputCheck((prevState) => ({
         ...prevState,
-        email: { ...prevState.email, status: "correct" },
+        email: { ...prevState.email, status: "default" },
       }));
       if (emailInput.current) {
-        emailInput.current.style.borderBottomColor = "#1DC078";
+        emailInput.current.style.borderBottomColor = "black";
       }
     } else {
       setInputCheck((prevState) => ({
@@ -369,7 +379,7 @@ const RegisterPage = () => {
   ) => {
     event.preventDefault();
     const data = {
-      email: emailCheckInput.current
+      key: emailCheckInput.current
         ? emailCheckInput.current.value
         : "no email certification number",
     };
@@ -384,8 +394,14 @@ const RegisterPage = () => {
       });
 
       await response.json();
-      toast.success("인증 완료!");
-      setAuthEmail(false);
+
+      if (response.ok) {
+        toast.success("인증 완료!");
+        setAuthEmail(false);
+        setEmailCheck(true);
+      } else {
+        toast.error("인증 실패. 다시 입력해주세요.");
+      }
     } catch (error) {
       console.error(error);
       toast.error("인증 실패. 다시 인증해주세요.");
