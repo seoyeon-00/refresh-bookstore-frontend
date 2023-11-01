@@ -4,9 +4,11 @@ import CheckIcon from "@/components/Common/Icons/CheckIcon";
 import Post from "@/components/Common/Post";
 import { postCodePopupStore } from "@/stores";
 import autoHyphen from "@/utils/autoHyphen";
+import autoHyphenBirth from "@/utils/autoHyphenBirth";
 import React, { FormEvent, useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { useRecoilState } from "recoil";
+import { useRouter } from "next/navigation";
 
 const RegisterPage = () => {
   const [inputCheck, setInputCheck] = useState({
@@ -40,6 +42,11 @@ const RegisterPage = () => {
       status: "default",
       isConfirmed: false,
     },
+    birth: {
+      value: "",
+      status: "default",
+      isConfirmed: false,
+    },
   });
   const [popup, setPopup] = useRecoilState(
     postCodePopupStore.postCodePopupState
@@ -61,6 +68,9 @@ const RegisterPage = () => {
   const addressZipcodeInput = React.useRef<HTMLInputElement>(null);
   const addressAddressInput = React.useRef<HTMLInputElement>(null);
   const addressDetailInput = React.useRef<HTMLInputElement>(null);
+  const birthInput = React.useRef<HTMLInputElement>(null);
+
+  const router = useRouter();
 
   useEffect(() => {
     if (inputCheck.passwordConfirm.value === "") {
@@ -161,7 +171,8 @@ const RegisterPage = () => {
   };
 
   const checkPassword = (e: React.ChangeEvent<HTMLInputElement>) => {
-    var passwordPattern = /^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]{8,20}$/;
+    var passwordPattern =
+      /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*()_+{}\[\]:;<>,.?~\\-])[a-zA-Z\d!@#$%^&*()_+{}\[\]:;<>,.?~\\-]{8,20}$/;
     setInputCheck((prevState) => ({
       ...prevState,
       password: { ...prevState.password, value: e.target.value },
@@ -301,8 +312,89 @@ const RegisterPage = () => {
     }
   };
 
+  const checkBirth = (e: React.ChangeEvent<HTMLInputElement>) => {
+    birthInput.current
+      ? (birthInput.current.value = autoHyphenBirth(e.target.value))
+      : "";
+
+    const checkValidate = (value: string) => {
+      var result = true;
+      try {
+        const date = value.split("-");
+        var y = parseInt(date[0], 10),
+          m = parseInt(date[1], 10),
+          d = parseInt(date[2], 10);
+
+        var dateRegex =
+          /^(?=\d)(?:(?:31(?!.(?:0?[2469]|11))|(?:30|29)(?!.0?2)|29(?=.0?2.(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00)))(?:\x20|$))|(?:2[0-8]|1\d|0?[1-9]))([-.\/])(?:1[012]|0?[1-9])\1(?:1[6-9]|[2-9]\d)?\d\d(?:(?=\x20\d)\x20|$))?(((0?[1-9]|1[012])(:[0-5]\d){0,2}(\x20[AP]M))|([01]\d|2[0-3])(:[0-5]\d){1,2})?$/;
+        result = dateRegex.test(d + "-" + m + "-" + y);
+      } catch (error) {
+        result = false;
+      }
+      return result;
+    };
+
+    setInputCheck((prevState) => ({
+      ...prevState,
+      birth: { ...prevState.birth, value: e.target.value },
+    }));
+
+    if (e.target.value === "") {
+      setInputCheck((prevState) => ({
+        ...prevState,
+        birth: { ...prevState.birth, status: "default" },
+      }));
+      if (birthInput.current) {
+        birthInput.current.style.borderBottomColor = "black";
+      }
+    } else if (checkValidate(e.target.value)) {
+      setInputCheck((prevState) => ({
+        ...prevState,
+        birth: { ...prevState.birth, status: "correct" },
+      }));
+      if (birthInput.current) {
+        birthInput.current.style.borderBottomColor = "#1DC078";
+      }
+    } else {
+      setInputCheck((prevState) => ({
+        ...prevState,
+        birth: { ...prevState.birth, status: "wrong" },
+      }));
+      if (birthInput.current) {
+        birthInput.current.style.borderBottomColor = "red";
+      }
+    }
+  };
+
   const handlePostClick = () => {
     setPopup(!popup);
+  };
+
+  // 이메일 중복 확인
+  const emailDoubleCheck = async (): Promise<boolean> => {
+    const data = {
+      email: emailInput.current ? emailInput.current.value : "no email",
+    };
+    try {
+      const response = await fetch("/api/user/checkEmail", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        throw new Error("Email double check request failed");
+      }
+
+      const result = await response.json();
+      console.log(result);
+      return true;
+    } catch (err) {
+      toast.error("중복된 이메일입니다.");
+      return false;
+    }
   };
 
   const handleSubmit = async (event: FormEvent) => {
@@ -325,6 +417,7 @@ const RegisterPage = () => {
       phone: phoneNumberInput.current
         ? phoneNumberInput.current.value
         : "no phone number",
+      birth: birthInput.current ? birthInput.current.value : "no birth",
     };
 
     try {
@@ -342,6 +435,8 @@ const RegisterPage = () => {
 
       const result = await response.json();
       console.log(result);
+      router.push("/login");
+      toast.error("회원가입이 완료되었습니다.");
     } catch (err) {
       console.error(err);
     }
@@ -352,6 +447,17 @@ const RegisterPage = () => {
     event: React.MouseEvent<HTMLButtonElement>
   ) => {
     event.preventDefault();
+
+    const isEmailDuplicate: boolean = await emailDoubleCheck();
+    if (!isEmailDuplicate) {
+      return;
+    }
+
+    if (emailInput.current && emailInput.current.value === "") {
+      toast.error("이메일을 입력해주세요.");
+      return;
+    }
+
     const data = {
       email: emailInput.current ? emailInput.current.value : "no email",
     };
@@ -378,6 +484,11 @@ const RegisterPage = () => {
     event: React.MouseEvent<HTMLButtonElement>
   ) => {
     event.preventDefault();
+
+    if (emailCheckInput.current && emailCheckInput.current.value === "") {
+      toast.error("인증번호를 입력해주세요.");
+      return;
+    }
     const data = {
       key: emailCheckInput.current
         ? emailCheckInput.current.value
@@ -437,6 +548,7 @@ const RegisterPage = () => {
               ref={nameInput}
               onChange={(e) => checkName(e)}
               placeholder="이름을 입력해주세요."
+              type="text"
             />
           </div>
         </div>
@@ -459,6 +571,7 @@ const RegisterPage = () => {
                   className={`w-full h-[30px] border-b border-black text-xl outline-none`}
                   onChange={(e) => checkEmail(e)}
                   placeholder="이메일을 입력해주세요."
+                  type="email"
                 />
               </div>
               <div className="bg-point px-4 w-[30%] bold text-center cursor-pointer">
@@ -639,6 +752,36 @@ const RegisterPage = () => {
               onChange={(e) => checkAddress(e)}
               placeholder="상세주소를 입력해주세요."
             />
+          </div>
+        </div>
+        <div className="w-[60%] h-[70px] flex flex-row justify-around items-start mx-10 my-2">
+          {inputCheck.birth.status === "correct" ? (
+            <label className="w-[25%] h-[30px] flex flex-row justify-start items-center text-point font-bold text-xl">
+              생년월일 <CheckIcon color="#1DC078" width="20px" />
+            </label>
+          ) : (
+            <label className="w-[25%] h-[30px] flex flex-row justify-start items-center font-semibold text-xl">
+              생년월일
+            </label>
+          )}
+
+          <div className="w-[65%] flex flex-col justify-start">
+            <input
+              className="w-full h-[30px] border-b border-black text-xl outline-none"
+              ref={birthInput}
+              onChange={(e) => checkBirth(e)}
+              placeholder="생년월일을 입력해주세요."
+            />
+            <div className="text-xs text-red">
+              {inputCheck.birth.status === "wrong" ? (
+                <div className="text-xs text-red flex flex-row items-center">
+                  <AlertIcon width="15px" color="red" />
+                  정확한 생년월일을 입력해주세요.
+                </div>
+              ) : (
+                ""
+              )}
+            </div>
           </div>
         </div>
         <div className="w-[60%] h-[100px] flex flex-col justify-around items-start mx-10 my-2">
