@@ -1,5 +1,6 @@
 import "./globals.css";
 import { Inter } from "next/font/google";
+
 import Header from "../layout/Header";
 import Footer from "../layout/Footer";
 import RecoilRootWrapper from "../providers/RecoilRootWrapper";
