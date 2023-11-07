@@ -8,12 +8,13 @@ const MyPageLayout = ({ children }: { children: React.ReactNode }) => {
   console.log(path);
   return (
     <div className="m-8">
-      <h1 className="text-large my-1">마이페이지</h1>
+      <h1 className="text-large my-1 font-bold pt-2 pb-5">마이페이지</h1>
       <hr className="text-light_gray" />
       <div className="flex">
-        <section className="menu flex flex-col min-w-[150px]">
+        <section className="menu flex flex-col min-w-[150px] pt-[20px]">
           <Link
-            className={`text-medium text-center p-2 m-2 ${
+            className={` text-center py-1 m-2 text-[17px] font-medium 
+            ${
               path === "order-list" || path === "order-detail"
                 ? "font-semibold text-point"
                 : ""
@@ -23,9 +24,8 @@ const MyPageLayout = ({ children }: { children: React.ReactNode }) => {
             주문 내역
           </Link>
           <Link
-            className={`text-medium text-center p-2 m-2 ${
-              path === "mypage" ? "font-semibold text-point" : ""
-            }`}
+            className={`text-center py-1 m-2 text-[17px] font-medium 
+            ${path === "mypage" ? "font-semibold text-point" : ""}`}
             href={"/mypage"}
           >
             회원정보수정
