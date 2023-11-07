@@ -7,13 +7,15 @@ import RefreshAnimation from "@/components/Home/RefreshAnimation";
 import Search from "@/components/Home/Search";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
+import { AuthContext } from "../contexts/AuthContext";
 
 const Header = () => {
   const currentURI = usePathname();
   const [searchState, setSearchState] = useState(false);
   const [slogan, setSlogan] = useState("일상");
   let num = 1;
+
   useEffect(() => {
     const slogans = ["일상", "경력", "삶", "내일"];
 
@@ -55,6 +57,8 @@ const Header = () => {
     scale(${currentURI === "/" ? 1.4 : 1})
     `,
   };
+
+  const userData = useContext(AuthContext);
 
   return (
     <div className="w-full overflow-hidden relative">
@@ -149,7 +153,15 @@ const Header = () => {
                   <SearchIcon color="#16a263" width="50px" />
                 </div>
                 <CartIcon color="#16a263" width="50px" isFull={false} />
-                <AccountIcon color="#16a263" width="50px" isLoggedIn={false} />
+                {userData?.isLogin ? (
+                  <AccountIcon color="#16a263" width="50px" isLoggedIn={true} />
+                ) : (
+                  <AccountIcon
+                    color="#16a263"
+                    width="50px"
+                    isLoggedIn={false}
+                  />
+                )}
               </div>
             </div>
           </div>

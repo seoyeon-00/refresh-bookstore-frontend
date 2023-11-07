@@ -5,6 +5,7 @@ import Header from "../layout/Header";
 import Footer from "../layout/Footer";
 import RecoilRootWrapper from "../providers/RecoilRootWrapper";
 import ToasterProvider from "@/providers/ToasterProvider";
+import { AuthProvider } from "@/contexts/AuthContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,11 +24,13 @@ export default function RootLayout({
       <body>
         <ToasterProvider />
         <RecoilRootWrapper>
-          <Header />
-          <div className={"max-w-[1024px] h-auto m-auto min-h-[70vh]"}>
-            {children}
-          </div>
-          <Footer />
+          <AuthProvider>
+            <Header />
+            <div className={"max-w-[1024px] h-auto m-auto min-h-[70vh]"}>
+              {children}
+            </div>
+            <Footer />
+          </AuthProvider>
         </RecoilRootWrapper>
       </body>
     </html>

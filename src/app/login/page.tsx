@@ -4,7 +4,7 @@ import RefreshAnimation from "@/components/Home/RefreshAnimation";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { FormEvent } from "react";
-import { loginUser } from "@/api/Auth";
+import { loginUser } from "@/api/auth";
 
 const LoginPage = () => {
   const emailInput = React.useRef<HTMLInputElement>(null);
