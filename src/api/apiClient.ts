@@ -1,49 +1,57 @@
 import { getCookie } from "cookies-next";
 import { API_BASE_URL } from "@/constants/path";
-import axios, { AxiosError } from "axios";
+import axios, { AxiosError, AxiosInstance } from "axios";
 import { requestToken } from "./auth";
 
-export const apiClient = () => {
-  //let accessToken = localStorage.getItem("token");
-  let accessToken = getCookie("access-token");
+export const apiClient = (): AxiosInstance => {
+  let accessTokenLocal = localStorage.getItem("token");
   let refreshToken = getCookie("refresh-token");
 
+  if (!accessTokenLocal) {
+    throw new Error("accessToken is null");
+  }
+
+  const item = JSON.parse(accessTokenLocal);
   const api = axios.create({
     baseURL: API_BASE_URL,
   });
 
   api.interceptors.request.use((config) => {
-    if (accessToken) {
-      config.headers.Authorization = `Bearer ${accessToken}`;
+    if (accessTokenLocal) {
+      config.headers.Authorization = `Bearer ${item.value}`;
     }
     return config;
   });
 
   api.interceptors.response.use(
-    (res) => res,
-    async (error: AxiosError) => {
-      console.log(error.response);
-      if (!accessToken && refreshToken) {
+    async (res) => {
+      const now = new Date();
+      if (now.getTime() > item.expires && refreshToken) {
         console.log("access 토큰 만료!");
         try {
           // 토큰 재발급 요청
           await requestToken(refreshToken);
 
           // 이전 요청을 다시 시도 (헤더에 새로운 액세스 토큰 추가)
-          if (error.config) {
-            error.config.headers.Authorization = `Bearer ${accessToken}`;
-            return axios(error.config);
+          if (res.config) {
+            res.config.headers.Authorization = `Bearer ${item.value}`;
+            return axios(res.config);
           } else {
             console.error("error.config is undefined");
           }
         } catch (error) {
           // 재발급 실패 시 로그인 화면으로 리디렉션 또는 다른 처리
           console.error("토큰 재발급 실패:", error);
+
           // 여기서 리디렉션 또는 다른 처리를 수행할 수 있습니다.
         }
       }
 
-      // 다른 에러는 그대로 반환
+      // 비동기 요청 성공 시 반환
+      return Promise.resolve(res);
+    },
+    async (error: AxiosError) => {
+      // 오류 응답 처리
       return Promise.reject(error);
     }
   );

@@ -15,6 +15,7 @@ const Header = () => {
   const [searchState, setSearchState] = useState(false);
   const [slogan, setSlogan] = useState("일상");
   let num = 1;
+
   useEffect(() => {
     const slogans = ["일상", "경력", "삶", "내일"];
 

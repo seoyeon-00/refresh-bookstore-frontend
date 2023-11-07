@@ -19,11 +19,13 @@ export const loginUser = async (data: any) => {
         Number(new Date()) + loginData.refreshTokenExpiration
       );
 
-      localStorage.setItem("token", loginData.accessToken); // access 토큰 저장
-      setCookie("access-token", loginData.accessToken, {
-        secure: true,
-        maxAge: 60 * 5,
-      });
+      let now = new Date();
+      var tenMinutes = 5 * 60 * 1000; // 5분
+      var tenMinutesLater = now.getTime() + tenMinutes;
+      const item = { value: loginData.accessToken, expires: tenMinutesLater };
+      localStorage.setItem("token", JSON.stringify(item));
+
+      //localStorage.setItem("token", loginData.accessToken); // access 토큰 저장
       setCookie("refresh-token", loginData.refreshToken, {
         expires: expiryDate,
         secure: true,
@@ -46,13 +48,19 @@ export const logoutUser = async () => {
 export const requestToken = async (refreshToken: string) => {
   //const accessToken = getCookie("access-token") || "";
   const accessToken = localStorage.getItem("token");
-  console.log(accessToken);
+
+  if (!accessToken) {
+    throw new Error("accessToken is null");
+  }
+
+  const item = JSON.parse(accessToken);
+  console.log(item);
   try {
     const response = await fetch("/api/user/refresh-token", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: `Bearer ${item.value}`,
       },
       body: JSON.stringify({
         refreshToken: refreshToken,
@@ -64,11 +72,15 @@ export const requestToken = async (refreshToken: string) => {
 
     if (response.ok) {
       console.log("리프레시 토큰! 재발급");
-      localStorage.setItem("token", requestTokenData.accessToken);
-      setCookie("access-token", requestTokenData.accessToken, {
-        secure: true,
-        maxAge: 60 * 5,
-      });
+      let now = new Date();
+      var tenMinutes = 5 * 60 * 1000; // 5분
+      var tenMinutesLater = now.getTime() + tenMinutes;
+      const item = {
+        value: requestTokenData.accessToken,
+        expires: tenMinutesLater,
+      };
+      localStorage.setItem("token", JSON.stringify(item));
+      //localStorage.setItem("token", requestTokenData.accessToken);
       setCookie("refresh-token", requestTokenData.refreshToken, {
         expires: requestTokenData.expiryDate,
         secure: true,

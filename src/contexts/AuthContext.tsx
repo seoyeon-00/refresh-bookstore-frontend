@@ -27,12 +27,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     user: null,
   });
 
-  const accessToken = getCookie("access-token") || "";
+  const accessToken = localStorage.getItem("token");
   const refreshToken = getCookie("refresh-token") || "";
 
   useEffect(() => {
     const getUserState = async () => {
       if (accessToken) {
+        console.log("재발급");
         const userInfo = await getUser();
         setUserData({
           isLogin: true,
