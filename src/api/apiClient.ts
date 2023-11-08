@@ -4,20 +4,20 @@ import axios, { AxiosError, AxiosInstance } from "axios";
 import { requestToken } from "./auth";
 
 export const apiClient = (): AxiosInstance => {
-  let accessTokenLocal = localStorage.getItem("token");
+  let accessToken = localStorage.getItem("token");
   let refreshToken = getCookie("refresh-token");
 
-  if (!accessTokenLocal) {
+  if (!accessToken) {
     throw new Error("accessToken is null");
   }
 
-  const item = JSON.parse(accessTokenLocal);
+  const item = JSON.parse(accessToken);
   const api = axios.create({
     baseURL: API_BASE_URL,
   });
 
   api.interceptors.request.use((config) => {
-    if (accessTokenLocal) {
+    if (accessToken) {
       config.headers.Authorization = `Bearer ${item.value}`;
     }
     return config;
