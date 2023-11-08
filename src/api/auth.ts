@@ -23,14 +23,13 @@ export const loginUser = async (data: any) => {
       var tenMinutes = 5 * 60 * 1000; // 5분
       var tenMinutesLater = now.getTime() + tenMinutes;
       const item = { value: loginData.accessToken, expires: tenMinutesLater };
-      localStorage.setItem("token", JSON.stringify(item));
 
-      //localStorage.setItem("token", loginData.accessToken); // access 토큰 저장
+      localStorage.setItem("token", JSON.stringify(item));
       setCookie("refresh-token", loginData.refreshToken, {
         expires: expiryDate,
         secure: true,
         maxAge: 60 * 60 * 24,
-      }); // refresh 토큰 Cookie 저장
+      });
 
       return response.status;
     } else {
@@ -78,8 +77,8 @@ export const requestToken = async (refreshToken: string) => {
         value: requestTokenData.accessToken,
         expires: tenMinutesLater,
       };
+
       localStorage.setItem("token", JSON.stringify(item));
-      //localStorage.setItem("token", requestTokenData.accessToken);
       setCookie("refresh-token", requestTokenData.refreshToken, {
         expires: requestTokenData.expiryDate,
         secure: true,
@@ -91,7 +90,6 @@ export const requestToken = async (refreshToken: string) => {
   } catch (error) {
     console.error(error);
   } finally {
-    // Access 토큰 삭제
     deleteCookie("access-token");
   }
 };

@@ -30,6 +30,12 @@ const MyPageLayout = ({ children }: { children: React.ReactNode }) => {
           >
             회원정보수정
           </Link>
+          <Link
+            className={"text-center py-1 m-2 text-[17px] font-medium "}
+            href={"/"}
+          >
+            로그아웃
+          </Link>
         </section>
         {children}
       </div>
