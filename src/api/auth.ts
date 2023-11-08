@@ -46,7 +46,6 @@ export const logoutUser = async () => {
 };
 
 export const requestToken = async (refreshToken: string) => {
-  //const accessToken = getCookie("access-token") || "";
   const accessToken = localStorage.getItem("token");
 
   if (!accessToken) {
@@ -56,7 +55,7 @@ export const requestToken = async (refreshToken: string) => {
   const item = JSON.parse(accessToken);
   console.log(item);
   try {
-    const response = await fetch("/api/user/refresh-token", {
+    const response = await fetch("/api/user/refresh", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
