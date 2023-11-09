@@ -77,27 +77,30 @@ const BookDetail: React.FC<BookDetailProps> = ({ params }) => {
 
   const purchaseHandler = async () => {
     const token = localStorage.getItem("token");
-    try {
-      const response = await fetch(`/api/user/info`, {
-        method: "GET",
-        headers: {
-          "Content-type": "application/json",
-          Authorization: `Bearer ${JSON.parse(token).value}`,
-        },
-      });
-      console.log(response);
-      if (response.ok) {
-        const data = await response.json();
 
-        console.log(data);
-        router.push("/order-create");
-      } else {
-        throw new Error("error");
+    if (token !== null) {
+      try {
+        const response = await fetch(`/api/user/info`, {
+          method: "GET",
+          headers: {
+            "Content-type": "application/json",
+            Authorization: `Bearer ${JSON.parse(token).value}`,
+          },
+        });
+        console.log(response);
+        if (response.ok) {
+          const data = await response.json();
+
+          console.log(data);
+          router.push("/order-create");
+        } else {
+          throw new Error("error");
+        }
+      } catch (err: any) {
+        console.log(err.message);
+        alert("로그인을 해주세요.");
+        router.push("/login");
       }
-    } catch (err: any) {
-      console.log(err.message);
-      alert("로그인을 해주세요.");
-      router.push("/login");
     }
   };
 
