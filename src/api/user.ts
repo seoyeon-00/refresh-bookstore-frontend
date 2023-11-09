@@ -1,4 +1,3 @@
-import { toast } from "react-hot-toast";
 import { apiClient } from "./apiClient";
 
 type updateType = {
