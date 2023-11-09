@@ -19,7 +19,7 @@ const OrderListItem = () => {
             alt="모던 자바스크립트 Deep Dive"
           />
         </div>
-        <p className="flex-1 text-medium ml-4 flex items-center text-base">
+        <p className="flex-1 ium ml-4 flex items-center text-base">
           모던 자바스크립트 Deep Dive 외 1건
         </p>
       </div>
