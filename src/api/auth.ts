@@ -1,4 +1,4 @@
-import { setCookie, deleteCookie, getCookie } from "cookies-next";
+import { setCookie, deleteCookie } from "cookies-next";
 import { toast } from "react-hot-toast";
 import { apiClient } from "./apiClient";
 
