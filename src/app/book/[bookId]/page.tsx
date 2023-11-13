@@ -25,19 +25,22 @@ const BookDetail: React.FC<BookDetailProps> = ({ params }) => {
   const thisBook = books.find((book) => book.isbn === params.bookId);
   const router = useRouter();
   const [cart, setCart] = useRecoilState(cartStore.cartState);
-  const [detailData, setDetailDate] = useState<bookDataType | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [detailData, setDetailData] = useState<bookDataType | null>(null);
 
   useEffect(() => {
+    setIsLoading(true);
     getProductByISBN({ isbn: params.bookId })
       .then((result) => {
         const productDetailData = result;
-        console.log(productDetailData);
-        setDetailDate(productDetailData);
+        setIsLoading(false);
+        setDetailData(productDetailData);
       })
       .catch((error) => {
         console.error(error);
+        setIsLoading(false);
       });
-  }, []);
+  }, [params.bookId]);
 
   const amountHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (Number(e.target.value) <= 0) {
@@ -85,10 +88,6 @@ const BookDetail: React.FC<BookDetailProps> = ({ params }) => {
     }
   };
 
-  if (!detailData) {
-    return <div>해당 책의 정보를 찾을 수 없습니다.</div>;
-  }
-
   const purchaseHandler = async () => {
     const token = localStorage.getItem("token");
 
@@ -120,96 +119,108 @@ const BookDetail: React.FC<BookDetailProps> = ({ params }) => {
 
   return (
     <div className="my-10 flex flex-col justify-start items-center">
-      <div className="w-full flex flex-row justify-between items-start m-5">
-        <div className="w-[45%] h-[400px] border border-light_gray flex justify-center items-center relative rounded-xl bg-[#f9f9f9]">
-          <img
-            //src={`https://contents.kyobobook.co.kr/sih/fit-in/458x0/pdt/${detailData.isbn}.jpg`}
-            src={`${detailData.imagePath}`}
-            className=" w-[45%] drop-shadow-xl border border-light_gray"
-          />
-          <div className="w-[100px] m-2  absolute right-0 bottom-0 opacity-20">
-            <Logo width="100px" color="gray" />
-          </div>
-        </div>
-        <div className="w-[50%] h-[400px] flex flex-col justify-between items-start">
-          <div className="w-full flex flex-col justify-start items-start border-b border-light_gray overflow-hidden relative">
-            <div className=" h-7 mb-2 px-2 text-md font-light text-white bg-point rounded-full flex flex-col justify-center items-center drop-shadow-lg">{`#${detailData.categoryId}`}</div>
-            <div className=" font-bold text-2xl mt-1 mb-2">
-              {detailData.title}
+      {isLoading ? (
+        <div>로딩중입니다.</div>
+      ) : detailData ? (
+        <div>
+          <div className="w-full flex flex-row justify-between items-start m-5">
+            <div className="w-[45%] h-[400px] border border-light_gray flex justify-center items-center relative rounded-xl bg-[#f9f9f9]">
+              <img
+                //src={`https://contents.kyobobook.co.kr/sih/fit-in/458x0/pdt/${detailData.isbn}.jpg`}
+                src={`${detailData.imagePath}`}
+                className=" w-[45%] drop-shadow-xl border border-light_gray"
+              />
+              <div className="w-[100px] m-2  absolute right-0 bottom-0 opacity-20">
+                <Logo width="100px" color="gray" />
+              </div>
             </div>
-            <div className="text-md mb-4 text-point">{`${detailData.author} | ${
-              detailData.publisher
-            } | ${new Date(detailData.publicationDate).getFullYear()}`}</div>
-          </div>
-          <div className="w-full flex flex-col justify-start items-start">
-            <span className="font-md text-xs text-[#aaaaaa] my-3 flex flex-row">
-              <AlertIcon width="15px" color="#cccccc" />
-              <p className="ml-2">
-                기본배송비 3,000원 | 50,000원 이상 구매시 무료 배송
-              </p>
-            </span>
-            <div className="w-full h-[100px] rounded-xl bg-light_green flex flex-row p-6 justify-between items-center">
-              <p className="font-bold text-point">{detailData.title}</p>
-              <div className="w-[20%] flex flex-row  ">
-                <div
-                  className="w-[33%]  flex flex-col justify-center items-center cursor-pointer"
-                  onClick={() => {
-                    bookAmount <= 1
-                      ? setBookAmount(1)
-                      : setBookAmount(bookAmount - 1);
-                  }}
-                >
-                  <MinusIcon color="#1DC078" width="15px" />
+            <div className="w-[50%] h-[400px] flex flex-col justify-between items-start">
+              <div className="w-full flex flex-col justify-start items-start border-b border-light_gray overflow-hidden relative">
+                <div className=" h-7 mb-2 px-2 text-md font-light text-white bg-point rounded-full flex flex-col justify-center items-center drop-shadow-lg">{`#${detailData.categoryId}`}</div>
+                <div className=" font-bold text-2xl mt-1 mb-2">
+                  {detailData.title}
                 </div>
-                <input
-                  className="w-[33%] outline-none text-center bg-transparent text-point text-xl font-bold"
-                  onChange={amountHandler}
-                  value={bookAmount}
-                />
-                <div
-                  className="w-[33%]  flex flex-col justify-center items-center cursor-pointer"
-                  onClick={() => {
-                    setBookAmount(bookAmount + 1);
-                  }}
-                >
-                  <PlusIcon color="#1DC078" width="15px" />
+                <div className="text-md mb-4 text-point">{`${
+                  detailData.author
+                } | ${detailData.publisher} | ${new Date(
+                  detailData.publicationDate
+                ).getFullYear()}`}</div>
+              </div>
+              <div className="w-full flex flex-col justify-start items-start">
+                <span className="font-md text-xs text-[#aaaaaa] my-3 flex flex-row">
+                  <AlertIcon width="15px" color="#cccccc" />
+                  <p className="ml-2">
+                    기본배송비 3,000원 | 50,000원 이상 구매시 무료 배송
+                  </p>
+                </span>
+                <div className="w-full h-[100px] rounded-xl bg-light_green flex flex-row p-6 justify-between items-center">
+                  <p className="font-bold text-point">{detailData.title}</p>
+                  <div className="w-[20%] flex flex-row  ">
+                    <div
+                      className="w-[33%]  flex flex-col justify-center items-center cursor-pointer"
+                      onClick={() => {
+                        bookAmount <= 1
+                          ? setBookAmount(1)
+                          : setBookAmount(bookAmount - 1);
+                      }}
+                    >
+                      <MinusIcon color="#1DC078" width="15px" />
+                    </div>
+                    <input
+                      className="w-[33%] outline-none text-center bg-transparent text-point text-xl font-bold"
+                      onChange={amountHandler}
+                      value={bookAmount}
+                    />
+                    <div
+                      className="w-[33%]  flex flex-col justify-center items-center cursor-pointer"
+                      onClick={() => {
+                        setBookAmount(bookAmount + 1);
+                      }}
+                    >
+                      <PlusIcon color="#1DC078" width="15px" />
+                    </div>
+                  </div>
+                </div>
+                <div className="w-full h-[50px] flex flex-col justify-center items-end my-3 p-2">
+                  <p className="font-extrabold text-2xl">
+                    {(bookAmount * detailData.price).toLocaleString()}원
+                  </p>
+                </div>
+                <div className="w-full h-[50px] flex flex-row justify-between items-center">
+                  <button
+                    className="w-[48%] h-[40px] rounded-lg  my-2 border-point border hover:bg-light_green text-point text-lg font-extrabold"
+                    onClick={addToCartHandler}
+                  >
+                    장바구니
+                  </button>
+                  <button
+                    className="w-[48%] h-[40px] rounded-lg  my-2 bg-point hover:bg-dark_green text-white text-lg font-extrabold"
+                    onClick={purchaseHandler}
+                  >
+                    바로 구매
+                  </button>
                 </div>
               </div>
             </div>
-            <div className="w-full h-[50px] flex flex-col justify-center items-end my-3 p-2">
-              <p className="font-extrabold text-2xl">
-                {(bookAmount * detailData.price).toLocaleString()}원
-              </p>
-            </div>
-            <div className="w-full h-[50px] flex flex-row justify-between items-center">
-              <button
-                className="w-[48%] h-[40px] rounded-lg  my-2 border-point border hover:bg-light_green text-point text-lg font-extrabold"
-                onClick={addToCartHandler}
-              >
-                장바구니
-              </button>
-              <button
-                className="w-[48%] h-[40px] rounded-lg  my-2 bg-point hover:bg-dark_green text-white text-lg font-extrabold"
-                onClick={purchaseHandler}
-              >
-                바로 구매
-              </button>
-            </div>
+          </div>
+          <div className="w-full p-5 my-8 bg-white border-light_gray rounded-2xl border h-[100px] text-sm drop-shadow-md flex flex-row justify-around items-center text-dark_gray">
+            <p>ISBN | {detailData.isbn}</p>
+            <p>
+              발행일 | {new Date(detailData.publicationDate).getFullYear()}년{" "}
+              {new Date(detailData.publicationDate).getMonth()}월{" "}
+              {new Date(detailData.publicationDate).getDay()}일
+            </p>
+            <p>저자 | {detailData.author}</p>
+            <p>출판사 | {detailData.publisher}</p>
+          </div>
+          <p className="font-bold text-xl text-point my-5 ">책 소개</p>
+          <div className="w-full min-h-[500px] p-5  ">
+            {detailData.description}
           </div>
         </div>
-      </div>
-      <div className="w-full p-5 my-8 bg-white border-light_gray rounded-2xl border h-[100px] text-sm drop-shadow-md flex flex-row justify-around items-center text-dark_gray">
-        <p>ISBN | {detailData.isbn}</p>
-        <p>
-          발행일 | {new Date(detailData.publicationDate).getFullYear()}년{" "}
-          {new Date(detailData.publicationDate).getMonth()}월{" "}
-          {new Date(detailData.publicationDate).getDay()}일
-        </p>
-        <p>저자 | {detailData.author}</p>
-        <p>출판사 | {detailData.publisher}</p>
-      </div>
-      <p className="font-bold text-xl text-point my-5 ">책 소개</p>
-      <div className="w-full min-h-[500px] p-5  ">{detailData.description}</div>
+      ) : (
+        <div>해당 책의 정보를 찾을 수 없습니다.</div>
+      )}
     </div>
   );
 };
