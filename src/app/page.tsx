@@ -4,10 +4,11 @@ import RefreshAnimation from "@/components/Home/RefreshAnimation";
 import books from "../../public/mock-data/products.json";
 import React, { useEffect, useState } from "react";
 import { getProduct } from "@/api/product";
+import { getCategory } from "@/api/category";
 
 export default function Home() {
   const [productDataArray, setProductDataArray] = useState([]);
-  const [categories, setCategories] = useState(["전체", "모바일 앱 개발"]);
+  const [categories, setCategories] = useState(["전체"]);
   const [currentCategory, setCurrentCategory] = useState("전체");
   const categoryHandler = (category: string) => {
     setCurrentCategory(category);
@@ -19,6 +20,23 @@ export default function Home() {
         const productDataArray = result;
         //console.log(productDataArray);
         setProductDataArray(productDataArray);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+
+    getCategory({ page: 1, size: 20 })
+      .then((result) => {
+        const categoryDataArray = result;
+        const categoryStateData = categoryDataArray.map(
+          (item: any) => item.name
+        );
+
+        if (!categoryStateData.includes("전체")) {
+          categoryStateData.unshift("전체");
+        }
+
+        setCategories(categoryStateData);
       })
       .catch((error) => {
         console.error(error);

@@ -1,5 +1,4 @@
 import { apiClient } from "./apiClient";
-import { bookDataType } from "@/types/bookDataType";
 
 type getProductType = {
   page: number;
@@ -21,6 +20,34 @@ export const getProduct = async ({ page, size }: getProductType) => {
     } else {
     }
   } catch (error) {
-    console.error("");
+    console.error(error);
+  }
+};
+
+export const getProductByISBN = async ({ isbn }: { isbn: string }) => {
+  const accessToken = localStorage.getItem("token");
+
+  if (!accessToken) {
+    throw new Error("accessToken is null");
+  }
+
+  const item = JSON.parse(accessToken);
+
+  try {
+    const response = await fetch(`/api/products/isbn/${isbn}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${item.value}`,
+      },
+    });
+
+    if (response.ok) {
+      const productByISBNData = await response.json();
+      return productByISBNData;
+    } else {
+    }
+  } catch (error) {
+    console.error(error);
   }
 };

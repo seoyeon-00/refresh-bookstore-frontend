@@ -1,7 +1,7 @@
 "use client";
 
 import Book from "@/components/Common/Book";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import books from "../../../../public/mock-data/products.json";
 import { truncateText } from "@/utils/truncateText";
 import Logo from "@/components/Common/Logo";
@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation";
 import { useRecoilState } from "recoil";
 import { cartStore } from "@/stores";
 import { bookDataType } from "@/types/bookDataType";
+import { getProductByISBN } from "@/api/product";
 
 interface BookDetailProps {
   params: {
@@ -24,6 +25,19 @@ const BookDetail: React.FC<BookDetailProps> = ({ params }) => {
   const thisBook = books.find((book) => book.isbn === params.bookId);
   const router = useRouter();
   const [cart, setCart] = useRecoilState(cartStore.cartState);
+  const [detailData, setDetailDate] = useState<bookDataType | null>(null);
+
+  useEffect(() => {
+    getProductByISBN({ isbn: params.bookId })
+      .then((result) => {
+        const productDetailData = result;
+        console.log(productDetailData);
+        setDetailDate(productDetailData);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, []);
 
   const amountHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (Number(e.target.value) <= 0) {
@@ -71,7 +85,7 @@ const BookDetail: React.FC<BookDetailProps> = ({ params }) => {
     }
   };
 
-  if (!thisBook) {
+  if (!detailData) {
     return <div>해당 책의 정보를 찾을 수 없습니다.</div>;
   }
 
@@ -109,7 +123,8 @@ const BookDetail: React.FC<BookDetailProps> = ({ params }) => {
       <div className="w-full flex flex-row justify-between items-start m-5">
         <div className="w-[45%] h-[400px] border border-light_gray flex justify-center items-center relative rounded-xl bg-[#f9f9f9]">
           <img
-            src={`https://contents.kyobobook.co.kr/sih/fit-in/458x0/pdt/${thisBook.isbn}.jpg`}
+            //src={`https://contents.kyobobook.co.kr/sih/fit-in/458x0/pdt/${detailData.isbn}.jpg`}
+            src={`${detailData.imagePath}`}
             className=" w-[45%] drop-shadow-xl border border-light_gray"
           />
           <div className="w-[100px] m-2  absolute right-0 bottom-0 opacity-20">
@@ -118,13 +133,13 @@ const BookDetail: React.FC<BookDetailProps> = ({ params }) => {
         </div>
         <div className="w-[50%] h-[400px] flex flex-col justify-between items-start">
           <div className="w-full flex flex-col justify-start items-start border-b border-light_gray overflow-hidden relative">
-            <div className=" h-7 mb-2 px-2 text-md font-light text-white bg-point rounded-full flex flex-col justify-center items-center drop-shadow-lg">{`#${thisBook.category}`}</div>
+            <div className=" h-7 mb-2 px-2 text-md font-light text-white bg-point rounded-full flex flex-col justify-center items-center drop-shadow-lg">{`#${detailData.categoryId}`}</div>
             <div className=" font-bold text-2xl mt-1 mb-2">
-              {thisBook.title}
+              {detailData.title}
             </div>
-            <div className="text-md mb-4 text-point">{`${thisBook.author} | ${
-              thisBook.publisher
-            } | ${new Date(thisBook.publication_date).getFullYear()}`}</div>
+            <div className="text-md mb-4 text-point">{`${detailData.author} | ${
+              detailData.publisher
+            } | ${new Date(detailData.publicationDate).getFullYear()}`}</div>
           </div>
           <div className="w-full flex flex-col justify-start items-start">
             <span className="font-md text-xs text-[#aaaaaa] my-3 flex flex-row">
@@ -134,7 +149,7 @@ const BookDetail: React.FC<BookDetailProps> = ({ params }) => {
               </p>
             </span>
             <div className="w-full h-[100px] rounded-xl bg-light_green flex flex-row p-6 justify-between items-center">
-              <p className="font-bold text-point">{thisBook.title}</p>
+              <p className="font-bold text-point">{detailData.title}</p>
               <div className="w-[20%] flex flex-row  ">
                 <div
                   className="w-[33%]  flex flex-col justify-center items-center cursor-pointer"
@@ -163,7 +178,7 @@ const BookDetail: React.FC<BookDetailProps> = ({ params }) => {
             </div>
             <div className="w-full h-[50px] flex flex-col justify-center items-end my-3 p-2">
               <p className="font-extrabold text-2xl">
-                {(bookAmount * thisBook.price).toLocaleString()}원
+                {(bookAmount * detailData.price).toLocaleString()}원
               </p>
             </div>
             <div className="w-full h-[50px] flex flex-row justify-between items-center">
@@ -184,17 +199,17 @@ const BookDetail: React.FC<BookDetailProps> = ({ params }) => {
         </div>
       </div>
       <div className="w-full p-5 my-8 bg-white border-light_gray rounded-2xl border h-[100px] text-sm drop-shadow-md flex flex-row justify-around items-center text-dark_gray">
-        <p>ISBN | {thisBook.isbn}</p>
+        <p>ISBN | {detailData.isbn}</p>
         <p>
-          발행일 | {new Date(thisBook.publication_date).getFullYear()}년{" "}
-          {new Date(thisBook.publication_date).getMonth()}월{" "}
-          {new Date(thisBook.publication_date).getDay()}일
+          발행일 | {new Date(detailData.publicationDate).getFullYear()}년{" "}
+          {new Date(detailData.publicationDate).getMonth()}월{" "}
+          {new Date(detailData.publicationDate).getDay()}일
         </p>
-        <p>저자 | {thisBook.author}</p>
-        <p>출판사 | {thisBook.publisher}</p>
+        <p>저자 | {detailData.author}</p>
+        <p>출판사 | {detailData.publisher}</p>
       </div>
       <p className="font-bold text-xl text-point my-5 ">책 소개</p>
-      <div className="w-full min-h-[500px] p-5  ">{thisBook.description}</div>
+      <div className="w-full min-h-[500px] p-5  ">{detailData.description}</div>
     </div>
   );
 };
