@@ -148,7 +148,7 @@ const Cart = () => {
               >
                 <CartItem
                   isbn={book.isbn}
-                  image_path={book.image_path}
+                  image_path={book.imagePath}
                   title={book.title}
                   author={book.author}
                   price={book.price}

@@ -54,11 +54,11 @@ const BookDetail: React.FC<BookDetailProps> = ({ params }) => {
     if (typeof window !== "undefined") {
       localStorage.setItem(
         "cart",
-        JSON.stringify([{ ...thisBook, amount: bookAmount }])
+        JSON.stringify([{ ...detailData, amount: bookAmount }])
       );
       setCart((prevCart) => {
         const existingItemIndex = prevCart.findIndex(
-          (item) => item.id === thisBook!.isbn
+          (item) => item.id === detailData!.isbn
         );
         if (existingItemIndex > -1) {
           // 기존 아이템의 수량 업데이트
@@ -70,8 +70,8 @@ const BookDetail: React.FC<BookDetailProps> = ({ params }) => {
           return [
             ...prevCart,
             {
-              ...(thisBook as bookDataType),
-              id: thisBook!.isbn,
+              ...(detailData as bookDataType),
+              id: detailData!.isbn,
               amount: bookAmount,
             },
           ];
