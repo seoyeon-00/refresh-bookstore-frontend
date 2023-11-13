@@ -24,7 +24,7 @@ const BookCatalogue: React.FC<BookCatalogueProps> = ({ book }) => {
           </div>
         </Link>
         <div className=" w-full h-[20px] text-xs mt-1  px-2  flex flex-row justify-center text-point  ">
-          {`#${book.category}`}
+          {`#${book.categoryId}`}
         </div>
         <div className=" w-full h-[20px] text-xs  px-2  flex flex-row justify-center  ">
           {book.price.toLocaleString()}원
