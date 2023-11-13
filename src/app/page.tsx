@@ -2,14 +2,46 @@
 import BookCatalogue from "@/components/Home/BookCatalogue";
 import RefreshAnimation from "@/components/Home/RefreshAnimation";
 import books from "../../public/mock-data/products.json";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { getProduct } from "@/api/product";
+import { getCategory } from "@/api/category";
 
 export default function Home() {
-  const [categories, setCategories] = useState(["전체", "모바일 앱 개발"]);
+  const [productDataArray, setProductDataArray] = useState([]);
+  const [categories, setCategories] = useState(["전체"]);
   const [currentCategory, setCurrentCategory] = useState("전체");
   const categoryHandler = (category: string) => {
     setCurrentCategory(category);
   };
+
+  useEffect(() => {
+    getProduct({ page: 1, size: 20 })
+      .then((result) => {
+        const productDataArray = result;
+        //console.log(productDataArray);
+        setProductDataArray(productDataArray);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+
+    getCategory({ page: 1, size: 20 })
+      .then((result) => {
+        const categoryDataArray = result;
+        const categoryStateData = categoryDataArray.map(
+          (item: any) => item.name
+        );
+
+        if (!categoryStateData.includes("전체")) {
+          categoryStateData.unshift("전체");
+        }
+
+        setCategories(categoryStateData);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, []);
 
   return (
     <div>
@@ -27,10 +59,10 @@ export default function Home() {
           &apos;{currentCategory}&apos; 카테고리의 책입니다.
         </p>
         <div className="w-full h-auto flex flex-row flex-wrap justify-start gap-5 items-start">
-          {books.map((book, index) => {
+          {productDataArray.map((book, index) => {
             if (
               currentCategory === "전체" ||
-              book.category === currentCategory
+              book.categoryId === currentCategory
             ) {
               return <BookCatalogue key={index} book={book} />;
             }
