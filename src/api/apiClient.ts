@@ -2,6 +2,7 @@ import { getCookie } from "cookies-next";
 import { API_BASE_URL } from "@/constants/path";
 import axios, { AxiosError, AxiosInstance } from "axios";
 import { requestToken } from "./auth";
+import { toast } from "react-hot-toast";
 
 export const apiClient = (): AxiosInstance => {
   let accessToken = localStorage.getItem("token");
@@ -50,10 +51,15 @@ export const apiClient = (): AxiosInstance => {
       // 비동기 요청 성공 시 반환
       return Promise.resolve(res);
     },
-    async (error: AxiosError) => {
+    async (error) => {
       // 오류 응답 처리
-      return Promise.reject(error);
+      toast.error("로그인 실패. 다시 로그인해주세요.");
+      //return Promise.reject(error);
     }
+    // async (error: AxiosError) => {
+    //   // 오류 응답 처리
+    //   return Promise.reject(error);
+    // }
   );
 
   return api;
