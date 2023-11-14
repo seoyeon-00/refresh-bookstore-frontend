@@ -50,6 +50,24 @@ export const getProductByCategory = async ({
   }
 };
 
+export const getProductByCategoryAll = async (category: number) => {
+  try {
+    const response = await fetch(`/api/products/category/total/${category}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (response.ok) {
+      const productByCategoryAllData = await response.json();
+      return productByCategoryAllData;
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 export const getProductByISBN = async ({ isbn }: { isbn: string }) => {
   const accessToken = localStorage.getItem("token");
   if (!accessToken) {
