@@ -1,13 +1,13 @@
 "use client";
 import BookCatalogue from "@/components/Home/BookCatalogue";
 import RefreshAnimation from "@/components/Home/RefreshAnimation";
-import books from "../../public/mock-data/products.json";
 import React, { useEffect, useState } from "react";
 import { getProduct } from "@/api/product";
 import { getCategory } from "@/api/category";
+import { bookDataType } from "@/types/bookDataType";
 
 export default function Home() {
-  const [productDataArray, setProductDataArray] = useState([]);
+  const [productDataArray, setProductDataArray] = useState<bookDataType[]>([]);
   const [categories, setCategories] = useState(["전체"]);
   const [currentCategory, setCurrentCategory] = useState("전체");
   const categoryHandler = (category: string) => {
@@ -46,11 +46,11 @@ export default function Home() {
   return (
     <div>
       <div className="w-full flex flex-col justify-start items-center">
-        <div className="w-full p-4 border-b border-light_green flex flex-row justify-start flex-wrap my-5 gap-3">
+        <div className="w-full p-4 border-b border-light_green flex flex-row justify-start flex-wrap my-5 gap-[5px]">
           {categories.map((category, index) => (
             <div
               key={index}
-              className="h-7 mb-2 px-4 text-md font-light text-white bg-point rounded-full flex flex-col hover:bg-dark_green justify-center items-center drop-shadow-lg cursor-pointer"
+              className="h-7 mb-1 px-3 text-sm font-medium text-white bg-point rounded-full flex flex-col hover:bg-dark_green justify-center items-center drop-shadow-lg cursor-pointer"
               onClick={() => categoryHandler(category)}
             >{`#${category}`}</div>
           ))}
@@ -64,7 +64,13 @@ export default function Home() {
               currentCategory === "전체" ||
               book.categoryId === currentCategory
             ) {
-              return <BookCatalogue key={index} book={book} />;
+              return (
+                <BookCatalogue
+                  key={index}
+                  book={book}
+                  category={categories[Number(book.categoryId)]}
+                />
+              );
             }
             return null;
           })}

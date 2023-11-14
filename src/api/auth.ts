@@ -52,7 +52,6 @@ export const requestToken = async (refreshToken: string) => {
   }
 
   const item = JSON.parse(accessToken);
-  console.log(item);
   try {
     const response = await fetch("/api/user/refresh", {
       method: "POST",

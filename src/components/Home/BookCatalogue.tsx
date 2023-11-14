@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import Book from "../Common/Book";
 import Link from "next/link";
 import { bookDataType } from "@/types/bookDataType";
@@ -6,9 +5,10 @@ import { truncateText } from "@/utils/truncateText";
 
 interface BookCatalogueProps {
   book: bookDataType;
+  category: string;
 }
 
-const BookCatalogue: React.FC<BookCatalogueProps> = ({ book }) => {
+const BookCatalogue: React.FC<BookCatalogueProps> = ({ book, category }) => {
   return (
     <div className="w-[180px] h-[300px] flex flex-col justify-start items-center rounded-2xl relative m-1 mb-5 ">
       <Link
@@ -24,7 +24,7 @@ const BookCatalogue: React.FC<BookCatalogueProps> = ({ book }) => {
           </div>
         </Link>
         <div className=" w-full h-[20px] text-xs mt-1  px-2  flex flex-row justify-center text-point  ">
-          {`#${book.categoryId}`}
+          {`#${category}`}
         </div>
         <div className=" w-full h-[20px] text-xs  px-2  flex flex-row justify-center  ">
           {book.price.toLocaleString()}원
