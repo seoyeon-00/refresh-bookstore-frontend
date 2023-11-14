@@ -141,7 +141,7 @@ const BookDetail: React.FC<BookDetailProps> = ({ params }) => {
         <div>로딩중입니다.</div>
       ) : detailData ? (
         <div>
-          <div className="w-full flex flex-row justify-between items-start m-5">
+          <div className="w-full flex flex-row justify-between items-start">
             <div className="w-[45%] h-[400px] border border-light_gray flex justify-center items-center relative rounded-xl bg-[#f9f9f9]">
               <img
                 src={`${detailData.imagePath}`}
