@@ -1,13 +1,13 @@
 "use client";
 import BookCatalogue from "@/components/Home/BookCatalogue";
 import RefreshAnimation from "@/components/Home/RefreshAnimation";
-import books from "../../public/mock-data/products.json";
 import React, { useEffect, useState } from "react";
 import { getProduct } from "@/api/product";
 import { getCategory } from "@/api/category";
+import { bookDataType } from "@/types/bookDataType";
 
 export default function Home() {
-  const [productDataArray, setProductDataArray] = useState([]);
+  const [productDataArray, setProductDataArray] = useState<bookDataType[]>([]);
   const [categories, setCategories] = useState(["전체"]);
   const [currentCategory, setCurrentCategory] = useState("전체");
   const categoryHandler = (category: string) => {
@@ -64,7 +64,13 @@ export default function Home() {
               currentCategory === "전체" ||
               book.categoryId === currentCategory
             ) {
-              return <BookCatalogue key={index} book={book} />;
+              return (
+                <BookCatalogue
+                  key={index}
+                  book={book}
+                  category={categories[Number(book.categoryId)]}
+                />
+              );
             }
             return null;
           })}

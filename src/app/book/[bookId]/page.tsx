@@ -13,6 +13,7 @@ import { useRecoilState } from "recoil";
 import { cartStore } from "@/stores";
 import { bookDataType } from "@/types/bookDataType";
 import { getProductByISBN } from "@/api/product";
+import { getCategory } from "@/api/category";
 
 interface BookDetailProps {
   params: {
@@ -22,7 +23,7 @@ interface BookDetailProps {
 
 const BookDetail: React.FC<BookDetailProps> = ({ params }) => {
   const [bookAmount, setBookAmount] = useState(1);
-  const thisBook = books.find((book) => book.isbn === params.bookId);
+  const [categories, setCategories] = useState(["전체"]);
   const router = useRouter();
   const [cart, setCart] = useRecoilState(cartStore.cartState);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -39,6 +40,23 @@ const BookDetail: React.FC<BookDetailProps> = ({ params }) => {
       .catch((error) => {
         console.error(error);
         setIsLoading(false);
+      });
+
+    getCategory({ page: 1, size: 20 })
+      .then((result) => {
+        const categoryDataArray = result;
+        const categoryStateData = categoryDataArray.map(
+          (item: any) => item.name
+        );
+
+        if (!categoryStateData.includes("전체")) {
+          categoryStateData.unshift("전체");
+        }
+
+        setCategories(categoryStateData);
+      })
+      .catch((error) => {
+        console.error(error);
       });
   }, [params.bookId]);
 
@@ -126,7 +144,6 @@ const BookDetail: React.FC<BookDetailProps> = ({ params }) => {
           <div className="w-full flex flex-row justify-between items-start m-5">
             <div className="w-[45%] h-[400px] border border-light_gray flex justify-center items-center relative rounded-xl bg-[#f9f9f9]">
               <img
-                //src={`https://contents.kyobobook.co.kr/sih/fit-in/458x0/pdt/${detailData.isbn}.jpg`}
                 src={`${detailData.imagePath}`}
                 className=" w-[45%] drop-shadow-xl border border-light_gray"
               />
@@ -135,9 +152,11 @@ const BookDetail: React.FC<BookDetailProps> = ({ params }) => {
               </div>
             </div>
             <div className="w-[50%] h-[400px] flex flex-col justify-between items-start">
-              <div className="w-full flex flex-col justify-start items-start border-b border-light_gray overflow-hidden relative">
-                <div className=" h-7 mb-2 px-2 text-md font-light text-white bg-point rounded-full flex flex-col justify-center items-center drop-shadow-lg">{`#${detailData.categoryId}`}</div>
-                <div className=" font-bold text-2xl mt-1 mb-2">
+              <div className="w-full flex flex-col justify-start items-start overflow-hidden relative">
+                <div className=" h-7 mb-1 px-3 py-1 text-sm font-semibold text-white bg-point rounded-full flex flex-col justify-center items-center">
+                  {`#${categories[Number(detailData.categoryId)]}`}
+                </div>
+                <div className=" font-bold text-2xl mb-1">
                   {detailData.title}
                 </div>
                 <div className="text-md mb-4 text-point">{`${
@@ -146,6 +165,7 @@ const BookDetail: React.FC<BookDetailProps> = ({ params }) => {
                   detailData.publicationDate
                 ).getFullYear()}`}</div>
               </div>
+              <div className="h-[1px] w-full bg-neutral-200 mt-3"></div>
               <div className="w-full flex flex-col justify-start items-start">
                 <span className="font-md text-xs text-[#aaaaaa] my-3 flex flex-row">
                   <AlertIcon width="15px" color="#cccccc" />
@@ -181,7 +201,7 @@ const BookDetail: React.FC<BookDetailProps> = ({ params }) => {
                     </div>
                   </div>
                 </div>
-                <div className="w-full h-[50px] flex flex-col justify-center items-end my-3 p-2">
+                <div className="w-full h-[50px] flex flex-col justify-center items-end my-3 p-1">
                   <p className="font-extrabold text-2xl">
                     {(bookAmount * detailData.price).toLocaleString()}원
                   </p>
