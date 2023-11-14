@@ -2,7 +2,7 @@
 import BookCatalogue from "@/components/Home/BookCatalogue";
 import RefreshAnimation from "@/components/Home/RefreshAnimation";
 import React, { useEffect, useState } from "react";
-import { getProduct } from "@/api/product";
+import { getProduct, getProductByCategory } from "@/api/product";
 import { getCategory } from "@/api/category";
 import { bookDataType } from "@/types/bookDataType";
 
@@ -18,7 +18,6 @@ export default function Home() {
     getProduct({ page: 1, size: 20 })
       .then((result) => {
         const productDataArray = result;
-        //console.log(productDataArray);
         setProductDataArray(productDataArray);
       })
       .catch((error) => {
@@ -43,6 +42,28 @@ export default function Home() {
       });
   }, []);
 
+  const selectCategoryHandler = (index: number) => {
+    const getProductDataByCategory = async () => {
+      try {
+        const result =
+          index === 0
+            ? await getProduct({ page: 1, size: 20 })
+            : await getProductByCategory({
+                page: 1,
+                size: 10,
+                category: index,
+              });
+
+        const productDataArray = result;
+        setProductDataArray(productDataArray);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    getProductDataByCategory();
+  };
+
   return (
     <div>
       <div className="w-full flex flex-col justify-start items-center">
@@ -51,7 +72,11 @@ export default function Home() {
             <div
               key={index}
               className="h-7 mb-1 px-3 text-sm font-medium text-white bg-point rounded-full flex flex-col hover:bg-dark_green justify-center items-center drop-shadow-lg cursor-pointer"
-              onClick={() => categoryHandler(category)}
+              onClick={() => {
+                console.log(index);
+                categoryHandler(category);
+                selectCategoryHandler(index);
+              }}
             >{`#${category}`}</div>
           ))}
         </div>
@@ -62,7 +87,7 @@ export default function Home() {
           {productDataArray.map((book, index) => {
             if (
               currentCategory === "전체" ||
-              book.categoryId === currentCategory
+              categories[Number(book.categoryId)] === currentCategory
             ) {
               return (
                 <BookCatalogue

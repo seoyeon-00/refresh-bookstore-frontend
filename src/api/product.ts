@@ -3,6 +3,7 @@ import { apiClient } from "./apiClient";
 type getProductType = {
   page: number;
   size: number;
+  category?: number;
 };
 
 export const getProduct = async ({ page, size }: getProductType) => {
@@ -24,13 +25,36 @@ export const getProduct = async ({ page, size }: getProductType) => {
   }
 };
 
+export const getProductByCategory = async ({
+  page,
+  size,
+  category,
+}: getProductType) => {
+  try {
+    const response = await fetch(
+      `/api/products/category?page=${page}&size=${size}&category=${category}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (response.ok) {
+      const productByCategoryData = await response.json();
+      return productByCategoryData;
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 export const getProductByISBN = async ({ isbn }: { isbn: string }) => {
   const accessToken = localStorage.getItem("token");
-
   if (!accessToken) {
     throw new Error("accessToken is null");
   }
-
   const item = JSON.parse(accessToken);
 
   try {
