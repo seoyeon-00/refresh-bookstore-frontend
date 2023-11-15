@@ -21,3 +21,8 @@ export const orderCreate = async (data: orderType) => {
   const response = await apiClient().post(`/api/orders`, data);
   return response;
 };
+
+export const getOrderByUser = async (user: number) => {
+  const response = await apiClient().get(`/api/orders/user/${user}`);
+  return response;
+};
