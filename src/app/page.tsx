@@ -9,6 +9,7 @@ import {
 } from "@/api/product";
 import { getCategory } from "@/api/category";
 import { bookDataType } from "@/types/bookDataType";
+import ClipLoader from "react-spinners/ClipLoader";
 import NextIcon from "@/components/Common/Icons/NextIcon";
 import PrevIcon from "@/components/Common/Icons/prevIcon";
 
@@ -139,27 +140,35 @@ export default function Home() {
         <p className="w-full m-12 flex flex-col justify-center items-center font-md text-lg text-point">
           &apos;{currentCategory}&apos; 카테고리의 책입니다.
         </p>
-        <div className="w-full h-auto flex flex-row flex-wrap justify-start gap-5 items-start">
+        <div className="w-full h-auto">
           {/* 로딩 중일 때 로딩 UI 표시 */}
-          {isLoading && <RefreshAnimation />}
-          {!isLoading &&
-            productDataArray.map((book, index) => {
-              if (
-                currentCategory === "전체" ||
-                categories[Number(book.categoryId)] === currentCategory
-              ) {
-                return (
-                  <div key={`bookItem-${index}`}>
-                    <BookCatalogue
-                      key={index}
-                      book={book}
-                      category={categories[Number(book.categoryId)]}
-                    />
-                  </div>
-                );
-              }
-              return null;
-            })}
+          <div>
+            {isLoading && (
+              <div className="flex justify-center h-[300px] items-center">
+                <ClipLoader color="#1DC078" size={50} />
+              </div>
+            )}
+          </div>
+          <div className="w-full h-auto flex flex-row flex-wrap justify-start gap-5 items-start">
+            {!isLoading &&
+              productDataArray.map((book, index) => {
+                if (
+                  currentCategory === "전체" ||
+                  categories[Number(book.categoryId)] === currentCategory
+                ) {
+                  return (
+                    <div key={`bookItem-${index}`}>
+                      <BookCatalogue
+                        key={index}
+                        book={book}
+                        category={categories[Number(book.categoryId)]}
+                      />
+                    </div>
+                  );
+                }
+                return null;
+              })}
+          </div>
           <div className="flex w-[320px] justify-between mx-auto m-[30px]">
             <button
               onClick={() => {
