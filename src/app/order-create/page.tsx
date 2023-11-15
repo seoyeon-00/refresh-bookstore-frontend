@@ -18,9 +18,11 @@ import { toast } from "react-hot-toast";
 import { orderCreate } from "@/api/order";
 import { AuthContext } from "@/contexts/AuthContext";
 import ClipLoader from "react-spinners/ClipLoader";
+import { useRouter } from "next/navigation";
 
 const OrderCreate = () => {
   const userData = useContext(AuthContext);
+  const router = useRouter();
 
   const [mounted, setMounted] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -129,20 +131,27 @@ const OrderCreate = () => {
   const data = {
     userName: name,
     email: userData?.user?.email,
+    deliveryFee: 0,
+    shippingStatus: "PREPARING",
     userPhone: phone,
     postalCode: addressZipcode,
     address: addressAddress,
-    detailAdress: addressDetail,
+    detailAddress: addressDetail,
     orderRequest: deliveryRequest,
+    totalPrice: 0,
     orderItems: orderItem(),
   };
 
   const submitHandler = async (event: FormEvent) => {
     event.preventDefault();
-
     const result = await orderCreate(data);
+
     if (result.status === 200) {
-      toast.success("수정이 완료되었습니다.");
+      toast.success("주문이 완료되었습니다.");
+      localStorage.removeItem("cart");
+      router.push("/");
+    } else {
+      toast.error("주문 생성 실패");
     }
   };
 

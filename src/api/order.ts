@@ -2,12 +2,15 @@ import { apiClient } from "./apiClient";
 
 type orderType = {
   userName: string;
-  email: string;
+  email: string | undefined;
+  deliveryFee: number;
+  shippingStatus: string;
   postalCode: string;
   address: string;
   detailAddress: string;
   userPhone: string;
   orderRequest: string;
+  totalPrice: number;
   orderItems: {
     isbn: string;
     amount: number;
