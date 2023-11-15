@@ -17,9 +17,12 @@ import autoHyphen from "../../utils/autoHyphen";
 import { toast } from "react-hot-toast";
 import { orderCreate } from "@/api/order";
 import { AuthContext } from "@/contexts/AuthContext";
+import ClipLoader from "react-spinners/ClipLoader";
+import { useRouter } from "next/navigation";
 
 const OrderCreate = () => {
   const userData = useContext(AuthContext);
+  const router = useRouter();
 
   const [mounted, setMounted] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -128,57 +131,71 @@ const OrderCreate = () => {
   const data = {
     userName: name,
     email: userData?.user?.email,
+    deliveryFee: 0,
+    shippingStatus: "PREPARING",
     userPhone: phone,
     postalCode: addressZipcode,
     address: addressAddress,
-    detailAdress: addressDetail,
+    detailAddress: addressDetail,
     orderRequest: deliveryRequest,
+    totalPrice: 0,
     orderItems: orderItem(),
   };
 
   const submitHandler = async (event: FormEvent) => {
     event.preventDefault();
-
     const result = await orderCreate(data);
+
     if (result.status === 200) {
-      toast.success("수정이 완료되었습니다.");
+      toast.success("주문이 완료되었습니다.");
+      localStorage.removeItem("cart");
+      router.push("/");
+    } else {
+      toast.error("주문 생성 실패");
     }
   };
 
   return (
     <div className="m-8">
-      <h1 className="text-large my-1">결제하기</h1>
+      <h1 className="text-large my-1">도서 결제하기</h1>
       <hr className="text-light_gray" />
       <div className="flex min-h-[70vh] h-[100%] my-2">
-        <section className="flex-1 px-2">
-          <h1 className="text-medium font-normal m-2">주문 상품 정보</h1>
-          {!isLoading ? (
-            cart.map((item) => (
-              <OrderCreateItem
-                key={item.isbn}
-                isbn={item.isbn}
-                image_path={item.image_path}
-                title={item.title}
-                author={item.author}
-                price={item.price}
-                amount={item.amount}
-              />
-            ))
-          ) : (
-            <p>Loading...</p>
-          )}
+        <section className="flex-1 px-3 w-[50%]">
+          <div className="flex justify-between mt-3 items-end">
+            <div className="text-base font-medium">주문 상품 정보</div>
+            <div className="text-xs text-neutral-500">
+              총 {cart.length}개의 상품이 있습니다.
+            </div>
+          </div>
+          <div className="bg-[#f9f9f9] py-3 px-2 mt-3">
+            {!isLoading ? (
+              cart.map((item) => (
+                <OrderCreateItem
+                  key={item.isbn}
+                  isbn={item.isbn}
+                  image_path={item.imagePath}
+                  title={item.title}
+                  author={item.author}
+                  price={item.price}
+                  amount={item.amount}
+                />
+              ))
+            ) : (
+              <ClipLoader color="#1DC078" size={50} />
+            )}
+          </div>
         </section>
-        <section className="px-2 flex-1 border-l border-light_gray ">
-          <h1 className="text-medium font-normal m-2">주문/배송 정보</h1>
-          <div className="mx-auto my-4">
-            <div className="userName m-2 flex justify-center">
-              <label className="w-[110px] px-2 mx-2 flex items-center justify-center border-r-[1px] border-light_gray">
+        <section className="w-[50%] px-3 flex-1 border-l border-light_gray ">
+          <h1 className="text-base font-medium mt-3 ml-3">주문/배송 정보</h1>
+          <div className="my-4">
+            <div className="userName flex justify-between my-2">
+              <label className="text-[14px] w-[30%] mx-2 flex items-center justify-center border-r-[1px] border-light_gray">
                 이름
               </label>
-              <div className="relative">
+              <div className="w-[70%] relative">
                 <input
                   value={name}
-                  className="border-[1px] rounded border-light_gray w-[300px] h-[32px] px-2"
+                  className="text-[14px] border-[1px] rounded border-light_gray w-full h-[32px] px-2"
                   placeholder="이름을 입력해주세요."
                   onChange={(e) => {
                     const newName = e.target.value;
@@ -191,13 +208,13 @@ const OrderCreate = () => {
                 </div>
               </div>
             </div>
-            <div className="userPhoneNumber m-2 flex justify-center">
-              <label className="w-[110px] px-2 mx-2 flex items-center justify-center border-r-[1px] border-light_gray">
+            <div className="userPhoneNumber flex justify-center my-2">
+              <label className="text-[14px] w-[30%] mx-2 flex items-center justify-center border-r-[1px] border-light_gray">
                 연락처
               </label>
-              <div className="relative">
+              <div className="w-[70%] relative">
                 <input
-                  className="border-[1px] rounded border-light_gray w-[300px] h-[32px] px-2"
+                  className="text-[14px] border-[1px] rounded border-light_gray w-full h-[32px] px-2"
                   autoComplete="on"
                   value={phone}
                   onChange={(e) => {
@@ -215,30 +232,32 @@ const OrderCreate = () => {
                 </div>
               </div>
             </div>
-            <div className="userAddress m-2 flex justify-center">
-              <label className="w-[110px] px-2 mx-2 flex items-center justify-center border-r-[1px] border-light_gray">
+            <div className="userAddress flex justify-center my-2">
+              <label className="text-[14px] w-[30%] mx-2 flex items-center justify-center border-r-[1px] border-light_gray">
                 주소
               </label>
-              <div className="addressInput w-[300px]">
+              <div className="addressInput w-[70%]">
+                <div className="flex">
+                  <input
+                    type="text"
+                    onClick={handlePopup}
+                    className="text-[14px] user_delivery_info border-[1px] rounded border-light_gray w-[60%] h-[32px] px-2"
+                    id="postalCodeInput"
+                    placeholder="우편번호"
+                    value={address.zonecode}
+                    readOnly
+                  />
+                  <input
+                    type="button"
+                    onClick={handlePopup}
+                    className="text-[14px] search_address cursor-pointer border-[1px] rounded border-light_gray w-[40%] h-[32px] px-2 ml-1"
+                    value="주소 검색"
+                  />
+                </div>
                 <input
                   type="text"
                   onClick={handlePopup}
-                  className="user_delivery_info border-[1px] rounded border-light_gray w-[156px] h-[32px] px-2 my-1"
-                  id="postalCodeInput"
-                  placeholder="우편번호"
-                  value={address.zonecode}
-                  readOnly
-                />
-                <input
-                  type="button"
-                  onClick={handlePopup}
-                  className="search_address cursor-pointer border-[1px] rounded border-light_gray w-[140px] h-[32px] px-2 ml-1"
-                  value="주소 검색"
-                />
-                <input
-                  type="text"
-                  onClick={handlePopup}
-                  className="user_delivery_info border-[1px] rounded border-light_gray w-[300px] h-[32px] px-2 my-1"
+                  className="text-[14px] user_delivery_info border-[1px] rounded border-light_gray w-full h-[32px] px-2 my-1"
                   placeholder="주소"
                   value={address.address}
                   readOnly
@@ -247,7 +266,7 @@ const OrderCreate = () => {
                   <input
                     value={addressDetail}
                     type="text"
-                    className="user_delivery_info border-[1px] rounded border-light_gray w-[300px] h-[32px] px-2 my-1"
+                    className="text-[14px] user_delivery_info border-[1px] rounded border-light_gray w-full h-[32px] px-2 my-1"
                     placeholder="상세주소를 입력해주세요."
                     onChange={(e) => {
                       const newAdressDetail = e.target.value;
@@ -263,15 +282,15 @@ const OrderCreate = () => {
                 </div>
               </div>
             </div>
-            <div className="deliveryRequest m-2 flex justify-center">
-              <p className="w-[110px] px-2 mx-2 flex items-center justify-center border-r-[1px] border-light_gray">
+            <div className="deliveryRequest flex justify-center my-2">
+              <p className="text-[14px] w-[30%] mx-2 flex items-center justify-center border-r-[1px] border-light_gray">
                 배송 요청 사항
               </p>
-              <div className="deliveryRequestSelect w-[300px]">
+              <div className="deliveryRequestSelect w-[70%]">
                 <select
                   value={deliveryRequest}
                   onChange={handleInput}
-                  className="border-[1px] rounded border-light_gray w-[300px] h-[32px] px-1 my-1"
+                  className="text-[14px] border-[1px] rounded border-light_gray w-full h-[32px] px-1 my-1"
                 >
                   <option value="0" className="ml-2">
                     배송시 요청사항을 선택해 주세요.
@@ -322,10 +341,10 @@ const OrderCreate = () => {
           </div>
           <hr className="m-2 text-light_gray box-border" />
           <div>
-            <h1 className="text-medium font-normal m-4 box-border">
+            <h1 className="text-base font-medium mt-4 ml-3 box-border">
               결제 금액
             </h1>
-            <div className="priceInfo text-medium font-normal ml-[40%] mr-4 flex flex-col ">
+            <div className="priceInfo text-base font-normal ml-[40%] mr-4 flex flex-col ">
               <div className="flex justify-between mb-2">
                 <p>상품 가격</p>
                 <p>{priceSum.toLocaleString()}원</p>
@@ -340,7 +359,7 @@ const OrderCreate = () => {
               </div>
               <button
                 onClick={submitHandler}
-                className="rounded text-white bg-point w-[100%] h-[45px] disabled:bg-gray"
+                className="mt-4 rounded text-white bg-point w-[100%] h-[45px] disabled:bg-gray"
               >
                 결제하기
               </button>
