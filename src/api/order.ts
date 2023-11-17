@@ -26,3 +26,11 @@ export const getOrderByUser = async (user: number) => {
   const response = await apiClient().get(`/api/orders/user/${user}`);
   return response;
 };
+
+export const getOrderByNumber = async (orderNumber: string | null) => {
+  console.log(orderNumber);
+  const response = await apiClient().get(
+    `/api/orders/orderNumber/${orderNumber}`
+  );
+  return response.data;
+};

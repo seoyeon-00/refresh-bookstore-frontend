@@ -40,11 +40,13 @@ const OrderListItem = ({ item }: { item: orderDataType }) => {
       : product.title
     : "상품 정보를 가져오고 있습니다.";
 
+  const orderListLink = `/mypage/order-detail?orderId=${item.orderNumber}`;
+
   return (
     <div className="bg-[#f9f9f9] overflow-hidden rounded-lg h-[150px] mb-4 flex justify-between items-center">
       <div className="text-sm h-[-webkit-fill-available] p-5 my-2 mr-2 flex flex-col justify-center items-center text-dark_gray border-light_gray border-r">
         <Link
-          href={"/mypage/order-detail?orderId=RJ558046"}
+          href={orderListLink}
           className="text-black font-semibold underline hover:underline hover:decoration-[#16a263] hover:text-[#16a263]"
         >
           {item.orderNumber}
@@ -65,7 +67,7 @@ const OrderListItem = ({ item }: { item: orderDataType }) => {
         </p>
         <p className="text-white font-semibold text-lg">{item.totalPrice}원</p>
         <Link
-          href={"/mypage/order-detail?orderId=RJ558046"}
+          href={orderListLink}
           className="mt-2 px-2 py-1 rounded text-[#fff] text-xs border hover:bg-[#16a263] hover:bg-opacity-10"
         >
           주문 상세

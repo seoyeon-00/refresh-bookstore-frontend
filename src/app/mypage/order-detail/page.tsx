@@ -7,13 +7,28 @@ import ListolIcon from "@/components/Common/Icons/ListolIcon";
 import TruckIcon from "@/components/Common/Icons/TruckIcon";
 import OrderDetailItem from "../../../components/order-detail/OrderDetailItem";
 import books from "../../../../public/mock-data/products.json";
+import { useEffect, useState } from "react";
+import { getOrderByNumber } from "@/api/order";
+import { orderDataType } from "@/types/orderDataType";
 
 const OrderDetail = () => {
   const searchParams = useSearchParams();
   const orderId = searchParams.get("orderId");
   const mockData = books.slice(0, 2);
-  console.log(mockData);
+  const [orderData, setOrderData] = useState<orderDataType | null>(null);
 
+  useEffect(() => {
+    getOrderByNumber(orderId)
+      .then((result) => {
+        const orderInformation = result;
+        setOrderData(orderInformation);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, [orderId]);
+
+  console.log(orderData);
   return (
     <section className="border-l border-light_gray min-h-[70vh] p-[2.5rem] flex-1">
       <h1 className="w-fit text-medium font-[600] mb-3">주문/배송 상세정보</h1>
@@ -26,7 +41,7 @@ const OrderDetail = () => {
             </div>
             <div className="ml-2 font-medium">주문 날짜</div>
           </div>
-          <p className="text-[15px] font-normal">2023.07.20</p>
+          <p className="text-[15px] font-normal">{orderData?.createdAt}</p>
         </div>
         <div className="flex items-center mb-1">
           <div className="w-[20%] font-semibold text-[15px] flex flex-row items-center">
@@ -44,7 +59,7 @@ const OrderDetail = () => {
             </div>
             <div className="ml-2 font-medium">배송 상태</div>
           </div>
-          <p className="text-[15px] font-normal">배송중</p>
+          <p className="text-[15px] font-normal">{orderData?.shippingStatus}</p>
         </div>
       </div>
       <div className="flex mt-10 justify-between">
@@ -55,7 +70,7 @@ const OrderDetail = () => {
         </div>
       </div>
       <div className="mt-[10px] bg-[#f9f9f9] p-5">
-        {mockData.map((item, index) => (
+        {/* {mockData.map((item, index) => (
           <div key={`order-${index}`} className="mb-3">
             <OrderDetailItem
               key={item.isbn}
@@ -65,6 +80,19 @@ const OrderDetail = () => {
               author={item.author}
               price={item.price}
               amount={1}
+            />
+          </div>
+        ))} */}
+        {orderData?.orderItems.map((item, index) => (
+          <div key={`order-${index}`} className="mb-3">
+            <OrderDetailItem
+              key={item.isbn}
+              isbn={item.isbn}
+              image_path={item.image_path}
+              title={item.title}
+              author={item.author}
+              price={item.price}
+              amount={item.amount}
             />
           </div>
         ))}
@@ -97,23 +125,24 @@ const OrderDetail = () => {
       <div className="text-sm border-[1px] border-light_gray rounded mt-2 p-4">
         <div className="flex items-center mb-1">
           <h2 className="font-medium text-sm min-w-[110px] mx-2">이름</h2>
-          <p className="font-light">엘리스</p>
+          <p className="font-light">{orderData?.userName}</p>
         </div>
         <div className="flex items-center mb-1">
           <h2 className="font-medium text-sm min-w-[110px] mx-2">연락처</h2>
-          <p className="font-light">010-1234-1234</p>
+          <p className="font-light">{orderData?.userPhone}</p>
         </div>
         <div className="flex items-center mb-1">
           <h2 className="font-medium text-sm min-w-[110px] mx-2">주소</h2>
           <p className="font-light">
-            (13529) 경기 성남시 분당구 판교역로 166 (백현동, 카카오 판교 아지트)
+            ({orderData?.postalCode}) {orderData?.address}{" "}
+            {orderData?.detailAddress}
           </p>
         </div>
         <div className="flex items-center">
           <h2 className="font-medium text-sm min-w-[110px] mx-2">
             배송 요청 사항
           </h2>
-          <p className="font-light">요청사항 없음.</p>
+          <p className="font-light">{orderData?.orderRequest}</p>
         </div>
       </div>
     </section>
