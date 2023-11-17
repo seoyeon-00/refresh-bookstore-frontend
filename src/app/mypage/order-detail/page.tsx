@@ -10,12 +10,15 @@ import books from "../../../../public/mock-data/products.json";
 import { useEffect, useState } from "react";
 import { getOrderByNumber } from "@/api/order";
 import { orderDataType } from "@/types/orderDataType";
+import { bookDataType } from "@/types/bookDataType";
+import { getProductByISBN } from "@/api/product";
 
 const OrderDetail = () => {
   const searchParams = useSearchParams();
   const orderId = searchParams.get("orderId");
   const mockData = books.slice(0, 2);
   const [orderData, setOrderData] = useState<orderDataType | null>(null);
+  const [product, setProduct] = useState<bookDataType[] | []>([]);
 
   useEffect(() => {
     getOrderByNumber(orderId)
@@ -28,7 +31,24 @@ const OrderDetail = () => {
       });
   }, [orderId]);
 
+  useEffect(() => {
+    orderData?.orderItems.map((item) => {
+      getProductByISBN({ isbn: item.isbn })
+        .then((result) => {
+          const productDate = result;
+
+          console.log(productDate);
+          setProduct((prevItem) => [...prevItem, productDate]);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    });
+  }, [orderData]);
+
   console.log(orderData);
+  console.log(product);
+
   return (
     <section className="border-l border-light_gray min-h-[70vh] p-[2.5rem] flex-1">
       <h1 className="w-fit text-medium font-[600] mb-3">주문/배송 상세정보</h1>
