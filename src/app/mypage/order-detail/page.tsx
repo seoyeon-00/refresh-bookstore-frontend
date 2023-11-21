@@ -108,10 +108,10 @@ const OrderDetail = () => {
             <OrderDetailItem
               key={item.isbn}
               isbn={item.isbn}
-              image_path={item.image_path}
-              title={item.title}
-              author={item.author}
-              price={item.price}
+              // image_path={item.image_path}
+              // title={item.title}
+              // author={item.author}
+              // price={item.price}
               amount={item.amount}
             />
           </div>
