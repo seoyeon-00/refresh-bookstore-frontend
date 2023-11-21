@@ -1,6 +1,7 @@
 import { getProductByISBN } from "@/api/product";
 import { useEffect, useState } from "react";
 import { bookDataType } from "@/types/bookDataType";
+import { ClipLoader } from "react-spinners";
 
 type cartItemProps = {
   isbn: string;
@@ -9,7 +10,9 @@ type cartItemProps = {
 
 const OrderDetailItem = ({ isbn, amount }: cartItemProps) => {
   const [orderItem, setorderItem] = useState<bookDataType | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   useEffect(() => {
+    setIsLoading(true);
     getProductByISBN({ isbn: isbn })
       .then((result) => {
         const productDate = result;
@@ -19,8 +22,19 @@ const OrderDetailItem = ({ isbn, amount }: cartItemProps) => {
       })
       .catch((error) => {
         console.error(error);
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
   }, []);
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center h-[130px] items-center">
+        <ClipLoader color="#1DC078" size={30} />
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white border-[1px] border-light_gray rounded-lg h-[150px] px-3 py-2 flex justify-between items-center shadow-md">
