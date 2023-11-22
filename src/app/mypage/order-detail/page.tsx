@@ -49,6 +49,11 @@ const OrderDetail = () => {
   console.log(orderData);
   console.log(product);
 
+  const orderDate = () => {
+    const findIndex = orderData?.createdAt.indexOf("T");
+    return orderData?.createdAt.substring(0, findIndex).replaceAll("-", ".");
+  };
+
   return (
     <section className="border-l border-light_gray min-h-[70vh] p-[2.5rem] flex-1">
       <h1 className="w-fit text-medium font-[600] mb-3">주문/배송 상세정보</h1>
@@ -61,7 +66,7 @@ const OrderDetail = () => {
             </div>
             <div className="ml-2 font-medium">주문 날짜</div>
           </div>
-          <p className="text-[15px] font-normal">{orderData?.createdAt}</p>
+          <p className="text-[15px] font-normal">{orderDate()}</p>
         </div>
         <div className="flex items-center mb-1">
           <div className="w-[20%] font-semibold text-[15px] flex flex-row items-center">
