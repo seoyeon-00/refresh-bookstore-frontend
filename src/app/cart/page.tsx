@@ -136,34 +136,36 @@ const Cart = () => {
               </label>
               <input
                 type="button"
-                className="border-[1px] border-gray bg-white text-dark_gray font-medium rounded px-1 cursor-pointer duration-500 hover:bg-light_gray"
-                value="선택 삭제 𐌢"
+                className="bg-[#898989] text-xs text-[#e8e8e8] font-medium rounded px-2 py-1 cursor-pointer"
+                value="선택 삭제"
                 onClick={deleteCheckedItem}
               />
             </section>
-            {cart.map((book: cartStateType, i) => (
-              <div
-                key={book.isbn}
-                className="border-[1px] border-light_gray rounded-lg w-full h-[160px] my-3 px-4 py-1 flex justify-between items-center shadow-md"
-              >
-                <CartItem
-                  isbn={book.isbn}
-                  image_path={book.imagePath}
-                  title={book.title}
-                  author={book.author}
-                  price={book.price}
-                  amount={book.amount}
-                  ref={checkboxRefs[i]}
-                />
-              </div>
-            ))}
+            <div className="bg-[#f9f9f9] py-3 px-5">
+              {cart.map((book: cartStateType, i) => (
+                <div
+                  key={book.isbn}
+                  className="bg-white border-[1px] border-light_gray rounded-lg w-full h-[150px] my-3 px-5 py-1 flex justify-between items-center shadow-md"
+                >
+                  <CartItem
+                    isbn={book.isbn}
+                    image_path={book.imagePath}
+                    title={book.title}
+                    author={book.author}
+                    price={book.price}
+                    amount={book.amount}
+                    ref={checkboxRefs[i]}
+                  />
+                </div>
+              ))}
+            </div>
           </form>
           <hr className="text-light_gray" />
-          <section className="cartInfo flex justify-between">
-            <p className="text-dark_gray m-2">
+          <section className="cartInfo flex justify-between mt-2">
+            <p className="text-dark_gray m-2 text-sm">
               * 기본배송비 3,000원 | 50,000원 이상 구매시 무료 배송
             </p>
-            <div className="priceInfo w-[30%] text-medium font-normal m-2">
+            <div className="priceInfo w-[30%] text-base font-normal m-2">
               <div className="flex justify-between mb-2">
                 <p>선택 상품 금액</p>
                 <p>{checkedItemPrice.toLocaleString()}원</p>
@@ -189,7 +191,7 @@ const Cart = () => {
               <button
                 onClick={purchase}
                 disabled={checkedItemPrice ? false : true}
-                className="rounded text-white bg-point w-[100%] h-[45px] disabled:bg-gray"
+                className="mt-2 rounded text-white bg-point w-[100%] h-[45px] disabled:bg-gray"
               >
                 구매하기
               </button>

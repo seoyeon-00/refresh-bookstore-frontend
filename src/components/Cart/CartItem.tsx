@@ -63,28 +63,30 @@ const CartItem = (
         <img src={image_path} alt={title} />
       </div>
       <div className="flex flex-col justify-center w-1/2">
-        <h1 className="text-medium font-normal">{title}</h1>
-        <div className="text-regular text-dark_gray">{author}</div>
+        <h1 className="text-base font-normal leading-tight">{title}</h1>
+        <div className="text-xs text-dark_gray mt-3">{author}</div>
       </div>
       <div className="flex flex-col items-center mb-1">
         <p className="text-dark_gray text-small ">수량</p>
         <input
           type="number"
-          className="border-[1px] border-gray rounded pl-3 w-[80px] text-center cursor-pointer"
+          className="border-[1px] border-gray rounded pl-3 w-[50px] text-center cursor-pointer"
           min={1}
           value={amount}
           onChange={amountChangeHandler}
         />
       </div>
       <div className="w-[150px] flex flex-col justify-center items-center">
-        <p className="text-small">상품 금액</p>
-        <p className="text-medium">{(price * amount).toLocaleString()}원</p>
+        <p className="text-[13px] text-dark_gray">상품 금액</p>
+        <p className="text-[17px] font-medium">
+          {(price * amount).toLocaleString()}원
+        </p>
       </div>
       <input
         type="button"
-        value="╳"
+        value="삭제"
         onClick={deleteItem}
-        className="cursor-pointer duration-500 hover:scale-125"
+        className="py-1 px-2 rounded-sm text-small font-medium bg-point text-white cursor-pointer duration-500 hover:-translate-y-1"
       />
     </>
   );
