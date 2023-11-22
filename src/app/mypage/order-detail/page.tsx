@@ -12,6 +12,9 @@ import { getOrderByNumber } from "@/api/order";
 import { orderDataType } from "@/types/orderDataType";
 import { bookDataType } from "@/types/bookDataType";
 import { getProductByISBN } from "@/api/product";
+import OrderUpdateModal from "@/components/order-detail/OrderUpdateModal";
+import { useRecoilState } from "recoil";
+import { postCodePopupStore } from "@/stores";
 
 const OrderDetail = () => {
   const searchParams = useSearchParams();
@@ -19,6 +22,10 @@ const OrderDetail = () => {
   const mockData = books.slice(0, 2);
   const [orderData, setOrderData] = useState<orderDataType | null>(null);
   const [product, setProduct] = useState<bookDataType[] | []>([]);
+  const [updateModal, setUpdateModal] = useState<boolean>(false);
+  const [orderUpdatePopup, setOrderUpdatePopup] = useRecoilState(
+    postCodePopupStore.orderUpdatePopupState
+  );
 
   useEffect(() => {
     getOrderByNumber(orderId)
@@ -46,16 +53,18 @@ const OrderDetail = () => {
     });
   }, [orderData]);
 
-  console.log(orderData);
-  console.log(product);
-
   const orderDate = () => {
     const findIndex = orderData?.createdAt.indexOf("T");
     return orderData?.createdAt.substring(0, findIndex).replaceAll("-", ".");
   };
 
+  const orderUpdateHandler = () => {
+    setOrderUpdatePopup(!orderUpdatePopup);
+  };
+
   return (
     <section className="border-l border-light_gray min-h-[70vh] p-[2.5rem] flex-1">
+      {orderUpdatePopup ? <OrderUpdateModal /> : null}
       <h1 className="w-fit text-medium font-[600] mb-3">주문/배송 상세정보</h1>
       <div className="w-full h-[2px] bg-neutral-100"></div>
       <div className="bg-[#f9f9f9] my-4 px-5 py-4">
@@ -95,28 +104,11 @@ const OrderDetail = () => {
         </div>
       </div>
       <div className="mt-[10px] bg-[#f9f9f9] p-5">
-        {/* {mockData.map((item, index) => (
-          <div key={`order-${index}`} className="mb-3">
-            <OrderDetailItem
-              key={item.isbn}
-              isbn={item.isbn}
-              image_path={item.image_path}
-              title={item.title}
-              author={item.author}
-              price={item.price}
-              amount={1}
-            />
-          </div>
-        ))} */}
         {orderData?.orderItems.map((item, index) => (
           <div key={`order-${index}`} className="mb-3">
             <OrderDetailItem
               key={item.isbn}
               isbn={item.isbn}
-              // image_path={item.image_path}
-              // title={item.title}
-              // author={item.author}
-              // price={item.price}
               amount={item.amount}
             />
           </div>
@@ -139,7 +131,10 @@ const OrderDetail = () => {
       <div className="flex items-center mt-10 justify-between">
         <h2 className="font-semibold text-regular">받는 분 정보</h2>
         <div className="flex gap-1">
-          <button className="text-sm font-medium rounded bg-point px-3 py-2 text-white text-regular hover:bg-[#a3f4ad]">
+          <button
+            onClick={orderUpdateHandler}
+            className="text-sm font-medium rounded bg-point px-3 py-2 text-white text-regular hover:bg-[#a3f4ad]"
+          >
             주문정보 수정
           </button>
           <button className="text-sm font-medium rounded bg-neutral-400 px-3 py-2 text-white hover:bg-dark_gray">

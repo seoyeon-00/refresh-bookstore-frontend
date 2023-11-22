@@ -14,6 +14,7 @@ import { cartStore } from "@/stores";
 import { bookDataType } from "@/types/bookDataType";
 import { getProductByISBN } from "@/api/product";
 import { getCategory } from "@/api/category";
+import { ClipLoader } from "react-spinners";
 
 interface BookDetailProps {
   params: {
@@ -138,7 +139,9 @@ const BookDetail: React.FC<BookDetailProps> = ({ params }) => {
   return (
     <div className="my-10 flex flex-col justify-start items-center">
       {isLoading ? (
-        <div>로딩중입니다.</div>
+        <div className="flex justify-center h-[300px] items-center">
+          <ClipLoader color="#1DC078" size={50} />
+        </div>
       ) : detailData ? (
         <div>
           <div className="w-full flex flex-row justify-between items-start">
