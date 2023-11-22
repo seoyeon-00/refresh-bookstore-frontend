@@ -33,15 +33,9 @@ export default function Home() {
       .then((result) => {
         const productDataArray = result;
         setProductDataArray(productDataArray);
-      })
-      .catch((error) => {
-        console.error(error);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
 
-    getCategory({ page: 0, size: 20 })
+        return getCategory({ page: 0, size: 20 });
+      })
       .then((result) => {
         const categoryDataArray = result;
         const categoryStateData = categoryDataArray.map(
@@ -56,27 +50,36 @@ export default function Home() {
       })
       .catch((error) => {
         console.error(error);
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
   }, []);
 
   useEffect(() => {
     setIsLoading(true);
-    getProductByCategory({
-      page: currentPage,
-      size: 10,
-      category: categoryIndex,
-    })
-      .then((result) => {
+    const fetchProductByCategory = async () => {
+      try {
+        const result =
+          categoryIndex === 0
+            ? await getProduct({ page: currentPage, size: 10 })
+            : await getProductByCategory({
+                page: currentPage,
+                size: 10,
+                category: categoryIndex,
+              });
+
         const productDataArray = result;
         setProductDataArray(productDataArray);
-      })
-      .catch((error) => {
+      } catch (error) {
         console.error(error);
-      })
-      .finally(() => {
+      } finally {
         setIsLoading(false);
-      });
-  }, [currentPage]);
+      }
+    };
+
+    fetchProductByCategory();
+  }, [currentPage, categoryIndex]);
 
   const selectCategoryHandler = (index: number) => {
     setIsLoading(true);
