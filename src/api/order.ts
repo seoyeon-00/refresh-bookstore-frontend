@@ -1,26 +1,28 @@
 import { apiClient } from "./apiClient";
 
 type orderType = {
-  id?: number;
+  id?: number | null;
   userName: string;
-  email: string | undefined;
-  deliveryFee: number;
-  shippingStatus: string;
-  postalCode: string;
-  address: string;
-  detailAddress: string;
-  userPhone: string;
-  orderRequest: string;
-  orderNumber: string;
-  totalPrice: number;
-  createdAt?: string;
-  updatedAt?: string;
-  orderItems: {
-    id?: number;
-    isbn: string;
-    amount: number;
-    orderId?: number;
-  }[];
+  email: string | null;
+  deliveryFee: number | null;
+  shippingStatus: string | null;
+  postalCode: string | null;
+  address: string | null;
+  detailAddress: string | null;
+  userPhone: string | null;
+  orderRequest: string | null;
+  orderNumber: string | null;
+  totalPrice: number | null;
+  createdAt?: string | null;
+  updatedAt?: string | null;
+  orderItems:
+    | {
+        id?: number;
+        isbn: string;
+        amount: number;
+        orderId?: number;
+      }[]
+    | null;
 };
 
 export const orderCreate = async (data: orderType) => {
