@@ -9,12 +9,48 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState, useContext } from "react";
 import { AuthContext } from "../contexts/AuthContext";
+import { getUser } from "@/api/auth";
+import { userDataType } from "@/types/userDataType";
+import { ClipLoader } from "react-spinners";
+
+type useStateProps = {
+  isLogin: boolean | null;
+  user: userDataType | null;
+};
 
 const Header = () => {
   const currentURI = usePathname();
   const [searchState, setSearchState] = useState(false);
   const [slogan, setSlogan] = useState("일상");
+  const [isLoading, setIsLoading] = useState(true);
+  const [userData, setUserData] = useState<useStateProps>({
+    isLogin: null,
+    user: null,
+  });
+
   let num = 1;
+
+  const isToken = localStorage.getItem("token");
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+        const userInfo = await getUser();
+        setUserData({
+          isLogin: true,
+          user: userInfo.data.data,
+        });
+      } catch (error) {
+        setIsLoading(false);
+        console.error("데이터 로딩에 실패했습니다.", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData(); // 데이터 로딩
+  }, [isToken]);
 
   useEffect(() => {
     const slogans = ["일상", "경력", "삶", "내일"];
@@ -23,7 +59,6 @@ const Header = () => {
       num === 3 ? (num = 0) : (num = num + 1);
       setSlogan(slogans[num]);
     }, 1000);
-
     // Clean up the interval
     return () => clearInterval(intervalId);
   }, []);
@@ -57,8 +92,6 @@ const Header = () => {
     scale(${currentURI === "/" ? 1.4 : 1})
     `,
   };
-
-  const userData = useContext(AuthContext);
 
   return (
     <div className="w-full overflow-hidden relative">
@@ -153,14 +186,26 @@ const Header = () => {
                   <SearchIcon color="#16a263" width="50px" />
                 </div>
                 <CartIcon color="#16a263" width="50px" isFull={false} />
-                {userData?.isLogin ? (
-                  <AccountIcon color="#16a263" width="50px" isLoggedIn={true} />
+                {isLoading ? (
+                  <div>
+                    <ClipLoader color="#1DC078" size={20} />
+                  </div>
                 ) : (
-                  <AccountIcon
-                    color="#16a263"
-                    width="50px"
-                    isLoggedIn={false}
-                  />
+                  <>
+                    {userData?.isLogin ? (
+                      <AccountIcon
+                        color="#16a263"
+                        width="50px"
+                        isLoggedIn={true}
+                      />
+                    ) : (
+                      <AccountIcon
+                        color="#16a263"
+                        width="50px"
+                        isLoggedIn={false}
+                      />
+                    )}
+                  </>
                 )}
               </div>
             </div>

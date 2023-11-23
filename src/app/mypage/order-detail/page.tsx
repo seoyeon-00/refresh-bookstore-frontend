@@ -64,7 +64,7 @@ const OrderDetail = () => {
 
   return (
     <section className="border-l border-light_gray min-h-[70vh] p-[2.5rem] flex-1">
-      {orderUpdatePopup ? <OrderUpdateModal /> : null}
+      {orderUpdatePopup ? <OrderUpdateModal orderData={orderData} /> : null}
       <h1 className="w-fit text-medium font-[600] mb-3">주문/배송 상세정보</h1>
       <div className="w-full h-[2px] bg-neutral-100"></div>
       <div className="bg-[#f9f9f9] my-4 px-5 py-4">
