@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 import { orderDataType } from "@/types/orderDataType";
 
 type orderDataProps = {
-  orderData: orderDataType;
+  orderData: orderDataType | null;
 };
 
 const OrderUpdateModal = ({ orderData }: orderDataProps) => {
@@ -96,22 +96,32 @@ const OrderUpdateModal = ({ orderData }: orderDataProps) => {
     }
   };
 
+  const isCheckEmpty =
+    Object.values(inputCheck).every((error) => error === "") &&
+    name !== "" &&
+    phone !== "" &&
+    addressZipcode !== "" &&
+    addressAddress !== "" &&
+    addressDetail !== "";
+
+  console.log(isCheckEmpty);
+
   const data = {
-    id: orderData.id,
-    email: orderData.email,
-    orderNumber: orderData.orderNumber,
+    id: orderData && orderData.id,
+    email: orderData && orderData.email,
+    orderNumber: orderData && orderData.orderNumber,
     userName: name,
     userPhone: phone,
     postalCode: addressZipcode,
     address: addressAddress,
     detailAddress: addressDetail,
     orderRequest: deliveryRequest,
-    deliveryFee: orderData.deliveryFee,
-    createdAt: orderData.createdAt,
-    updatedAt: orderData.updatedAt,
-    totalPrice: orderData.totalPrice,
-    shippingStatus: orderData.shippingStatus,
-    orderItems: orderData.orderItems,
+    deliveryFee: orderData && orderData.deliveryFee,
+    createdAt: orderData && orderData.createdAt,
+    updatedAt: orderData && orderData.updatedAt,
+    totalPrice: orderData && orderData.totalPrice,
+    shippingStatus: orderData && orderData.shippingStatus,
+    orderItems: orderData && orderData.orderItems,
   };
 
   const submitHandler = async (event: FormEvent) => {
@@ -141,7 +151,7 @@ const OrderUpdateModal = ({ orderData }: orderDataProps) => {
               <input
                 value={name}
                 className="text-[14px] border-[1px] rounded border-light_gray w-full h-[32px] px-2"
-                placeholder={orderData.userName}
+                placeholder={orderData?.userName}
                 onChange={(e) => {
                   const newName = e.target.value;
                   setName(newName);
@@ -168,7 +178,7 @@ const OrderUpdateModal = ({ orderData }: orderDataProps) => {
                   validatePhone(newPhoneNumber);
                 }}
                 maxLength={13}
-                placeholder={orderData.userPhone}
+                placeholder={orderData?.userPhone}
               />
               <div className="absolute top-2 right-3 text-xs font-medium text-neutral-500">
                 {inputCheck.phone !== "" ? <div>{inputCheck.phone}</div> : null}
@@ -186,7 +196,7 @@ const OrderUpdateModal = ({ orderData }: orderDataProps) => {
                   onClick={handlePopup}
                   className="text-[14px] user_delivery_info border-[1px] rounded border-light_gray w-[60%] h-[32px] px-2"
                   id="postalCodeInput"
-                  placeholder={orderData.postalCode}
+                  placeholder={orderData?.postalCode}
                   value={address.zonecode}
                   readOnly
                 />
@@ -201,7 +211,7 @@ const OrderUpdateModal = ({ orderData }: orderDataProps) => {
                 type="text"
                 onClick={handlePopup}
                 className="text-[14px] user_delivery_info border-[1px] rounded border-light_gray w-full h-[32px] px-2 my-1"
-                placeholder={orderData.address}
+                placeholder={orderData?.address || ""}
                 value={address.address}
                 readOnly
               />
@@ -210,7 +220,7 @@ const OrderUpdateModal = ({ orderData }: orderDataProps) => {
                   value={addressDetail}
                   type="text"
                   className="text-[14px] user_delivery_info border-[1px] rounded border-light_gray w-full h-[32px] px-2 my-1"
-                  placeholder={orderData.detailAddress}
+                  placeholder={orderData?.detailAddress}
                   onChange={(e) => {
                     const newAdressDetail = e.target.value;
                     setAddressDetail(newAdressDetail);
@@ -270,13 +280,15 @@ const OrderUpdateModal = ({ orderData }: orderDataProps) => {
         <div className="flex gap-1 mt-10 text-[13px] text-white font-medium">
           <button
             onClick={submitHandler}
-            className="bg-[#1DC078] w-[50%] py-2 cursor-pointer"
+            className="w-[50%] py-2"
+            style={{ backgroundColor: isCheckEmpty ? "#1DC078" : "#777" }}
+            disabled={!isCheckEmpty}
           >
             수정하기
           </button>
           <button
             onClick={() => setOrderUpdatePopup(!orderUpdatePopup)}
-            className="bg-[#777] w-[50%] py-2 cursor-pointer"
+            className="bg-[#777] w-[50%] py-2 "
           >
             취소
           </button>
