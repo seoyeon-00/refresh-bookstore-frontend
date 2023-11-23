@@ -1,10 +1,18 @@
 import { postCodePopupStore } from "@/stores";
 import autoHyphen from "@/utils/autoHyphen";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import Post from "../Common/Post";
+import { updateOrder } from "@/api/order";
+import { toast } from "react-hot-toast";
+import { useRouter } from "next/navigation";
+import { orderDataType } from "@/types/orderDataType";
 
-const OrderUpdateModal = () => {
+type orderDataProps = {
+  orderData: orderDataType;
+};
+
+const OrderUpdateModal = ({ orderData }: orderDataProps) => {
   const [inputCheck, setInputCheck] = useState({
     name: "",
     phone: "",
@@ -23,19 +31,28 @@ const OrderUpdateModal = () => {
   const [addressAddress, setAddressAddress] = useState<string>("");
   const [addressDetail, setAddressDetail] = useState<string>("");
   const [deliveryRequest, seDeliveryRequest] = useState<string>("");
+  const [deliveryValue, setDeliveryValue] = useState<string>("0");
   const [writeRequest, setWriteRequest] = useState<string>("");
   const [inputVisible, setInputVisible] = useState(false);
   const [orderUpdatePopup, setOrderUpdatePopup] = useRecoilState(
     postCodePopupStore.orderUpdatePopupState
   );
+  const router = useRouter();
 
   const handlePopup = () => {
     setPopup(!popup);
   };
 
+  useEffect(() => {
+    setAddressZipcode(address.zonecode);
+    setAddressAddress(address.address);
+    seDeliveryRequest(writeRequest);
+  }, [address, writeRequest]);
+
   const handleInput = (e: ChangeEvent<HTMLSelectElement>) => {
     const type = e.target.value;
     const selectedOptionText = e.target.options[e.target.selectedIndex].text;
+    setDeliveryValue(type);
     seDeliveryRequest(selectedOptionText);
 
     if (type === "5") {
@@ -79,6 +96,36 @@ const OrderUpdateModal = () => {
     }
   };
 
+  const data = {
+    id: orderData.id,
+    email: orderData.email,
+    orderNumber: orderData.orderNumber,
+    userName: name,
+    userPhone: phone,
+    postalCode: addressZipcode,
+    address: addressAddress,
+    detailAddress: addressDetail,
+    orderRequest: deliveryRequest,
+    deliveryFee: orderData.deliveryFee,
+    createdAt: orderData.createdAt,
+    updatedAt: orderData.updatedAt,
+    totalPrice: orderData.totalPrice,
+    shippingStatus: orderData.shippingStatus,
+    orderItems: orderData.orderItems,
+  };
+
+  const submitHandler = async (event: FormEvent) => {
+    event.preventDefault();
+    const result = await updateOrder(data);
+
+    if (result.status === 200) {
+      toast.success("주문정보 수정이 완료되었습니다.");
+      router.push("/mypage/order-list");
+    } else {
+      toast.error("주문 생성 실패");
+    }
+  };
+
   return (
     <div className="z-[999999999] postmodal fixed bg-point overflow-hidden bg-opacity-40 top-0 left-0 h-[100%] w-[100%] flex justify-center backdrop-blur-md  backdrop-filter items-center">
       {popup && <Post address={address} setAddress={setAddress} />}
@@ -94,7 +141,7 @@ const OrderUpdateModal = () => {
               <input
                 value={name}
                 className="text-[14px] border-[1px] rounded border-light_gray w-full h-[32px] px-2"
-                placeholder="이름을 입력해주세요."
+                placeholder={orderData.userName}
                 onChange={(e) => {
                   const newName = e.target.value;
                   setName(newName);
@@ -121,7 +168,7 @@ const OrderUpdateModal = () => {
                   validatePhone(newPhoneNumber);
                 }}
                 maxLength={13}
-                placeholder="연락처를 입력해주세요."
+                placeholder={orderData.userPhone}
               />
               <div className="absolute top-2 right-3 text-xs font-medium text-neutral-500">
                 {inputCheck.phone !== "" ? <div>{inputCheck.phone}</div> : null}
@@ -139,7 +186,7 @@ const OrderUpdateModal = () => {
                   onClick={handlePopup}
                   className="text-[14px] user_delivery_info border-[1px] rounded border-light_gray w-[60%] h-[32px] px-2"
                   id="postalCodeInput"
-                  placeholder="우편번호"
+                  placeholder={orderData.postalCode}
                   value={address.zonecode}
                   readOnly
                 />
@@ -154,7 +201,7 @@ const OrderUpdateModal = () => {
                 type="text"
                 onClick={handlePopup}
                 className="text-[14px] user_delivery_info border-[1px] rounded border-light_gray w-full h-[32px] px-2 my-1"
-                placeholder="주소"
+                placeholder={orderData.address}
                 value={address.address}
                 readOnly
               />
@@ -163,7 +210,7 @@ const OrderUpdateModal = () => {
                   value={addressDetail}
                   type="text"
                   className="text-[14px] user_delivery_info border-[1px] rounded border-light_gray w-full h-[32px] px-2 my-1"
-                  placeholder="상세주소를 입력해주세요."
+                  placeholder={orderData.detailAddress}
                   onChange={(e) => {
                     const newAdressDetail = e.target.value;
                     setAddressDetail(newAdressDetail);
@@ -184,8 +231,8 @@ const OrderUpdateModal = () => {
             </p>
             <div className="deliveryRequestSelect w-[80%]">
               <select
-                value={deliveryRequest}
-                onChange={handleInput}
+                value={deliveryValue}
+                onChange={(e) => handleInput(e)}
                 className="text-[14px] border-[1px] rounded border-light_gray w-full h-[32px] px-1 my-1"
               >
                 <option value="0" className="ml-2">
@@ -221,7 +268,10 @@ const OrderUpdateModal = () => {
           </div>
         </div>
         <div className="flex gap-1 mt-10 text-[13px] text-white font-medium">
-          <button className="bg-[#1DC078] w-[50%] py-2 cursor-pointer">
+          <button
+            onClick={submitHandler}
+            className="bg-[#1DC078] w-[50%] py-2 cursor-pointer"
+          >
             수정하기
           </button>
           <button
