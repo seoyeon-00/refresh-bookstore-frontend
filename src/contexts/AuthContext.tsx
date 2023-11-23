@@ -17,6 +17,7 @@ type authContextProps = {
 type useStateProps = {
   isLogin: boolean | null;
   user: userDataType | null;
+  isLoading: boolean;
 };
 
 export const AuthContext = createContext<authContextProps | null>(null);
@@ -25,6 +26,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [userData, setUserData] = useState<useStateProps>({
     isLogin: null,
     user: null,
+    isLoading: true,
   });
 
   const accessToken = localStorage.getItem("token");
@@ -38,17 +40,20 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         setUserData({
           isLogin: true,
           user: userInfo.data.data,
+          isLoading: false,
         });
       } else if (!accessToken && refreshToken) {
         const userInfo = await getUser();
         setUserData({
           isLogin: true,
           user: userInfo.data.data,
+          isLoading: false,
         });
       } else {
         setUserData({
           isLogin: false,
           user: null,
+          isLoading: false,
         });
       }
     };
