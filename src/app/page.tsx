@@ -29,12 +29,13 @@ export default function Home() {
   useEffect(() => {
     setIsLoading(true);
 
-    getProduct({ page: 0, size: 20 })
+    getProduct({ page: 0, size: 10 })
       .then((result) => {
-        const productDataArray = result;
+        const productDataArray = result.products;
         setProductDataArray(productDataArray);
+        setCategoryLength(result.pagination.totalPages);
 
-        return getCategory({ page: 0, size: 20 });
+        return getCategory({ page: 0, size: 10 });
       })
       .then((result) => {
         const categoryDataArray = result;
@@ -69,8 +70,13 @@ export default function Home() {
                 category: categoryIndex,
               });
 
-        const productDataArray = result;
-        setProductDataArray(productDataArray);
+        if (categoryIndex === 0) {
+          const productDataArray = result.products;
+          setProductDataArray(productDataArray);
+        } else {
+          const productDataArray = result;
+          setProductDataArray(productDataArray);
+        }
       } catch (error) {
         console.error(error);
       } finally {
@@ -88,15 +94,21 @@ export default function Home() {
       try {
         const result =
           index === 0
-            ? await getProduct({ page: 0, size: 20 })
+            ? await getProduct({ page: 0, size: 10 })
             : await getProductByCategory({
                 page: 0,
                 size: 10,
                 category: index,
               });
 
-        const productDataArray = result;
-        setProductDataArray(productDataArray);
+        if (index === 0) {
+          const productDataArray = result.products;
+          setProductDataArray(productDataArray);
+          setCategoryLength(result.pagination.totalPages);
+        } else {
+          const productDataArray = result;
+          setProductDataArray(productDataArray);
+        }
       } catch (error) {
         console.error(error);
       } finally {
