@@ -43,7 +43,6 @@ const Header = () => {
         });
       } catch (error) {
         setIsLoading(false);
-        console.error("데이터 로딩에 실패했습니다.", error);
       } finally {
         setIsLoading(false);
       }
