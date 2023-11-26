@@ -2,10 +2,16 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { toast } from "react-hot-toast";
 
 const MyPageLayout = ({ children }: { children: React.ReactNode }) => {
   const path = usePathname().split("/").slice(-1)[0];
-  console.log(path);
+
+  const logOutHandler = () => {
+    localStorage.removeItem("token");
+    toast.success("로그아웃 완료!");
+  };
+
   return (
     <div className="m-8">
       <h1 className="text-large my-1 font-bold pt-2 pb-5">마이페이지</h1>
@@ -33,6 +39,7 @@ const MyPageLayout = ({ children }: { children: React.ReactNode }) => {
           <Link
             className={"text-center py-1 m-2 text-[17px] font-medium "}
             href={"/"}
+            onClick={logOutHandler}
           >
             로그아웃
           </Link>
