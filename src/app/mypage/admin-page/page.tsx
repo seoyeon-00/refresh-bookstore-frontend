@@ -51,12 +51,21 @@ const AdminPage = () => {
       <div className="mt-10">
         {tabIndex === 0 ? (
           <div>
-            {userData &&
-              userData.map((item, index) => (
-                <div key={`item-${index}`}>
-                  <UserItem index={index} item={item} />
-                </div>
-              ))}
+            <div className="text-[12px] flex justify-between text-center mb-3 text-[#696969]">
+              <div className="w-[5%]">번호</div>
+              <div className="w-[20%]">이름</div>
+              <div className="w-[35%]">이메일</div>
+              <div className="w-[10%]">권한</div>
+              <div className="w-[25%]">관리</div>
+            </div>
+            <div>
+              {userData &&
+                userData.map((item, index) => (
+                  <div key={`item-${index}`}>
+                    <UserItem index={index} item={item} />
+                  </div>
+                ))}
+            </div>
           </div>
         ) : null}
         {tabIndex === 1 ? <div>1</div> : null}
