@@ -2,6 +2,12 @@ import { setCookie, deleteCookie } from "cookies-next";
 import { toast } from "react-hot-toast";
 import { apiClient } from "./apiClient";
 
+interface refreshTypes {
+  refreshToken: string;
+  email: string | undefined;
+  password: string | undefined;
+}
+
 export const loginUser = async (data: any) => {
   try {
     const response = await fetch("/api/user/login", {
@@ -44,23 +50,21 @@ export const logoutUser = async () => {
   deleteCookie("refresh-token");
 };
 
-export const requestToken = async (refreshToken: string) => {
-  const accessToken = localStorage.getItem("token");
-
-  if (!accessToken) {
-    throw new Error("accessToken is null");
-  }
-
-  const item = JSON.parse(accessToken);
+export const requestToken = async ({
+  refreshToken,
+  email,
+  password,
+}: refreshTypes) => {
   try {
     const response = await fetch("/api/user/refresh", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${item.value}`,
       },
       body: JSON.stringify({
         refreshToken: refreshToken,
+        email: email,
+        password: password,
       }),
     });
 
@@ -96,4 +100,32 @@ export const requestToken = async (refreshToken: string) => {
 export const getUser = async () => {
   const response = await apiClient().get("api/user/info");
   return response;
+};
+
+// apiClient 없이 유저 데이터 불러오기 (토큰 갱신)
+export const getUserData = async () => {
+  const accessToken = localStorage.getItem("token");
+
+  if (!accessToken) {
+    throw new Error("accessToken is null");
+  }
+
+  const item = JSON.parse(accessToken);
+
+  try {
+    const response = await fetch(`/api/user/info`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${item.value}`,
+      },
+    });
+
+    if (response.ok) {
+      const userData = await response.json();
+      return userData;
+    }
+  } catch (error) {
+    console.error(error);
+  }
 };

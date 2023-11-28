@@ -42,13 +42,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           user: userInfo.data.data,
           isLoading: false,
         });
-      } else if (!accessToken && refreshToken) {
-        const userInfo = await getUser();
-        setUserData({
-          isLogin: true,
-          user: userInfo.data.data,
-          isLoading: false,
-        });
+        // } else if (!accessToken && refreshToken) {
+        //   const userInfo = await getUser();
+        //   setUserData({
+        //     isLogin: true,
+        //     user: userInfo.data.data,
+        //     isLoading: false,
+        //   });
       } else {
         setUserData({
           isLogin: false,

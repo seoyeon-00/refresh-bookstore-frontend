@@ -1,7 +1,9 @@
 import { getCookie } from "cookies-next";
 import { API_BASE_URL } from "@/constants/path";
 import axios, { AxiosError, AxiosInstance } from "axios";
-import { requestToken } from "./auth";
+import { getUser, getUserData, requestToken } from "./auth";
+import { useContext } from "react";
+import { AuthContext } from "@/contexts/AuthContext";
 
 export const apiClient = (): AxiosInstance => {
   let accessToken = localStorage.getItem("token");
@@ -22,13 +24,23 @@ export const apiClient = (): AxiosInstance => {
   api.interceptors.response.use(
     async (res) => {
       const now = new Date();
+
       if (accessToken) {
         const item = JSON.parse(accessToken);
         if (now.getTime() > item.expires && refreshToken) {
           console.log("access 토큰 만료!");
           try {
-            // 토큰 재발급 요청
-            await requestToken(refreshToken);
+            console.log("오잉,.,");
+            const data = await getUserData();
+            console.log(data);
+
+            const refreshData = {
+              refreshToken: refreshToken,
+              email: data?.data.email,
+              password: data?.data.password,
+            };
+
+            await requestToken(refreshData);
 
             // 이전 요청을 다시 시도 (헤더에 새로운 액세스 토큰 추가)
             if (res.config) {
