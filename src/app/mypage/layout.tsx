@@ -43,6 +43,13 @@ const MyPageLayout = ({ children }: { children: React.ReactNode }) => {
           >
             로그아웃
           </Link>
+          <Link
+            className={` text-center py-1 m-2 text-[17px] font-medium 
+            ${path === "admin-page" ? "font-semibold text-point" : ""}`}
+            href={"/mypage/admin-page"}
+          >
+            관리자
+          </Link>
         </section>
         {children}
       </div>

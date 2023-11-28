@@ -15,3 +15,8 @@ export const updateUser = async (data: updateType) => {
   const response = await apiClient().put(`/api/user`, data);
   return response;
 };
+
+export const getAllUser = async () => {
+  const response = await apiClient().get(`/api/user/admin`);
+  return response;
+};
