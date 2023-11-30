@@ -104,8 +104,6 @@ const OrderUpdateModal = ({ orderData }: orderDataProps) => {
     addressAddress !== "" &&
     addressDetail !== "";
 
-  console.log(isCheckEmpty);
-
   const data = {
     id: orderData && orderData.id,
     email: orderData && orderData.email,

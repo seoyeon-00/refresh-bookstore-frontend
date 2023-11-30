@@ -1,10 +1,13 @@
 import { getProductByISBN } from "@/api/product";
 import { orderDataType } from "@/types/orderDataType";
-import { useEffect, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { bookDataType } from "@/types/bookDataType";
 import ProductDetailItem from "./ProductDetailItem";
 import DownIcon from "../Common/Icons/DownIcon";
 import UpIcon from "../Common/Icons/UpIcon";
+import { updateOrder } from "@/api/order";
+import { toast } from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 type OrderItemProps = {
   item: orderDataType;
@@ -18,8 +21,13 @@ type productInfo = {
 
 const OrderItem = ({ item, index }: OrderItemProps) => {
   const [isContent, setIsContent] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isShippingStatus, setIsShippingStatus] = useState<boolean>(false);
   const [product, setProduct] = useState<productInfo[] | []>([]);
+  const [selectedValue, setSelectedValue] = useState<string>(
+    item.shippingStatus
+  );
+  const router = useRouter();
+
   const addContent = () => {
     setIsContent(!isContent);
   };
@@ -53,6 +61,48 @@ const OrderItem = ({ item, index }: OrderItemProps) => {
 
     fetchData();
   }, [item.orderItems]);
+
+  const selectShippingStatus = () => {
+    setIsShippingStatus(!isShippingStatus);
+  };
+
+  const handleChange = (event: any) => {
+    setSelectedValue(event.target.value);
+  };
+
+  const data = {
+    id: item && item.id,
+    email: item && item.email,
+    orderNumber: item && item.orderNumber,
+    userName: item.userName,
+    userPhone: item.userPhone,
+    postalCode: item.postalCode,
+    address: item.address,
+    detailAddress: item.detailAddress,
+    orderRequest: item.orderRequest,
+    deliveryFee: item.deliveryFee,
+    createdAt: item.createdAt,
+    updatedAt: item.updatedAt,
+    totalPrice: item.totalPrice,
+    shippingStatus: selectedValue,
+    orderItems: item.orderItems,
+  };
+
+  const updateStatusHander = async (event: FormEvent) => {
+    event.preventDefault();
+    if (selectedValue === item.shippingStatus) {
+      toast.error("동일한 배송상태입니다.");
+      return;
+    }
+
+    const result = await updateOrder(data);
+    if (result.status === 200) {
+      toast.success("배송상태 수정이 완료되었습니다.");
+      router.push("/mypage/admin-page");
+    } else {
+      toast.error("배송상태 수정 실패");
+    }
+  };
 
   return (
     <div className="bg-neutral-100 p-4 text-[13px] items-center mb-2">
@@ -109,8 +159,103 @@ const OrderItem = ({ item, index }: OrderItemProps) => {
             ))}
           </div>
           <div className="flex gap-1 text-white justify-end text-xs mt-6">
-            <button className="bg-point px-3 py-2">배송상태 변경</button>
-            <button className="bg-[#636363] px-3 py-2">주문 취소</button>
+            <button
+              onClick={selectShippingStatus}
+              className="bg-point px-3 py-2"
+            >
+              배송상태 변경
+            </button>
+            <button className="bg-[#636363] px-3 py-2">주문 삭제</button>
+          </div>
+          <div>
+            {isShippingStatus ? (
+              <div className="flex justify-between mt-6">
+                <div className="flex gap-1">
+                  <div>
+                    <input
+                      type="radio"
+                      id="PREPARING"
+                      value="PREPARING"
+                      name="orderStatus"
+                      className="hidden peer"
+                      onChange={handleChange}
+                      defaultChecked={
+                        item.shippingStatus === "PREPARING" ? true : false
+                      }
+                    />
+                    <label
+                      htmlFor="PREPARING"
+                      className="inline-flex items-center justify-between w-full p-3 text-neutral-400 bg-white border border-neutral-300 rounded-lg cursor-pointer dark:hover:text-neutral-300 dark:border-gray-700 dark:peer-checked:text-point peer-checked:border-point peer-checked:text-point hover:text-gray-600 hover:bg-neutral-100"
+                    >
+                      준비중
+                    </label>
+                  </div>
+                  <div>
+                    <input
+                      type="radio"
+                      id="SHIPPING"
+                      value="SHIPPING"
+                      name="orderStatus"
+                      className="hidden peer"
+                      onChange={handleChange}
+                      defaultChecked={
+                        item.shippingStatus === "SHIPPING" ? true : false
+                      }
+                    />
+                    <label
+                      htmlFor="SHIPPING"
+                      className="inline-flex items-center justify-between w-full p-3 text-neutral-400 bg-white border border-neutral-300 rounded-lg cursor-pointer dark:hover:text-gray-300 dark:border-gray-700 dark:peer-checked:text-point peer-checked:border-point peer-checked:text-point hover:text-gray-600 hover:bg-neutral-100"
+                    >
+                      배송중
+                    </label>
+                  </div>
+                  <div>
+                    <input
+                      type="radio"
+                      id="COMPLETED"
+                      value="COMPLETED"
+                      name="orderStatus"
+                      className="hidden peer"
+                      onChange={handleChange}
+                      defaultChecked={
+                        item.shippingStatus === "COMPLETED" ? true : false
+                      }
+                    />
+                    <label
+                      htmlFor="COMPLETED"
+                      className="inline-flex items-center justify-between w-full p-3 text-neutral-400 bg-white border border-neutral-300 rounded-lg cursor-pointer dark:hover:text-gray-300 dark:border-gray-700 dark:peer-checked:text-point peer-checked:border-point peer-checked:text-point hover:text-gray-600 hover:bg-neutral-100"
+                    >
+                      배송완료
+                    </label>
+                  </div>
+                  <div>
+                    <input
+                      type="radio"
+                      id="CANCELLED"
+                      value="CANCELLED"
+                      name="orderStatus"
+                      className="hidden peer"
+                      onChange={handleChange}
+                      defaultChecked={
+                        item.shippingStatus === "CANCELLED" ? true : false
+                      }
+                    />
+                    <label
+                      htmlFor="CANCELLED"
+                      className="inline-flex items-center justify-between w-full p-3 text-neutral-400 bg-white border border-neutral-300 rounded-lg cursor-pointer dark:hover:text-gray-300 dark:border-gray-700 dark:peer-checked:text-point peer-checked:border-point peer-checked:text-point hover:text-gray-600 hover:bg-neutral-100"
+                    >
+                      배송취소
+                    </label>
+                  </div>
+                </div>
+                <button
+                  onClick={updateStatusHander}
+                  className="bg-point text-white px-3 rounded-md"
+                >
+                  변경
+                </button>
+              </div>
+            ) : null}
           </div>
         </div>
       ) : null}
