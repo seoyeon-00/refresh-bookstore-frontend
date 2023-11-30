@@ -110,6 +110,10 @@ const OrderItem = ({ item, index }: OrderItemProps) => {
               </div>
             ))}
           </div>
+          <div className="flex gap-1 text-white justify-end text-xs mt-6">
+            <button className="bg-point px-3 py-2">배송상태 변경</button>
+            <button className="bg-[#636363] px-3 py-2">주문 취소</button>
+          </div>
         </div>
       ) : null}
     </div>

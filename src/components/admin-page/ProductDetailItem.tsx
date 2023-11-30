@@ -8,8 +8,8 @@ type ProductItemProps = {
 const ProductDetailItem = ({ item, amount }: ProductItemProps) => {
   return (
     <div className="bg-white mb-3 flex py-1 px-2 rounded-md">
-      <div className="w-[80px] h-[100px]">
-        <img src={`${item.imagePath}`} className="w-full" />
+      <div className="w-[75px]">
+        <img src={`${item.imagePath}`} className="w-fit h-fit" />
       </div>
       <div className="w-[90%] flex flex-col justify-center px-3">
         <div>{item.title}</div>
