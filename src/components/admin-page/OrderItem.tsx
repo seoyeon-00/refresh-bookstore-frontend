@@ -19,7 +19,6 @@ type productInfo = {
 const OrderItem = ({ item, index }: OrderItemProps) => {
   const [isContent, setIsContent] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  // const [product, setProduct] = useState<bookDataType[] | []>([]);
   const [product, setProduct] = useState<productInfo[] | []>([]);
   const addContent = () => {
     setIsContent(!isContent);
@@ -47,7 +46,6 @@ const OrderItem = ({ item, index }: OrderItemProps) => {
         );
 
         setProduct(productDataArray);
-        setIsLoading(false);
       } catch (error) {
         console.error(error);
       }
