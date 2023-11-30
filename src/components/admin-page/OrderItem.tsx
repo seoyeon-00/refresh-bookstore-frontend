@@ -18,7 +18,7 @@ type productInfo = {
 
 const OrderItem = ({ item, index }: OrderItemProps) => {
   const [isContent, setIsContent] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isShippingStatus, setIsShippingStatus] = useState<boolean>(false);
   const [product, setProduct] = useState<productInfo[] | []>([]);
   const addContent = () => {
     setIsContent(!isContent);
@@ -53,6 +53,10 @@ const OrderItem = ({ item, index }: OrderItemProps) => {
 
     fetchData();
   }, [item.orderItems]);
+
+  const selectShippingStatus = () => {
+    setIsShippingStatus(!isShippingStatus);
+  };
 
   return (
     <div className="bg-neutral-100 p-4 text-[13px] items-center mb-2">
@@ -109,8 +113,96 @@ const OrderItem = ({ item, index }: OrderItemProps) => {
             ))}
           </div>
           <div className="flex gap-1 text-white justify-end text-xs mt-6">
-            <button className="bg-point px-3 py-2">배송상태 변경</button>
-            <button className="bg-[#636363] px-3 py-2">주문 취소</button>
+            <button
+              onClick={selectShippingStatus}
+              className="bg-point px-3 py-2"
+            >
+              배송상태 변경
+            </button>
+            <button className="bg-[#636363] px-3 py-2">주문 삭제</button>
+          </div>
+          <div>
+            {isShippingStatus ? (
+              <div className="flex justify-between mt-6">
+                <div className="flex gap-1">
+                  <div>
+                    <input
+                      type="radio"
+                      id="PREPARING"
+                      value="PREPARING"
+                      name="orderStatus"
+                      className="hidden peer"
+                      defaultChecked={
+                        item.shippingStatus === "PREPARING" ? true : false
+                      }
+                    />
+                    <label
+                      htmlFor="PREPARING"
+                      className="inline-flex items-center justify-between w-full p-3 text-neutral-400 bg-white border border-neutral-300 rounded-lg cursor-pointer dark:hover:text-neutral-300 dark:border-gray-700 dark:peer-checked:text-point peer-checked:border-point peer-checked:text-point hover:text-gray-600 hover:bg-neutral-100"
+                    >
+                      준비중
+                    </label>
+                  </div>
+                  <div>
+                    <input
+                      type="radio"
+                      id="SHIPPING"
+                      value="SHIPPING"
+                      name="orderStatus"
+                      className="hidden peer"
+                      defaultChecked={
+                        item.shippingStatus === "SHIPPING" ? true : false
+                      }
+                    />
+                    <label
+                      htmlFor="SHIPPING"
+                      className="inline-flex items-center justify-between w-full p-3 text-neutral-400 bg-white border border-neutral-300 rounded-lg cursor-pointer dark:hover:text-gray-300 dark:border-gray-700 dark:peer-checked:text-point peer-checked:border-point peer-checked:text-point hover:text-gray-600 hover:bg-neutral-100"
+                    >
+                      배송중
+                    </label>
+                  </div>
+                  <div>
+                    <input
+                      type="radio"
+                      id="COMPLETED"
+                      value="COMPLETED"
+                      name="orderStatus"
+                      className="hidden peer"
+                      defaultChecked={
+                        item.shippingStatus === "COMPLETED" ? true : false
+                      }
+                    />
+                    <label
+                      htmlFor="COMPLETED"
+                      className="inline-flex items-center justify-between w-full p-3 text-neutral-400 bg-white border border-neutral-300 rounded-lg cursor-pointer dark:hover:text-gray-300 dark:border-gray-700 dark:peer-checked:text-point peer-checked:border-point peer-checked:text-point hover:text-gray-600 hover:bg-neutral-100"
+                    >
+                      배송완료
+                    </label>
+                  </div>
+                  <div>
+                    <input
+                      type="radio"
+                      id="CANCELLED"
+                      value="CANCELLED"
+                      name="orderStatus"
+                      className="hidden peer"
+                      defaultChecked={
+                        item.shippingStatus === "CANCELLED" ? true : false
+                      }
+                    />
+                    <label
+                      htmlFor="CANCELLED"
+                      className="inline-flex items-center justify-between w-full p-3 text-neutral-400 bg-white border border-neutral-300 rounded-lg cursor-pointer dark:hover:text-gray-300 dark:border-gray-700 dark:peer-checked:text-point peer-checked:border-point peer-checked:text-point hover:text-gray-600 hover:bg-neutral-100"
+                    >
+                      배송취소
+                    </label>
+                  </div>
+                </div>
+                <button className="bg-point text-white px-3 rounded-md">
+                  변경
+                </button>
+              </div>
+            ) : null}
           </div>
         </div>
       ) : null}
