@@ -30,7 +30,6 @@ export const apiClient = (): AxiosInstance => {
         if (now.getTime() > item.expires && refreshToken) {
           console.log("access 토큰 만료!");
           try {
-            console.log("오잉,.,");
             const data = await getUserData();
             console.log(data);
 

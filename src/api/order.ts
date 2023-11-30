@@ -25,6 +25,18 @@ type orderType = {
     | null;
 };
 
+type getOrderType = {
+  page: string;
+  size: string;
+};
+
+export const getOrders = async ({ page, size }: getOrderType) => {
+  const response = await apiClient().get(
+    `/api/orders?page=${page}&size=${size}`
+  );
+  return response;
+};
+
 export const orderCreate = async (data: orderType) => {
   const response = await apiClient().post(`/api/orders`, data);
   return response;
