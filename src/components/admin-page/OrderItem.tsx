@@ -25,6 +25,14 @@ const OrderItem = ({ item, index }: OrderItemProps) => {
     setIsContent(!isContent);
   };
 
+  // 주문 날짜 설정 (YYYY.MM.DD)
+  const createDate = () => {
+    const removeDate = item.createdAt
+      .slice(0, item.createdAt.indexOf("T"))
+      .replaceAll("-", ".");
+    return removeDate;
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -49,21 +57,21 @@ const OrderItem = ({ item, index }: OrderItemProps) => {
   }, [item.orderItems]);
 
   return (
-    <div className="bg-neutral-100 p-3 text-sm items-center mb-2">
+    <div className="bg-neutral-100 p-4 text-sm items-center mb-2">
       <div className="flex justify-between">
         <div>
           <span className="bg-point text-white text-xs px-2 py-1 rounded-full mr-2 font-medium">
-            주문 번호
+            주문번호
           </span>
           {item.orderNumber}
         </div>
         <div>{item.shippingStatus}</div>
-        <div>{item.createdAt}</div>
+        <div>{createDate()}</div>
         <button onClick={addContent}>
           {isContent ? (
             <UpIcon color={"#d3d3d3"} width={"18"} />
           ) : (
-            <DownIcon color={"#a0d0b0"} width={"18"} />
+            <DownIcon color={"#39c461"} width={"18"} />
           )}
         </button>
       </div>
@@ -72,18 +80,18 @@ const OrderItem = ({ item, index }: OrderItemProps) => {
         <div className="mt-6">
           <div>
             <h4 className="font-semibold mb-1">주문 정보</h4>
-            <div>
-              <div className="flex">
+            <div className="bg-white p-3">
+              <div className="flex mb-1">
                 <div className="w-[12%]">주문자 </div>
                 <div>{item.userName}</div>
               </div>
-              <div className="flex">
+              <div className="flex mb-1">
                 <div className="w-[12%]">배송지 </div>
                 <div>
                   ({item.postalCode}) {item.address} {item.detailAddress}
                 </div>
               </div>
-              <div className="flex">
+              <div className="flex mb-1">
                 <div className="w-[12%]">연락처 </div>
                 <div>{item.userPhone}</div>
               </div>
