@@ -4,17 +4,27 @@ import { getAllUser } from "@/api/user";
 import UserItem from "@/components/admin-page/UserItem";
 import { useEffect, useState } from "react";
 import { userDataType } from "@/types/userDataType";
+import { orderDataType } from "@/types/orderDataType";
+import { getOrders } from "@/api/order";
+import OrderItem from "@/components/admin-page/OrderItem";
 
 const AdminPage = () => {
   const [tabIndex, setTabIndex] = useState<number>(0);
   const tabList = ["유저", "상품", "카테고리", "주문 관리"];
   const [userData, setUserData] = useState<userDataType[] | null>(null);
+  const [orderData, setOrderData] = useState<orderDataType[] | null>(null);
 
   useEffect(() => {
     const fetchUserAllData = async () => {
       try {
-        const fetchData = await getAllUser();
-        setUserData(fetchData.data.data);
+        if (tabIndex === 0) {
+          const fetchData = await getAllUser();
+          setUserData(fetchData.data.data);
+        } else if (tabIndex === 3) {
+          const fetchData = await getOrders({ page: "0", size: "5" });
+          console.log(fetchData);
+          setOrderData(fetchData.data);
+        }
       } catch (error) {
         console.error(error);
       }
@@ -22,8 +32,6 @@ const AdminPage = () => {
 
     fetchUserAllData();
   }, [tabIndex]);
-
-  console.log(userData);
 
   const tabHandler = (index: number) => {
     setTabIndex(index);
@@ -70,7 +78,17 @@ const AdminPage = () => {
         ) : null}
         {tabIndex === 1 ? <div>1</div> : null}
         {tabIndex === 2 ? <div>2</div> : null}
-        {tabIndex === 3 ? <div>3</div> : null}
+        {tabIndex === 3 ? (
+          <div>
+            <div>
+              {orderData?.map((item, index) => (
+                <div key={`item-${index}`}>
+                  <OrderItem index={index} item={item} />
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : null}
       </div>
     </section>
   );
