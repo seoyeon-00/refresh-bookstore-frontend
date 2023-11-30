@@ -1,10 +1,13 @@
 import { getProductByISBN } from "@/api/product";
 import { orderDataType } from "@/types/orderDataType";
-import { useEffect, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { bookDataType } from "@/types/bookDataType";
 import ProductDetailItem from "./ProductDetailItem";
 import DownIcon from "../Common/Icons/DownIcon";
 import UpIcon from "../Common/Icons/UpIcon";
+import { updateOrder } from "@/api/order";
+import { toast } from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 type OrderItemProps = {
   item: orderDataType;
@@ -20,6 +23,11 @@ const OrderItem = ({ item, index }: OrderItemProps) => {
   const [isContent, setIsContent] = useState<boolean>(false);
   const [isShippingStatus, setIsShippingStatus] = useState<boolean>(false);
   const [product, setProduct] = useState<productInfo[] | []>([]);
+  const [selectedValue, setSelectedValue] = useState<string>(
+    item.shippingStatus
+  );
+  const router = useRouter();
+
   const addContent = () => {
     setIsContent(!isContent);
   };
@@ -56,6 +64,44 @@ const OrderItem = ({ item, index }: OrderItemProps) => {
 
   const selectShippingStatus = () => {
     setIsShippingStatus(!isShippingStatus);
+  };
+
+  const handleChange = (event: any) => {
+    setSelectedValue(event.target.value);
+  };
+
+  const data = {
+    id: item && item.id,
+    email: item && item.email,
+    orderNumber: item && item.orderNumber,
+    userName: item.userName,
+    userPhone: item.userPhone,
+    postalCode: item.postalCode,
+    address: item.address,
+    detailAddress: item.detailAddress,
+    orderRequest: item.orderRequest,
+    deliveryFee: item.deliveryFee,
+    createdAt: item.createdAt,
+    updatedAt: item.updatedAt,
+    totalPrice: item.totalPrice,
+    shippingStatus: selectedValue,
+    orderItems: item.orderItems,
+  };
+
+  const updateStatusHander = async (event: FormEvent) => {
+    event.preventDefault();
+    if (selectedValue === item.shippingStatus) {
+      toast.error("동일한 배송상태입니다.");
+      return;
+    }
+
+    const result = await updateOrder(data);
+    if (result.status === 200) {
+      toast.success("배송상태 수정이 완료되었습니다.");
+      router.push("/mypage/admin-page");
+    } else {
+      toast.error("배송상태 수정 실패");
+    }
   };
 
   return (
@@ -132,6 +178,7 @@ const OrderItem = ({ item, index }: OrderItemProps) => {
                       value="PREPARING"
                       name="orderStatus"
                       className="hidden peer"
+                      onChange={handleChange}
                       defaultChecked={
                         item.shippingStatus === "PREPARING" ? true : false
                       }
@@ -150,6 +197,7 @@ const OrderItem = ({ item, index }: OrderItemProps) => {
                       value="SHIPPING"
                       name="orderStatus"
                       className="hidden peer"
+                      onChange={handleChange}
                       defaultChecked={
                         item.shippingStatus === "SHIPPING" ? true : false
                       }
@@ -168,6 +216,7 @@ const OrderItem = ({ item, index }: OrderItemProps) => {
                       value="COMPLETED"
                       name="orderStatus"
                       className="hidden peer"
+                      onChange={handleChange}
                       defaultChecked={
                         item.shippingStatus === "COMPLETED" ? true : false
                       }
@@ -186,6 +235,7 @@ const OrderItem = ({ item, index }: OrderItemProps) => {
                       value="CANCELLED"
                       name="orderStatus"
                       className="hidden peer"
+                      onChange={handleChange}
                       defaultChecked={
                         item.shippingStatus === "CANCELLED" ? true : false
                       }
@@ -198,7 +248,10 @@ const OrderItem = ({ item, index }: OrderItemProps) => {
                     </label>
                   </div>
                 </div>
-                <button className="bg-point text-white px-3 rounded-md">
+                <button
+                  onClick={updateStatusHander}
+                  className="bg-point text-white px-3 rounded-md"
+                >
                   변경
                 </button>
               </div>
