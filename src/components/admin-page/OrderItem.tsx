@@ -57,23 +57,24 @@ const OrderItem = ({ item, index }: OrderItemProps) => {
   }, [item.orderItems]);
 
   return (
-    <div className="bg-neutral-100 p-4 text-sm items-center mb-2">
-      <div className="flex justify-between">
-        <div>
-          <span className="bg-point text-white text-xs px-2 py-1 rounded-full mr-2 font-medium">
-            주문번호
-          </span>
-          {item.orderNumber}
+    <div className="bg-neutral-100 p-4 text-[13px] items-center mb-2">
+      <div className="flex justify-between text-center">
+        <div className="w-[5%]">
+          <input type="checkbox" />
         </div>
-        <div>{item.shippingStatus}</div>
-        <div>{createDate()}</div>
-        <button onClick={addContent}>
-          {isContent ? (
-            <UpIcon color={"#d3d3d3"} width={"18"} />
-          ) : (
-            <DownIcon color={"#39c461"} width={"18"} />
-          )}
-        </button>
+        <div className="w-[25%]">{item.orderNumber}</div>
+        <div className="w-[15%]">{item.shippingStatus}</div>
+        <div className="w-[15%]">{createDate()}</div>
+        <div className="w-[35%]">{item.userName}님의 주문</div>
+        <div className="w-[5%]">
+          <button onClick={addContent}>
+            {isContent ? (
+              <UpIcon color={"#d3d3d3"} width={"18"} />
+            ) : (
+              <DownIcon color={"#39c461"} width={"18"} />
+            )}
+          </button>
+        </div>
       </div>
 
       {isContent ? (

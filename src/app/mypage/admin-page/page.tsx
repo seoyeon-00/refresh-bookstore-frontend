@@ -80,6 +80,14 @@ const AdminPage = () => {
         {tabIndex === 2 ? <div>2</div> : null}
         {tabIndex === 3 ? (
           <div>
+            <div className="flex justify-between mb-3 px-4 text-center font-medium text-sm">
+              <div className="w-[5%]"></div>
+              <div className="w-[25%]">주문번호</div>
+              <div className="w-[15%]">배송상태</div>
+              <div className="w-[15%]">주문날짜</div>
+              <div className="w-[35%]">주문자</div>
+              <div className="w-[5%]">상세</div>
+            </div>
             <div>
               {orderData?.map((item, index) => (
                 <div key={`item-${index}`}>
