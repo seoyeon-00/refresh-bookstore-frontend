@@ -20,6 +20,8 @@ const AdminPage = () => {
 
   const router = useRouter();
 
+  console.log(isLoading);
+
   const fetchOrders = async () => {
     try {
       const fetchData = await getOrders({ page: "0", size: "10" });
@@ -37,7 +39,7 @@ const AdminPage = () => {
           const fetchData = await getAllUser();
           setUserData(fetchData.data.data);
         } else if (tabIndex === 3) {
-          fetchOrders();
+          await fetchOrders();
         }
       } catch (error) {
         console.error(error);
