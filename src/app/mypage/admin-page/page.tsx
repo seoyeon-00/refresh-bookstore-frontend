@@ -8,6 +8,9 @@ import { orderDataType } from "@/types/orderDataType";
 import { getOrders } from "@/api/order";
 import OrderItem from "@/components/admin-page/OrderItem";
 import { ClipLoader } from "react-spinners";
+import { orderStore } from "@/stores";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { orderSelector } from "@/stores/order";
 
 const AdminPage = () => {
   const [tabIndex, setTabIndex] = useState<number>(0);
@@ -15,6 +18,8 @@ const AdminPage = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [userData, setUserData] = useState<userDataType[] | null>(null);
   const [orderData, setOrderData] = useState<orderDataType[] | null>(null);
+
+  const fetchData = useRecoilValue(orderSelector);
 
   useEffect(() => {
     const fetchUserAllData = async () => {
@@ -24,9 +29,11 @@ const AdminPage = () => {
           const fetchData = await getAllUser();
           setUserData(fetchData.data.data);
         } else if (tabIndex === 3) {
-          const fetchData = await getOrders({ page: "0", size: "5" });
+          console.log("A");
+          setOrderData(fetchData);
+          //const fetchData = await getOrders({ page: "0", size: "10" });
           console.log(fetchData);
-          setOrderData(fetchData.data);
+          // setOrderData(fetchData.data);
         }
       } catch (error) {
         console.error(error);

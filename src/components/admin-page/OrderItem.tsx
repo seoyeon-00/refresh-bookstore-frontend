@@ -5,7 +5,7 @@ import { bookDataType } from "@/types/bookDataType";
 import ProductDetailItem from "./ProductDetailItem";
 import DownIcon from "../Common/Icons/DownIcon";
 import UpIcon from "../Common/Icons/UpIcon";
-import { updateOrder } from "@/api/order";
+import { deleteOrder, updateOrder } from "@/api/order";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 
@@ -88,7 +88,7 @@ const OrderItem = ({ item, index }: OrderItemProps) => {
     orderItems: item.orderItems,
   };
 
-  const updateStatusHander = async (event: FormEvent) => {
+  const updateStatusHandler = async (event: FormEvent) => {
     event.preventDefault();
     if (selectedValue === item.shippingStatus) {
       toast.error("동일한 배송상태입니다.");
@@ -101,6 +101,18 @@ const OrderItem = ({ item, index }: OrderItemProps) => {
       router.push("/mypage/admin-page");
     } else {
       toast.error("배송상태 수정 실패");
+    }
+  };
+
+  const deleteOrderHandler = async (event: FormEvent) => {
+    event.preventDefault();
+    const result = await deleteOrder(item.id);
+
+    if (result.status === 204) {
+      toast.success(`${item.orderNumber}의 주문이 삭제되었습니다.`);
+      router.push("/mypage/admin-page");
+    } else {
+      toast.error("주문 삭제 실패");
     }
   };
 
@@ -165,7 +177,12 @@ const OrderItem = ({ item, index }: OrderItemProps) => {
             >
               배송상태 변경
             </button>
-            <button className="bg-[#636363] px-3 py-2">주문 삭제</button>
+            <button
+              onClick={deleteOrderHandler}
+              className="bg-[#636363] px-3 py-2"
+            >
+              주문 삭제
+            </button>
           </div>
           <div>
             {isShippingStatus ? (
@@ -249,7 +266,7 @@ const OrderItem = ({ item, index }: OrderItemProps) => {
                   </div>
                 </div>
                 <button
-                  onClick={updateStatusHander}
+                  onClick={updateStatusHandler}
                   className="bg-point text-white px-3 rounded-md"
                 >
                   변경

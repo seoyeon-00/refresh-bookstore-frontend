@@ -58,3 +58,8 @@ export const updateOrder = async (data: orderType) => {
   const response = await apiClient().put(`/api/orders/${data.id}`, data);
   return response;
 };
+
+export const deleteOrder = async (id: number) => {
+  const response = await apiClient().delete(`/api/orders/${id}`);
+  return response;
+};
