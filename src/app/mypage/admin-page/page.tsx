@@ -5,12 +5,11 @@ import UserItem from "@/components/admin-page/UserItem";
 import { useEffect, useState } from "react";
 import { userDataType } from "@/types/userDataType";
 import { orderDataType } from "@/types/orderDataType";
-import { getOrders } from "@/api/order";
+import { deleteOrder, getOrders } from "@/api/order";
 import OrderItem from "@/components/admin-page/OrderItem";
 import { ClipLoader } from "react-spinners";
-import { orderStore } from "@/stores";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { orderSelector } from "@/stores/order";
+import { toast } from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 const AdminPage = () => {
   const [tabIndex, setTabIndex] = useState<number>(0);
@@ -19,7 +18,16 @@ const AdminPage = () => {
   const [userData, setUserData] = useState<userDataType[] | null>(null);
   const [orderData, setOrderData] = useState<orderDataType[] | null>(null);
 
-  const fetchData = useRecoilValue(orderSelector);
+  const router = useRouter();
+
+  const fetchOrders = async () => {
+    try {
+      const fetchData = await getOrders({ page: "0", size: "10" });
+      setOrderData(fetchData.data);
+    } catch (error) {
+      console.error("Error fetching orders:", error);
+    }
+  };
 
   useEffect(() => {
     const fetchUserAllData = async () => {
@@ -29,11 +37,7 @@ const AdminPage = () => {
           const fetchData = await getAllUser();
           setUserData(fetchData.data.data);
         } else if (tabIndex === 3) {
-          console.log("A");
-          setOrderData(fetchData);
-          //const fetchData = await getOrders({ page: "0", size: "10" });
-          console.log(fetchData);
-          // setOrderData(fetchData.data);
+          fetchOrders();
         }
       } catch (error) {
         console.error(error);
@@ -45,7 +49,17 @@ const AdminPage = () => {
     fetchUserAllData();
   }, [tabIndex]);
 
-  console.log(isLoading);
+  const deleteOrderHandler = async (item: orderDataType) => {
+    const result = await deleteOrder(item.id);
+
+    if (result.status === 204) {
+      toast.success(`${item.orderNumber}의 주문이 삭제되었습니다.`);
+      fetchOrders();
+      router.push("/mypage/admin-page");
+    } else {
+      toast.error("주문 삭제 실패");
+    }
+  };
 
   const tabHandler = (index: number) => {
     setTabIndex(index);
@@ -119,7 +133,11 @@ const AdminPage = () => {
                 <div>
                   {orderData?.map((item, index) => (
                     <div key={`item-${index}`}>
-                      <OrderItem index={index} item={item} />
+                      <OrderItem
+                        index={index}
+                        item={item}
+                        orderDelete={() => deleteOrderHandler(item)}
+                      />
                     </div>
                   ))}
                 </div>

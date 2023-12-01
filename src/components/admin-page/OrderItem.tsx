@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation";
 type OrderItemProps = {
   item: orderDataType;
   index: number;
+  orderDelete: () => void;
 };
 
 type productInfo = {
@@ -19,7 +20,7 @@ type productInfo = {
   data: bookDataType;
 };
 
-const OrderItem = ({ item, index }: OrderItemProps) => {
+const OrderItem = ({ item, index, orderDelete }: OrderItemProps) => {
   const [isContent, setIsContent] = useState<boolean>(false);
   const [isShippingStatus, setIsShippingStatus] = useState<boolean>(false);
   const [product, setProduct] = useState<productInfo[] | []>([]);
@@ -104,18 +105,6 @@ const OrderItem = ({ item, index }: OrderItemProps) => {
     }
   };
 
-  const deleteOrderHandler = async (event: FormEvent) => {
-    event.preventDefault();
-    const result = await deleteOrder(item.id);
-
-    if (result.status === 204) {
-      toast.success(`${item.orderNumber}의 주문이 삭제되었습니다.`);
-      router.push("/mypage/admin-page");
-    } else {
-      toast.error("주문 삭제 실패");
-    }
-  };
-
   return (
     <div className="bg-neutral-100 p-4 text-[13px] items-center mb-2">
       <div className="flex justify-between text-center">
@@ -178,7 +167,10 @@ const OrderItem = ({ item, index }: OrderItemProps) => {
               배송상태 변경
             </button>
             <button
-              onClick={deleteOrderHandler}
+              onClick={async () => {
+                await orderDelete();
+                setIsContent(false);
+              }}
               className="bg-[#636363] px-3 py-2"
             >
               주문 삭제
