@@ -20,8 +20,6 @@ const AdminPage = () => {
 
   const router = useRouter();
 
-  console.log(isLoading);
-
   const fetchOrders = async () => {
     try {
       const fetchData = await getOrders({ page: "0", size: "10" });

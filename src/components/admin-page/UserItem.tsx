@@ -1,5 +1,6 @@
 import { userDataType } from "@/types/userDataType";
 import SettingIcon from "../Common/Icons/SettingIcon";
+import UserMinusIcon from "../Common/Icons/UserMinusIcon";
 
 type UserItemProps = {
   item: userDataType;
@@ -22,10 +23,12 @@ const UserItem = ({ item, index }: UserItemProps) => {
         </div>
       </div>
       <div className="w-[25%] flex justify-center gap-1">
-        <button className=" py-1 px-2">
+        <button className="py-1 px-1">
           <SettingIcon color={"#7b7b7b"} width={"17px"} />
         </button>
-        <button className="bg-[#f06d6d] text-white py-1 px-2">탈퇴</button>
+        <button className="py-1 px-1">
+          <UserMinusIcon color={"#1bc557"} width={"20px"} />
+        </button>
       </div>
     </div>
   );
