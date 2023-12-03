@@ -5,17 +5,23 @@ import UserItem from "@/components/admin-page/UserItem";
 import { useEffect, useState } from "react";
 import { userDataType } from "@/types/userDataType";
 import { orderDataType } from "@/types/orderDataType";
+import { categoryDataType } from "@/types/categoryDataType";
 import { deleteOrder, getOrders } from "@/api/order";
 import OrderItem from "@/components/admin-page/OrderItem";
 import { ClipLoader } from "react-spinners";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { getCategory } from "@/api/category";
+import CategoryItem from "@/components/admin-page/CategoryItem";
 
 const AdminPage = () => {
   const [tabIndex, setTabIndex] = useState<number>(0);
   const tabList = ["유저", "상품", "카테고리", "주문 관리"];
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [userData, setUserData] = useState<userDataType[] | null>(null);
+  const [categoryData, setCategoryData] = useState<categoryDataType[] | null>(
+    null
+  );
   const [orderData, setOrderData] = useState<orderDataType[] | null>(null);
 
   const router = useRouter();
@@ -36,6 +42,9 @@ const AdminPage = () => {
         if (tabIndex === 0) {
           const fetchData = await getAllUser();
           setUserData(fetchData.data.data);
+        } else if (tabIndex === 2) {
+          const fetchData = await getCategory({ page: 0, size: 100 });
+          setCategoryData(fetchData);
         } else if (tabIndex === 3) {
           await fetchOrders();
         }
@@ -113,7 +122,34 @@ const AdminPage = () => {
           </div>
         ) : null}
         {tabIndex === 1 ? <div>1</div> : null}
-        {tabIndex === 2 ? <div>2</div> : null}
+        {tabIndex === 2 ? (
+          <div>
+            {isLoading ? (
+              <div className="flex justify-center items-center h-[200px]">
+                <ClipLoader color="#1DC078" size={30} />
+              </div>
+            ) : (
+              <div>
+                <div className="flex justify-between mb-4">
+                  <h4 className="text-[15px] font-medium">카테고리 목록</h4>
+                  <button className="bg-neutral-200 text-[15px] font-medium px-2 py-1 rounded-lg">
+                    +
+                  </button>
+                </div>
+                <div className="flex flex-wrap">
+                  {categoryData?.map((item, index) => (
+                    <div
+                      key={`item-${index}`}
+                      className="w-[50%] px-[3px] py-[1px]"
+                    >
+                      <CategoryItem item={item} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        ) : null}
         {tabIndex === 3 ? (
           <div>
             {isLoading ? (
