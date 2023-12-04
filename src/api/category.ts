@@ -1,3 +1,6 @@
+import { apiClient } from "./apiClient";
+import { categoryDataType } from "@/types/categoryDataType";
+
 type getCategoryType = {
   page: number;
   size: number;
@@ -20,4 +23,9 @@ export const getCategory = async ({ page, size }: getCategoryType) => {
   } catch (error) {
     console.error("");
   }
+};
+
+export const createCategory = async (data: categoryDataType) => {
+  const response = await apiClient().post(`/api/categories`, data);
+  return response;
 };

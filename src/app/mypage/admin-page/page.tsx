@@ -2,7 +2,7 @@
 
 import { getAllUser } from "@/api/user";
 import UserItem from "@/components/admin-page/UserItem";
-import { useEffect, useState } from "react";
+import React, { ChangeEvent, useEffect, useRef, useState } from "react";
 import { userDataType } from "@/types/userDataType";
 import { orderDataType } from "@/types/orderDataType";
 import { categoryDataType } from "@/types/categoryDataType";
@@ -11,7 +11,7 @@ import OrderItem from "@/components/admin-page/OrderItem";
 import { ClipLoader } from "react-spinners";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import { getCategory } from "@/api/category";
+import { createCategory, getCategory } from "@/api/category";
 import CategoryItem from "@/components/admin-page/CategoryItem";
 
 const AdminPage = () => {
@@ -24,7 +24,23 @@ const AdminPage = () => {
   );
   const [orderData, setOrderData] = useState<orderDataType[] | null>(null);
 
+  const [categoryIsInput, setCategoryIsInput] = useState<boolean>(false);
+  const [categoryValue, setCategoryValue] = useState<string>("");
+
+  const categoryInputChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
+    setCategoryValue(event.target.value);
+  };
+
   const router = useRouter();
+
+  const fetchCategory = async () => {
+    try {
+      const fetchData = await getCategory({ page: 0, size: 100 });
+      setCategoryData(fetchData);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+    }
+  };
 
   const fetchOrders = async () => {
     try {
@@ -43,8 +59,7 @@ const AdminPage = () => {
           const fetchData = await getAllUser();
           setUserData(fetchData.data.data);
         } else if (tabIndex === 2) {
-          const fetchData = await getCategory({ page: 0, size: 100 });
-          setCategoryData(fetchData);
+          await fetchCategory();
         } else if (tabIndex === 3) {
           await fetchOrders();
         }
@@ -57,6 +72,22 @@ const AdminPage = () => {
 
     fetchUserAllData();
   }, [tabIndex]);
+
+  const createCategoryHandler = async () => {
+    const data = {
+      name: categoryValue,
+    };
+    try {
+      const fetchData = await createCategory(data);
+      if (fetchData.status === 200) {
+        toast.success(`${data.name}이 생성되었습니다.`);
+        setCategoryValue("");
+        fetchCategory();
+      }
+    } catch (error) {
+      console.error("Error fetching orders:", error);
+    }
+  };
 
   const deleteOrderHandler = async (item: orderDataType) => {
     const result = await deleteOrder(item.id);
@@ -132,9 +163,30 @@ const AdminPage = () => {
               <div>
                 <div className="flex justify-between mb-4">
                   <h4 className="text-[15px] font-medium">카테고리 목록</h4>
-                  <button className="bg-neutral-200 text-[15px] font-medium px-2 py-1 rounded-lg">
+                  <button
+                    onClick={() => setCategoryIsInput(!categoryIsInput)}
+                    className="bg-neutral-200 text-[15px] font-medium px-2 py-1 rounded-lg"
+                  >
                     +
                   </button>
+                </div>
+                <div>
+                  {categoryIsInput ? (
+                    <div className="flex gap-1 mb-4">
+                      <input
+                        placeholder="카테고리 네임을 입력해주세요"
+                        className="w-[93%] px-3 py-2 bg-[#f2faec] text-black text-sm"
+                        onChange={categoryInputChangeHandler}
+                        value={categoryValue}
+                      />
+                      <button
+                        onClick={createCategoryHandler}
+                        className="w-[7%] bg-point text-white text-sm"
+                      >
+                        생성
+                      </button>
+                    </div>
+                  ) : null}
                 </div>
                 <div className="flex flex-wrap">
                   {categoryData?.map((item, index) => (
