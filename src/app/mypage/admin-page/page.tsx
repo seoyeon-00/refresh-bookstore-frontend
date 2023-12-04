@@ -21,6 +21,14 @@ import CategoryItem from "@/components/admin-page/CategoryItem";
 import { getProduct } from "@/api/product";
 import { bookDataType } from "@/types/bookDataType";
 import ProductItem from "@/components/admin-page/ProductItem";
+import Pagination from "@/components/Common/Pagination";
+
+type paginationType = {
+  totalPages: number;
+  currentPage: number;
+  pageSize: number;
+  totalItems: number;
+};
 
 const AdminPage = () => {
   const [tabIndex, setTabIndex] = useState<number>(0);
@@ -28,11 +36,13 @@ const AdminPage = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [userData, setUserData] = useState<userDataType[] | null>(null);
   const [productData, setProductData] = useState<bookDataType[] | null>(null);
+  const [productPagination, setProductPagination] =
+    useState<paginationType | null>(null);
+  const [currentPage, setCurrentPage] = useState<number>(0);
   const [categoryData, setCategoryData] = useState<categoryDataType[] | null>(
     null
   );
   const [orderData, setOrderData] = useState<orderDataType[] | null>(null);
-
   const [categoryIsInput, setCategoryIsInput] = useState<boolean>(false);
   const [categoryValue, setCategoryValue] = useState<string>("");
 
@@ -44,8 +54,10 @@ const AdminPage = () => {
 
   const fetchProduct = async () => {
     try {
-      const fetchData = await getProduct({ page: 0, size: 30 });
+      const fetchData = await getProduct({ page: currentPage, size: 30 });
+      console.log(fetchData);
       setProductData(fetchData.products);
+      setProductPagination(fetchData.pagination);
     } catch (error) {
       console.error("Error fetching products:", error);
     }
@@ -92,6 +104,12 @@ const AdminPage = () => {
 
     fetchUserAllData();
   }, [tabIndex]);
+
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+  };
+
+  console.log(currentPage);
 
   const createCategoryHandler = async () => {
     const data = {
@@ -218,6 +236,17 @@ const AdminPage = () => {
                       <ProductItem item={item} />
                     </div>
                   ))}
+                </div>
+                <div className="flex justify-center mt-10">
+                  {productPagination && (
+                    <Pagination
+                      totalPages={productPagination.totalPages}
+                      currentPage={currentPage}
+                      pageSize={productPagination.pageSize}
+                      totalItems={productPagination.totalItems}
+                      onPageChange={handlePageChange}
+                    />
+                  )}
                 </div>
               </div>
             )}
