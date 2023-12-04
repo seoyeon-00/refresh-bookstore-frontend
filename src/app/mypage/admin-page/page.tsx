@@ -18,12 +18,16 @@ import {
   updateCategory,
 } from "@/api/category";
 import CategoryItem from "@/components/admin-page/CategoryItem";
+import { getProduct } from "@/api/product";
+import { bookDataType } from "@/types/bookDataType";
+import ProductItem from "@/components/admin-page/ProductItem";
 
 const AdminPage = () => {
   const [tabIndex, setTabIndex] = useState<number>(0);
   const tabList = ["유저", "상품", "카테고리", "주문 관리"];
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [userData, setUserData] = useState<userDataType[] | null>(null);
+  const [productData, setProductData] = useState<bookDataType[] | null>(null);
   const [categoryData, setCategoryData] = useState<categoryDataType[] | null>(
     null
   );
@@ -37,6 +41,15 @@ const AdminPage = () => {
   };
 
   const router = useRouter();
+
+  const fetchProduct = async () => {
+    try {
+      const fetchData = await getProduct({ page: 0, size: 30 });
+      setProductData(fetchData.products);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    }
+  };
 
   const fetchCategory = async () => {
     try {
@@ -63,6 +76,8 @@ const AdminPage = () => {
         if (tabIndex === 0) {
           const fetchData = await getAllUser();
           setUserData(fetchData.data.data);
+        } else if (tabIndex === 1) {
+          await fetchProduct();
         } else if (tabIndex === 2) {
           await fetchCategory();
         } else if (tabIndex === 3) {
@@ -189,7 +204,25 @@ const AdminPage = () => {
             )}
           </div>
         ) : null}
-        {tabIndex === 1 ? <div>1</div> : null}
+        {tabIndex === 1 ? (
+          <div>
+            {isLoading ? (
+              <div className="flex justify-center items-center h-[200px]">
+                <ClipLoader color="#1DC078" size={30} />
+              </div>
+            ) : (
+              <div>
+                <div>
+                  {productData?.map((item, index) => (
+                    <div key={`item-${index}`}>
+                      <ProductItem item={item} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        ) : null}
         {tabIndex === 2 ? (
           <div>
             {isLoading ? (
