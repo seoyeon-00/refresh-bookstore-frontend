@@ -2,7 +2,7 @@
 
 import { getAllUser } from "@/api/user";
 import UserItem from "@/components/admin-page/UserItem";
-import { useEffect, useState } from "react";
+import React, { ChangeEvent, useEffect, useRef, useState } from "react";
 import { userDataType } from "@/types/userDataType";
 import { orderDataType } from "@/types/orderDataType";
 import { categoryDataType } from "@/types/categoryDataType";
@@ -11,20 +11,66 @@ import OrderItem from "@/components/admin-page/OrderItem";
 import { ClipLoader } from "react-spinners";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import { getCategory } from "@/api/category";
+import {
+  createCategory,
+  deleteCategory,
+  getCategory,
+  updateCategory,
+} from "@/api/category";
 import CategoryItem from "@/components/admin-page/CategoryItem";
+import { getProduct } from "@/api/product";
+import { bookDataType } from "@/types/bookDataType";
+import ProductItem from "@/components/admin-page/ProductItem";
+import Pagination from "@/components/Common/Pagination";
+
+type paginationType = {
+  totalPages: number;
+  currentPage: number;
+  pageSize: number;
+  totalItems: number;
+};
 
 const AdminPage = () => {
   const [tabIndex, setTabIndex] = useState<number>(0);
   const tabList = ["유저", "상품", "카테고리", "주문 관리"];
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [userData, setUserData] = useState<userDataType[] | null>(null);
+  const [productData, setProductData] = useState<bookDataType[] | null>(null);
+  const [productPagination, setProductPagination] =
+    useState<paginationType | null>(null);
+  const [currentPage, setCurrentPage] = useState<number>(0);
   const [categoryData, setCategoryData] = useState<categoryDataType[] | null>(
     null
   );
   const [orderData, setOrderData] = useState<orderDataType[] | null>(null);
+  const [categoryIsInput, setCategoryIsInput] = useState<boolean>(false);
+  const [categoryValue, setCategoryValue] = useState<string>("");
+
+  const categoryInputChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
+    setCategoryValue(event.target.value);
+  };
 
   const router = useRouter();
+
+  const fetchProduct = async () => {
+    try {
+      const fetchData = await getProduct({ page: currentPage, size: 30 });
+      console.log(fetchData);
+      setProductData(fetchData.products);
+      setProductPagination(fetchData.pagination);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    }
+  };
+
+  const fetchCategory = async () => {
+    try {
+      const fetchData = await getCategory({ page: 0, size: 100 });
+      setCategoryData(fetchData);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+    }
+  };
 
   const fetchOrders = async () => {
     try {
@@ -42,9 +88,10 @@ const AdminPage = () => {
         if (tabIndex === 0) {
           const fetchData = await getAllUser();
           setUserData(fetchData.data.data);
+        } else if (tabIndex === 1) {
+          await fetchProduct();
         } else if (tabIndex === 2) {
-          const fetchData = await getCategory({ page: 0, size: 100 });
-          setCategoryData(fetchData);
+          await fetchCategory();
         } else if (tabIndex === 3) {
           await fetchOrders();
         }
@@ -57,6 +104,60 @@ const AdminPage = () => {
 
     fetchUserAllData();
   }, [tabIndex]);
+
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+  };
+
+  console.log(currentPage);
+
+  const createCategoryHandler = async () => {
+    const data = {
+      name: categoryValue,
+    };
+    try {
+      const fetchData = await createCategory(data);
+      if (fetchData.status === 200) {
+        toast.success(`${data.name}이 생성되었습니다.`);
+        setCategoryValue("");
+        fetchCategory();
+      }
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+    }
+  };
+
+  const updateCategoryHander = async (data: categoryDataType) => {
+    try {
+      const fetchData = await updateCategory(data);
+
+      if (fetchData.status === 200) {
+        toast.success(`카테고리 수정완료!`);
+        fetchCategory();
+      }
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+    }
+  };
+
+  const deleteCategoryHandler = async (id: number): Promise<void> => {
+    const shouldDelete = window.confirm("정말로 삭제하시겠습니까?");
+
+    if (shouldDelete) {
+      try {
+        const fetchData = await deleteCategory(id);
+
+        if (fetchData.status === 204) {
+          toast.success(`${id}번 카테고리 삭제 완료!`);
+          fetchCategory();
+        }
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    } else {
+      console.log("삭제가 취소되었습니다.");
+    }
+  };
 
   const deleteOrderHandler = async (item: orderDataType) => {
     const result = await deleteOrder(item.id);
@@ -121,7 +222,36 @@ const AdminPage = () => {
             )}
           </div>
         ) : null}
-        {tabIndex === 1 ? <div>1</div> : null}
+        {tabIndex === 1 ? (
+          <div>
+            {isLoading ? (
+              <div className="flex justify-center items-center h-[200px]">
+                <ClipLoader color="#1DC078" size={30} />
+              </div>
+            ) : (
+              <div>
+                <div>
+                  {productData?.map((item, index) => (
+                    <div key={`item-${index}`}>
+                      <ProductItem item={item} />
+                    </div>
+                  ))}
+                </div>
+                <div className="flex justify-center mt-10">
+                  {productPagination && (
+                    <Pagination
+                      totalPages={productPagination.totalPages}
+                      currentPage={currentPage}
+                      pageSize={productPagination.pageSize}
+                      totalItems={productPagination.totalItems}
+                      onPageChange={handlePageChange}
+                    />
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        ) : null}
         {tabIndex === 2 ? (
           <div>
             {isLoading ? (
@@ -132,9 +262,30 @@ const AdminPage = () => {
               <div>
                 <div className="flex justify-between mb-4">
                   <h4 className="text-[15px] font-medium">카테고리 목록</h4>
-                  <button className="bg-neutral-200 text-[15px] font-medium px-2 py-1 rounded-lg">
+                  <button
+                    onClick={() => setCategoryIsInput(!categoryIsInput)}
+                    className="bg-neutral-200 text-[15px] font-medium px-2 py-1 rounded-lg"
+                  >
                     +
                   </button>
+                </div>
+                <div>
+                  {categoryIsInput ? (
+                    <div className="flex gap-1 mb-4">
+                      <input
+                        placeholder="카테고리 네임을 입력해주세요"
+                        className="w-[93%] px-3 py-2 bg-[#f2faec] text-black text-sm"
+                        onChange={categoryInputChangeHandler}
+                        value={categoryValue}
+                      />
+                      <button
+                        onClick={createCategoryHandler}
+                        className="w-[7%] bg-point text-white text-sm"
+                      >
+                        생성
+                      </button>
+                    </div>
+                  ) : null}
                 </div>
                 <div className="flex flex-wrap">
                   {categoryData?.map((item, index) => (
@@ -142,7 +293,11 @@ const AdminPage = () => {
                       key={`item-${index}`}
                       className="w-[50%] px-[3px] py-[1px]"
                     >
-                      <CategoryItem item={item} />
+                      <CategoryItem
+                        item={item}
+                        deleteCategoryHandler={deleteCategoryHandler}
+                        updateCategoryHander={updateCategoryHander}
+                      />
                     </div>
                   ))}
                 </div>
