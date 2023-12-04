@@ -11,7 +11,12 @@ import OrderItem from "@/components/admin-page/OrderItem";
 import { ClipLoader } from "react-spinners";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import { createCategory, getCategory } from "@/api/category";
+import {
+  createCategory,
+  deleteCategory,
+  getCategory,
+  updateCategory,
+} from "@/api/category";
 import CategoryItem from "@/components/admin-page/CategoryItem";
 
 const AdminPage = () => {
@@ -85,7 +90,39 @@ const AdminPage = () => {
         fetchCategory();
       }
     } catch (error) {
-      console.error("Error fetching orders:", error);
+      console.error("Error fetching categories:", error);
+    }
+  };
+
+  const updateCategoryHander = async (data: categoryDataType) => {
+    try {
+      const fetchData = await updateCategory(data);
+
+      if (fetchData.status === 200) {
+        toast.success(`카테고리 수정완료!`);
+        fetchCategory();
+      }
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+    }
+  };
+
+  const deleteCategoryHandler = async (id: number): Promise<void> => {
+    const shouldDelete = window.confirm("정말로 삭제하시겠습니까?");
+
+    if (shouldDelete) {
+      try {
+        const fetchData = await deleteCategory(id);
+
+        if (fetchData.status === 204) {
+          toast.success(`${id}번 카테고리 삭제 완료!`);
+          fetchCategory();
+        }
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    } else {
+      console.log("삭제가 취소되었습니다.");
     }
   };
 
@@ -194,7 +231,11 @@ const AdminPage = () => {
                       key={`item-${index}`}
                       className="w-[50%] px-[3px] py-[1px]"
                     >
-                      <CategoryItem item={item} />
+                      <CategoryItem
+                        item={item}
+                        deleteCategoryHandler={deleteCategoryHandler}
+                        updateCategoryHander={updateCategoryHander}
+                      />
                     </div>
                   ))}
                 </div>
