@@ -55,7 +55,6 @@ const AdminPage = () => {
   const fetchProduct = async () => {
     try {
       const fetchData = await getProduct({ page: currentPage, size: 30 });
-      console.log(fetchData);
       setProductData(fetchData.products);
       setProductPagination(fetchData.pagination);
     } catch (error) {
@@ -103,7 +102,7 @@ const AdminPage = () => {
     };
 
     fetchUserAllData();
-  }, [tabIndex]);
+  }, [tabIndex, currentPage]);
 
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
