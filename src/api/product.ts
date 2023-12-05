@@ -1,3 +1,4 @@
+import { bookDataType } from "@/types/bookDataType";
 import { apiClient } from "./apiClient";
 
 type getProductType = {
@@ -92,4 +93,22 @@ export const getProductByISBN = async ({ isbn }: { isbn: string }) => {
   } catch (error) {
     console.error(error);
   }
+};
+
+export const createProduct = async (data: bookDataType) => {
+  const response = await apiClient().post(`/api/products`, data);
+  return response;
+};
+
+export const updateProduct = async (data: bookDataType) => {
+  const response = await apiClient().put(
+    `/api/products/isbn/${data.isbn}`,
+    data
+  );
+  return response;
+};
+
+export const deleteProduct = async (isbn: string) => {
+  const response = await apiClient().delete(`/api/products/isbn/${isbn}`);
+  return response;
 };
