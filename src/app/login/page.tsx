@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { FormEvent } from "react";
 import { loginUser } from "@/api/auth";
+import AlertIcon from "@/components/Common/Icons/AlertIcon";
 
 const LoginPage = () => {
   const emailInput = React.useRef<HTMLInputElement>(null);
@@ -74,6 +75,17 @@ const LoginPage = () => {
               </button>
             </Link>
           </form>
+          <div className="flex items-center mt-2">
+            <span className="mr-1">
+              <AlertIcon width="18px" color="#adadad" />
+            </span>
+            <span className="text-sm text-[#666] font-medium">
+              비밀번호를 잃어버리셨나요?{" "}
+              <span className="font-semibold text-[#333] cursor-pointer">
+                <Link href="/login/find-password">비밀번호 찾기</Link>
+              </span>
+            </span>
+          </div>
         </div>
       </div>
     </div>

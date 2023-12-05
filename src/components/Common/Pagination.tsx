@@ -1,3 +1,6 @@
+import NextIcon from "./Icons/NextIcon";
+import PrevIcon from "./Icons/prevIcon";
+
 type PaginationProps = {
   totalPages: number;
   currentPage: number;
@@ -23,24 +26,27 @@ const Pagination = ({
   );
 
   return (
-    <div className="flex gap-10">
+    <div className="flex gap-12 items-center">
       <button
-        disabled={currentPage === 1}
+        disabled={currentPage === 0}
         onClick={() => onPageChange(currentPage - 1)}
-      >{`<`}</button>
+        className="flex justify-center items-center rounded-full w-[32px] h-[32px] border-[1px] border-solid border-gray"
+      >
+        <PrevIcon width="7px" color="#777" />
+      </button>
       <div className="flex gap-4">
         {pages.map((page) => (
           <div
             key={page}
             className={
-              page === currentPage
-                ? "text-white bg-point inline-block w-[23px] h-[23px] text-center rounded-full"
-                : ""
+              page === currentPage + 1
+                ? "text-white font-medium bg-point inline-block w-[25px] h-[25px] text-center rounded"
+                : "text-neutral-600"
             }
           >
             <button
               onClick={() => {
-                onPageChange(page);
+                onPageChange(page - 1);
               }}
             >
               {page}
@@ -49,9 +55,12 @@ const Pagination = ({
         ))}
       </div>
       <button
-        disabled={currentPage === totalPages + 1}
+        disabled={currentPage === totalPages}
         onClick={() => onPageChange(currentPage + 1)}
-      >{`>`}</button>
+        className="flex justify-center items-center rounded-full w-[32px] h-[32px] border-[1px] border-solid border-gray"
+      >
+        <NextIcon width="7px" color="#777" />
+      </button>
     </div>
   );
 };

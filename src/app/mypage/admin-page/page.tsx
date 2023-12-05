@@ -22,6 +22,9 @@ import { getProduct } from "@/api/product";
 import { bookDataType } from "@/types/bookDataType";
 import ProductItem from "@/components/admin-page/ProductItem";
 import Pagination from "@/components/Common/Pagination";
+import Product from "@/components/Common/Product";
+import { productStore } from "@/stores";
+import { useRecoilState } from "recoil";
 
 type paginationType = {
   totalPages: number;
@@ -45,6 +48,7 @@ const AdminPage = () => {
   const [orderData, setOrderData] = useState<orderDataType[] | null>(null);
   const [categoryIsInput, setCategoryIsInput] = useState<boolean>(false);
   const [categoryValue, setCategoryValue] = useState<string>("");
+  const [popup, setPopup] = useRecoilState(productStore.productPopupState);
 
   const categoryInputChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
     setCategoryValue(event.target.value);
@@ -55,7 +59,6 @@ const AdminPage = () => {
   const fetchProduct = async () => {
     try {
       const fetchData = await getProduct({ page: currentPage, size: 30 });
-      console.log(fetchData);
       setProductData(fetchData.products);
       setProductPagination(fetchData.pagination);
     } catch (error) {
@@ -103,7 +106,7 @@ const AdminPage = () => {
     };
 
     fetchUserAllData();
-  }, [tabIndex]);
+  }, [tabIndex, currentPage]);
 
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
@@ -174,8 +177,14 @@ const AdminPage = () => {
   const tabHandler = (index: number) => {
     setTabIndex(index);
   };
+
+  const createProductModal = () => {
+    setPopup(true);
+  };
+
   return (
     <section className="border-l border-light_gray min-h-[70vh] p-[2.5rem] flex-1">
+      {popup ? <Product /> : null}
       <div className="font-semibold text-lg mb-3">관리자</div>
       <ul className="flex gap-2">
         {tabList.map((item, index) => (
@@ -230,6 +239,11 @@ const AdminPage = () => {
               </div>
             ) : (
               <div>
+                <div className="flex justify-end">
+                  <button className="bg-[#333]" onClick={createProductModal}>
+                    상품 추가
+                  </button>
+                </div>
                 <div>
                   {productData?.map((item, index) => (
                     <div key={`item-${index}`}>
