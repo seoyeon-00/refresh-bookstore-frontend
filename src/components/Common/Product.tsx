@@ -1,10 +1,14 @@
 import { createProduct } from "@/api/product";
 import { productStore } from "@/stores";
-import { useState } from "react";
+import { FormEvent, useState } from "react";
 import { toast } from "react-hot-toast";
 import { useRecoilState } from "recoil";
 
-const Product = () => {
+type ProductProps = {
+  fetchProduct: () => void;
+};
+
+const Product = ({ fetchProduct }: ProductProps) => {
   const [popup, setPopup] = useRecoilState(productStore.productPopupState);
   const [account, setAccount] = useState({
     categoryId: 0,
@@ -112,7 +116,8 @@ const Product = () => {
     return true;
   };
 
-  const createProductHandler = async () => {
+  const createProductHandler = async (event: FormEvent) => {
+    event.preventDefault();
     try {
       const result = await createProduct(account);
 
@@ -122,6 +127,7 @@ const Product = () => {
 
       toast.success("상품 추가가 완료되었습니다.");
       setPopup(!popup);
+      fetchProduct();
     } catch (error) {
       toast.error("Error 다시 시도해주세요.");
       console.error("Error fetching categories:", error);
@@ -132,7 +138,7 @@ const Product = () => {
     <div className="z-[999999999] postmodal fixed bg-point overflow-hidden bg-opacity-40 top-0 left-0 h-[100%] w-[100%] flex justify-center backdrop-blur-md  backdrop-filter items-center">
       <div className="bg-white relative w-[650px] p-14 text-[13px]">
         <button
-          className="absolute top-2 right-2 w-[30px] h-[30px] bg-black text-white rounded-full"
+          className="text-[18px] font-semibold absolute top-2 right-2 w-[30px] h-[30px] bg-black text-white rounded-full"
           onClick={() => {
             setPopup(!popup);
           }}

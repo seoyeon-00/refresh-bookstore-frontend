@@ -1,10 +1,33 @@
+import { deleteProduct } from "@/api/product";
 import { bookDataType } from "@/types/bookDataType";
+import { FormEvent } from "react";
+import { toast } from "react-hot-toast";
 
 type ProductItemProps = {
   item: bookDataType;
+  fetchProduct: () => void;
 };
 
-const ProductItem: React.FC<ProductItemProps> = ({ item }) => {
+const ProductItem: React.FC<ProductItemProps> = ({ item, fetchProduct }) => {
+  const deleteProductHandler = async (event: FormEvent) => {
+    event.preventDefault;
+
+    const shouldDelete = window.confirm("정말로 삭제하시겠습니까?");
+    if (shouldDelete) {
+      try {
+        const result = await deleteProduct(item.isbn);
+        if (result.status === 204) {
+          toast.success("삭제가 완료되었습니다.");
+          fetchProduct();
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    } else {
+      console.log("삭제가 취소되었습니다.");
+    }
+  };
+
   return (
     <div className="flex px-2 py-8 border-b-[1px] border-slate-200">
       <div className="w-[15%]">
@@ -34,7 +57,10 @@ const ProductItem: React.FC<ProductItemProps> = ({ item }) => {
         <button className="border-[1px] border-point px-3 py-1 rounded text-point">
           상품 수정
         </button>
-        <button className="bg-[#666] text-white px-3 py-1 rounded">
+        <button
+          onClick={deleteProductHandler}
+          className="bg-[#666] text-white px-3 py-1 rounded"
+        >
           상품 삭제
         </button>
       </div>

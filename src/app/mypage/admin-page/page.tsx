@@ -184,7 +184,7 @@ const AdminPage = () => {
 
   return (
     <section className="border-l border-light_gray min-h-[70vh] p-[2.5rem] flex-1">
-      {popup ? <Product /> : null}
+      {popup ? <Product fetchProduct={fetchProduct} /> : null}
       <div className="font-semibold text-lg mb-3">관리자</div>
       <ul className="flex gap-2">
         {tabList.map((item, index) => (
@@ -239,15 +239,25 @@ const AdminPage = () => {
               </div>
             ) : (
               <div>
-                <div className="flex justify-end">
-                  <button className="bg-[#333]" onClick={createProductModal}>
+                <div className="flex justify-between border-b-[1px] border-slate-200 pb-3">
+                  <div className="font-semibold">
+                    전체{" "}
+                    <span className="text-point">
+                      {productPagination?.totalItems}
+                    </span>
+                    개의 상품이 있습니다.
+                  </div>
+                  <button
+                    className="text-point bg-[#f1fdee] border-[1px] border-[#f4f4f4] rounded text-[13px] px-3 py-1"
+                    onClick={createProductModal}
+                  >
                     상품 추가
                   </button>
                 </div>
                 <div>
                   {productData?.map((item, index) => (
                     <div key={`item-${index}`}>
-                      <ProductItem item={item} />
+                      <ProductItem fetchProduct={fetchProduct} item={item} />
                     </div>
                   ))}
                 </div>
