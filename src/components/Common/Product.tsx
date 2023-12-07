@@ -1,5 +1,6 @@
 import { createProduct } from "@/api/product";
 import { productStore } from "@/stores";
+import { bookDataType } from "@/types/bookDataType";
 import { FormEvent, useState } from "react";
 import { toast } from "react-hot-toast";
 import { useRecoilState } from "recoil";
@@ -11,16 +12,16 @@ type ProductProps = {
 const Product = ({ fetchProduct }: ProductProps) => {
   const [popup, setPopup] = useRecoilState(productStore.productPopupState);
   const [account, setAccount] = useState({
-    categoryId: 0,
-    title: "",
-    author: "",
-    publisher: "",
-    publicationDate: "",
-    isbn: "",
-    description: "",
-    price: 0,
+    categoryId: popup.update ? popup.item.categoryId : 0,
+    title: popup.update ? popup.item.title : "",
+    author: popup.update ? popup.item.author : "",
+    publisher: popup.update ? popup.item.publisher : "",
+    publicationDate: popup.update ? popup.item.publicationDate : "",
+    isbn: popup.update ? popup.item.isbn : "",
+    description: popup.update ? popup.item.description : "",
+    price: popup.update ? Number(popup.item.description) : 0,
     imagePath: "",
-    isBestSeller: false,
+    isBestSeller: popup.update ? popup.item.isBestSeller : false,
   });
 
   const [validationError, setValidationError] = useState({
@@ -33,7 +34,20 @@ const Product = ({ fetchProduct }: ProductProps) => {
     description: "",
   });
 
-  const onChangeAccount = (e: any) => {
+  const getDefaultBookData = (): bookDataType => ({
+    categoryId: 1,
+    title: "",
+    author: "",
+    publisher: "",
+    publicationDate: "",
+    isbn: "",
+    description: "",
+    price: 0,
+    imagePath: "",
+    isBestSeller: false,
+  });
+
+  const onChangeAccount = (e: React.ChangeEvent<any>) => {
     const { name, value, type, checked } = e.target;
     const processedValue =
       type === "checkbox"
@@ -81,7 +95,7 @@ const Product = ({ fetchProduct }: ProductProps) => {
   const validateISBN = (value: string) => {
     let error = "";
     if (value.length >= 1 && value.length < 13) {
-      error = "13글자를 입력해주세요";
+      error = "13자 입력해주세요";
       setValidationError((prevState) => ({ ...prevState, isbn: error }));
     } else {
       setValidationError((prevState) => ({ ...prevState, isbn: "" }));
@@ -126,7 +140,10 @@ const Product = ({ fetchProduct }: ProductProps) => {
       }
 
       toast.success("상품 추가가 완료되었습니다.");
-      setPopup(!popup);
+      setPopup((prevPopupState) => ({
+        ...prevPopupState,
+        isOpen: !prevPopupState.isOpen,
+      }));
       fetchProduct();
     } catch (error) {
       toast.error("Error 다시 시도해주세요.");
@@ -140,7 +157,12 @@ const Product = ({ fetchProduct }: ProductProps) => {
         <button
           className="text-[18px] font-semibold absolute top-2 right-2 w-[30px] h-[30px] bg-black text-white rounded-full"
           onClick={() => {
-            setPopup(!popup);
+            setPopup((prevPopupState) => ({
+              ...prevPopupState,
+              isOpen: !prevPopupState.isOpen,
+              update: false,
+              item: getDefaultBookData(),
+            }));
           }}
         >
           x
@@ -152,44 +174,69 @@ const Product = ({ fetchProduct }: ProductProps) => {
             name="categoryId"
             onChange={onChangeAccount}
             className="w-[80%] bg-neutral-100 px-3 py-2 rounded-full"
-            placeholder="카테고리 번호를 입력해주세요."
+            placeholder={
+              popup.update
+                ? String(popup.item.categoryId)
+                : `카테고리 번호를 입력해주세요.`
+            }
           />
         </div>
         <div className="flex items-center mb-2">
           <span className="w-[20%] inline-block">제목</span>
-          <input
-            name="title"
-            onChange={(e) => {
-              onChangeAccount(e);
-              validateTitle(e.target.value);
-            }}
-            className="w-[80%] bg-neutral-100 px-3 py-2 rounded-full"
-            placeholder="도서 제목을 입력해주세요."
-          />
+          <div className="w-[80%] relative">
+            <input
+              name="title"
+              onChange={(e) => {
+                onChangeAccount(e);
+                validateTitle(e.target.value);
+              }}
+              className="w-full bg-neutral-100 px-3 py-2 rounded-full"
+              placeholder={
+                popup.update ? popup.item.title : `도서 제목을 입력해주세요.`
+              }
+            />
+            <div className="absolute right-4 top-[9px] text-xs text-neutral-500">
+              {validationError.title}
+            </div>
+          </div>
         </div>
         <div className="flex items-center mb-2">
           <span className="w-[20%] inline-block">작가</span>
-          <input
-            name="author"
-            className="w-[80%] bg-neutral-100 px-3 py-2 rounded-full"
-            placeholder="작가를 입력해주세요."
-            onChange={(e) => {
-              onChangeAccount(e);
-              validateAuthor(e.target.value);
-            }}
-          />
+          <div className="w-[80%] relative">
+            <input
+              name="author"
+              className="w-full bg-neutral-100 px-3 py-2 rounded-full"
+              placeholder={
+                popup.update ? popup.item.author : `작가를 입력해주세요.`
+              }
+              onChange={(e) => {
+                onChangeAccount(e);
+                validateAuthor(e.target.value);
+              }}
+            />
+            <div className="absolute right-4 top-[9px] text-xs text-neutral-500">
+              {validationError.author}
+            </div>
+          </div>
         </div>
         <div className="flex items-center mb-2">
           <span className="w-[20%] inline-block">출판사</span>
-          <input
-            name="publisher"
-            className="w-[80%] bg-neutral-100 px-3 py-2 rounded-full"
-            placeholder="출판사를 입력해주세요."
-            onChange={(e) => {
-              onChangeAccount(e);
-              validatePublisher(e.target.value);
-            }}
-          />
+          <div className="w-[80%] relative">
+            <input
+              name="publisher"
+              className="w-full bg-neutral-100 px-3 py-2 rounded-full"
+              placeholder={
+                popup.update ? popup.item.publisher : `출판사를 입력해주세요.`
+              }
+              onChange={(e) => {
+                onChangeAccount(e);
+                validatePublisher(e.target.value);
+              }}
+            />
+            <div className="absolute right-4 top-[9px] text-xs text-neutral-500">
+              {validationError.publisher}
+            </div>
+          </div>
         </div>
         <div className="flex items-center mb-2">
           <span className="w-[20%] inline-block">출판날짜</span>
@@ -203,28 +250,44 @@ const Product = ({ fetchProduct }: ProductProps) => {
         </div>
         <div className="flex items-center mb-2">
           <span className="w-[20%] inline-block">isbn</span>
-          <input
-            name="isbn"
-            className="w-[80%] bg-neutral-100 px-3 py-2 rounded-full"
-            placeholder="ISBN을 입력해주세요."
-            onChange={(e) => {
-              onChangeAccount(e);
-              validateISBN(e.target.value);
-            }}
-            maxLength={13}
-          />
+          <div className="w-[80%] relative">
+            <input
+              name="isbn"
+              className="w-full bg-neutral-100 px-3 py-2 rounded-full"
+              placeholder={
+                popup.update ? popup.item.isbn : `ISBN을 입력해주세요.`
+              }
+              onChange={(e) => {
+                onChangeAccount(e);
+                validateISBN(e.target.value);
+              }}
+              maxLength={13}
+            />
+            <div className="absolute right-4 top-[9px] text-xs text-neutral-500">
+              {validationError.isbn}
+            </div>
+          </div>
         </div>
         <div className="flex items-center mb-2">
           <span className="w-[20%] inline-block">설명</span>
-          <textarea
-            name="description"
-            className="w-[80%] bg-neutral-100 px-3 py-2 rounded h-[120px]"
-            placeholder="도서 설명을 입력해주세요."
-            onChange={(e) => {
-              onChangeAccount(e);
-              validateDescription(e.target.value);
-            }}
-          />
+          <div className="w-[80%] relative">
+            <textarea
+              name="description"
+              className="w-full bg-neutral-100 px-3 py-2 rounded h-[120px]"
+              placeholder={
+                popup.update
+                  ? popup.item.description
+                  : `도서 설명을 입력해주세요.`
+              }
+              onChange={(e) => {
+                onChangeAccount(e);
+                validateDescription(e.target.value);
+              }}
+            />
+            <div className="absolute right-4 top-[9px] text-xs text-neutral-500">
+              {validationError.description}
+            </div>
+          </div>
         </div>
         <div className="flex items-center mb-2">
           <span className="w-[20%] inline-block">가격</span>
@@ -232,7 +295,7 @@ const Product = ({ fetchProduct }: ProductProps) => {
             name="price"
             type="number"
             className="w-[80%] bg-neutral-100 px-3 py-2 rounded-full"
-            placeholder="0"
+            placeholder={popup.update ? String(popup.item.price) : "0"}
             onChange={onChangeAccount}
           />
         </div>
@@ -247,13 +310,6 @@ const Product = ({ fetchProduct }: ProductProps) => {
           />
           <label htmlFor="isBestSeller"> BEST</label>
         </div>
-        <div>
-          {validationError.author}
-          {validationError.description}
-          {validationError.isbn}
-          {validationError.publisher}
-          {validationError.title}
-        </div>
         <div className="mt-4">
           <button
             disabled={!submitCheck()}
@@ -264,7 +320,7 @@ const Product = ({ fetchProduct }: ProductProps) => {
                 : "bg-neutral-500 text-[#e8e8e8]"
             }`}
           >
-            상품 등록하기
+            {popup.update ? "상품 수정" : "상품 등록"}
           </button>
         </div>
       </div>

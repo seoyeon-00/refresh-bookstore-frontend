@@ -179,12 +179,15 @@ const AdminPage = () => {
   };
 
   const createProductModal = () => {
-    setPopup(true);
+    setPopup((prevPopupState) => ({
+      ...prevPopupState,
+      isOpen: !prevPopupState.isOpen,
+    }));
   };
 
   return (
     <section className="border-l border-light_gray min-h-[70vh] p-[2.5rem] flex-1">
-      {popup ? <Product fetchProduct={fetchProduct} /> : null}
+      {popup.isOpen ? <Product fetchProduct={fetchProduct} /> : null}
       <div className="font-semibold text-lg mb-3">관리자</div>
       <ul className="flex gap-2">
         {tabList.map((item, index) => (

@@ -1,7 +1,9 @@
 import { deleteProduct } from "@/api/product";
+import { productStore } from "@/stores";
 import { bookDataType } from "@/types/bookDataType";
 import { FormEvent } from "react";
 import { toast } from "react-hot-toast";
+import { useRecoilState } from "recoil";
 
 type ProductItemProps = {
   item: bookDataType;
@@ -9,6 +11,16 @@ type ProductItemProps = {
 };
 
 const ProductItem: React.FC<ProductItemProps> = ({ item, fetchProduct }) => {
+  const [popup, setPopup] = useRecoilState(productStore.productPopupState);
+
+  const updateProductModal = () => {
+    setPopup((prevPopupState) => ({
+      isOpen: !prevPopupState.isOpen,
+      update: true,
+      item: item,
+    }));
+  };
+
   const deleteProductHandler = async (event: FormEvent) => {
     event.preventDefault;
 
@@ -54,7 +66,10 @@ const ProductItem: React.FC<ProductItemProps> = ({ item, fetchProduct }) => {
         </div>
       </div>
       <div className="w-[15%] flex flex-col text-[12px] items-center justify-center gap-1">
-        <button className="border-[1px] border-point px-3 py-1 rounded text-point">
+        <button
+          onClick={updateProductModal}
+          className="border-[1px] border-point px-3 py-1 rounded text-point"
+        >
           상품 수정
         </button>
         <button
