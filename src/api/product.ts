@@ -101,9 +101,21 @@ export const createProduct = async (data: bookDataType) => {
 };
 
 export const updateProduct = async (data: bookDataType) => {
+  const updateData = {
+    categoryId: data.categoryId,
+    title: data.title,
+    author: data.author,
+    publisher: data.publisher,
+    publicationDate: data.publicationDate,
+    isbn: data.isbn,
+    description: data.description,
+    price: data.price,
+    imagePath: data.imagePath,
+    isBestSeller: data.isBestSeller,
+  };
   const response = await apiClient().put(
-    `/api/products/isbn/${data.isbn}`,
-    data
+    `/api/products/isbn/${data.originalISBN}`,
+    updateData
   );
   return response;
 };

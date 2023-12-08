@@ -1,7 +1,9 @@
-import { createProduct } from "@/api/product";
+import { getCategory } from "@/api/category";
+import { createProduct, updateProduct } from "@/api/product";
 import { productStore } from "@/stores";
 import { bookDataType } from "@/types/bookDataType";
-import { FormEvent, useState } from "react";
+import { categoryDataType } from "@/types/categoryDataType";
+import { FormEvent, useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { useRecoilState } from "recoil";
 
@@ -11,17 +13,19 @@ type ProductProps = {
 
 const Product = ({ fetchProduct }: ProductProps) => {
   const [popup, setPopup] = useRecoilState(productStore.productPopupState);
+  const [categories, setCategories] = useState([]);
   const [account, setAccount] = useState({
-    categoryId: popup.update ? popup.item.categoryId : 0,
+    categoryId: popup.update ? popup.item.categoryId : "",
     title: popup.update ? popup.item.title : "",
     author: popup.update ? popup.item.author : "",
     publisher: popup.update ? popup.item.publisher : "",
     publicationDate: popup.update ? popup.item.publicationDate : "",
     isbn: popup.update ? popup.item.isbn : "",
     description: popup.update ? popup.item.description : "",
-    price: popup.update ? Number(popup.item.description) : 0,
+    price: popup.update ? popup.item.price : 0,
     imagePath: "",
     isBestSeller: popup.update ? popup.item.isBestSeller : false,
+    ...(popup.update ? { originalISBN: popup.item.isbn } : {}),
   });
 
   const [validationError, setValidationError] = useState({
@@ -33,6 +37,8 @@ const Product = ({ fetchProduct }: ProductProps) => {
     publicationDate: "",
     description: "",
   });
+
+  console.log(account);
 
   const getDefaultBookData = (): bookDataType => ({
     categoryId: 1,
@@ -46,6 +52,21 @@ const Product = ({ fetchProduct }: ProductProps) => {
     imagePath: "",
     isBestSeller: false,
   });
+
+  useEffect(() => {
+    getCategory({ page: 1, size: 100 })
+      .then((result) => {
+        const categoryStateData = result.map((item: categoryDataType) => ({
+          name: item.name,
+          id: item.id,
+        }));
+
+        setCategories(categoryStateData);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, []);
 
   const onChangeAccount = (e: React.ChangeEvent<any>) => {
     const { name, value, type, checked } = e.target;
@@ -143,6 +164,29 @@ const Product = ({ fetchProduct }: ProductProps) => {
       setPopup((prevPopupState) => ({
         ...prevPopupState,
         isOpen: !prevPopupState.isOpen,
+        item: getDefaultBookData(),
+      }));
+      fetchProduct();
+    } catch (error) {
+      toast.error("Error 다시 시도해주세요.");
+      console.error("Error fetching categories:", error);
+    }
+  };
+
+  const updateProductHandler = async (event: FormEvent) => {
+    event.preventDefault();
+    try {
+      const result = await updateProduct(account);
+
+      if (result.status === 400) {
+        throw new Error("create request failed");
+      }
+
+      toast.success("상품 수정이 완료되었습니다.");
+      setPopup((prevPopupState) => ({
+        ...prevPopupState,
+        isOpen: !prevPopupState.isOpen,
+        item: getDefaultBookData(),
       }));
       fetchProduct();
     } catch (error) {
@@ -169,17 +213,27 @@ const Product = ({ fetchProduct }: ProductProps) => {
         </button>
         <div className="flex items-center mb-2">
           <span className="w-[20%] inline-block">카테고리</span>
-          <input
-            type="number"
+          <select
+            className="w-[80%] bg-neutral-100 px-3 py-2 rounded-full appearance-none"
             name="categoryId"
             onChange={onChangeAccount}
-            className="w-[80%] bg-neutral-100 px-3 py-2 rounded-full"
-            placeholder={
-              popup.update
-                ? String(popup.item.categoryId)
-                : `카테고리 번호를 입력해주세요.`
-            }
-          />
+            defaultValue=""
+          >
+            <option value="" selected>
+              카테고리 선택
+            </option>
+            {categories.map((item: any, index) => (
+              <option
+                value={item.id}
+                key={`item-${index}`}
+                selected={
+                  popup.update ? item.id === popup.item.categoryId : false
+                }
+              >
+                {item.name}
+              </option>
+            ))}
+          </select>
         </div>
         <div className="flex items-center mb-2">
           <span className="w-[20%] inline-block">제목</span>
@@ -313,7 +367,7 @@ const Product = ({ fetchProduct }: ProductProps) => {
         <div className="mt-4">
           <button
             disabled={!submitCheck()}
-            onClick={createProductHandler}
+            onClick={popup.update ? updateProductHandler : createProductHandler}
             className={`w-full py-2 font-medium ${
               submitCheck()
                 ? "bg-point text-white  hover:-translate-y-1 transition-transform"
