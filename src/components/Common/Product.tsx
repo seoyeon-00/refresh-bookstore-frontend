@@ -1,4 +1,4 @@
-import { createProduct } from "@/api/product";
+import { createProduct, updateProduct } from "@/api/product";
 import { productStore } from "@/stores";
 import { bookDataType } from "@/types/bookDataType";
 import { FormEvent, useState } from "react";
@@ -19,9 +19,10 @@ const Product = ({ fetchProduct }: ProductProps) => {
     publicationDate: popup.update ? popup.item.publicationDate : "",
     isbn: popup.update ? popup.item.isbn : "",
     description: popup.update ? popup.item.description : "",
-    price: popup.update ? Number(popup.item.description) : 0,
+    price: popup.update ? popup.item.price : 0,
     imagePath: "",
     isBestSeller: popup.update ? popup.item.isBestSeller : false,
+    ...(popup.update ? { originalISBN: popup.item.isbn } : {}),
   });
 
   const [validationError, setValidationError] = useState({
@@ -143,6 +144,29 @@ const Product = ({ fetchProduct }: ProductProps) => {
       setPopup((prevPopupState) => ({
         ...prevPopupState,
         isOpen: !prevPopupState.isOpen,
+        item: getDefaultBookData(),
+      }));
+      fetchProduct();
+    } catch (error) {
+      toast.error("Error 다시 시도해주세요.");
+      console.error("Error fetching categories:", error);
+    }
+  };
+
+  const updateProductHandler = async (event: FormEvent) => {
+    event.preventDefault();
+    try {
+      const result = await updateProduct(account);
+
+      if (result.status === 400) {
+        throw new Error("create request failed");
+      }
+
+      toast.success("상품 수정이 완료되었습니다.");
+      setPopup((prevPopupState) => ({
+        ...prevPopupState,
+        isOpen: !prevPopupState.isOpen,
+        item: getDefaultBookData(),
       }));
       fetchProduct();
     } catch (error) {
@@ -313,7 +337,7 @@ const Product = ({ fetchProduct }: ProductProps) => {
         <div className="mt-4">
           <button
             disabled={!submitCheck()}
-            onClick={createProductHandler}
+            onClick={popup.update ? updateProductHandler : createProductHandler}
             className={`w-full py-2 font-medium ${
               submitCheck()
                 ? "bg-point text-white  hover:-translate-y-1 transition-transform"
