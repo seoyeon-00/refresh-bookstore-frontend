@@ -1,11 +1,14 @@
 "use client";
 
+import { AuthContext } from "@/contexts/AuthContext";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useContext } from "react";
 import { toast } from "react-hot-toast";
 
 const MyPageLayout = ({ children }: { children: React.ReactNode }) => {
   const path = usePathname().split("/").slice(-1)[0];
+  const userData = useContext(AuthContext);
 
   const logOutHandler = () => {
     localStorage.removeItem("token");
@@ -43,13 +46,15 @@ const MyPageLayout = ({ children }: { children: React.ReactNode }) => {
           >
             로그아웃
           </Link>
-          <Link
-            className={` text-center py-1 m-2 text-[17px] font-medium 
-            ${path === "admin-page" ? "font-semibold text-point" : ""}`}
-            href={"/mypage/admin-page"}
-          >
-            관리자
-          </Link>
+          {userData?.user?.isAdmin ? (
+            <Link
+              className={` text-center py-1 m-2 text-[17px] font-medium 
+          ${path === "admin-page" ? "font-semibold text-point" : ""}`}
+              href={"/mypage/admin-page"}
+            >
+              관리자
+            </Link>
+          ) : null}
         </section>
         {children}
       </div>
