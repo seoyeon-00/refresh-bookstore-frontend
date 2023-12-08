@@ -56,6 +56,15 @@ const AdminPage = () => {
 
   const router = useRouter();
 
+  const fetchUser = async () => {
+    try {
+      const fetchData = await getAllUser();
+      setUserData(fetchData.data.data);
+    } catch (error) {
+      console.error("Error fetching Users:", error);
+    }
+  };
+
   const fetchProduct = async () => {
     try {
       const fetchData = await getProduct({ page: currentPage, size: 30 });
@@ -89,8 +98,7 @@ const AdminPage = () => {
       try {
         setIsLoading(true);
         if (tabIndex === 0) {
-          const fetchData = await getAllUser();
-          setUserData(fetchData.data.data);
+          await fetchUser();
         } else if (tabIndex === 1) {
           await fetchProduct();
         } else if (tabIndex === 2) {
@@ -195,7 +203,7 @@ const AdminPage = () => {
             key={`item-${index}`}
             onClick={() => tabHandler(index)}
             className={`
-              px-4 py-1 rounded-full text-[13px]
+              px-4 py-1 rounded-full text-[13px] hover:-translate-y-1 transition-transform
               ${
                 index === tabIndex
                   ? "bg-point text-white font-bold"
@@ -226,7 +234,11 @@ const AdminPage = () => {
                   {userData &&
                     userData.map((item, index) => (
                       <div key={`item-${index}`}>
-                        <UserItem index={index} item={item} />
+                        <UserItem
+                          fetchUser={fetchUser}
+                          index={index}
+                          item={item}
+                        />
                       </div>
                     ))}
                 </div>
