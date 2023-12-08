@@ -1,7 +1,9 @@
+import { getCategory } from "@/api/category";
 import { createProduct, updateProduct } from "@/api/product";
 import { productStore } from "@/stores";
 import { bookDataType } from "@/types/bookDataType";
-import { FormEvent, useState } from "react";
+import { categoryDataType } from "@/types/categoryDataType";
+import { FormEvent, useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { useRecoilState } from "recoil";
 
@@ -11,8 +13,9 @@ type ProductProps = {
 
 const Product = ({ fetchProduct }: ProductProps) => {
   const [popup, setPopup] = useRecoilState(productStore.productPopupState);
+  const [categories, setCategories] = useState([]);
   const [account, setAccount] = useState({
-    categoryId: popup.update ? popup.item.categoryId : 0,
+    categoryId: popup.update ? popup.item.categoryId : "",
     title: popup.update ? popup.item.title : "",
     author: popup.update ? popup.item.author : "",
     publisher: popup.update ? popup.item.publisher : "",
@@ -35,6 +38,8 @@ const Product = ({ fetchProduct }: ProductProps) => {
     description: "",
   });
 
+  console.log(account);
+
   const getDefaultBookData = (): bookDataType => ({
     categoryId: 1,
     title: "",
@@ -47,6 +52,21 @@ const Product = ({ fetchProduct }: ProductProps) => {
     imagePath: "",
     isBestSeller: false,
   });
+
+  useEffect(() => {
+    getCategory({ page: 1, size: 100 })
+      .then((result) => {
+        const categoryStateData = result.map((item: categoryDataType) => ({
+          name: item.name,
+          id: item.id,
+        }));
+
+        setCategories(categoryStateData);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, []);
 
   const onChangeAccount = (e: React.ChangeEvent<any>) => {
     const { name, value, type, checked } = e.target;
@@ -193,17 +213,27 @@ const Product = ({ fetchProduct }: ProductProps) => {
         </button>
         <div className="flex items-center mb-2">
           <span className="w-[20%] inline-block">카테고리</span>
-          <input
-            type="number"
+          <select
+            className="w-[80%] bg-neutral-100 px-3 py-2 rounded-full appearance-none"
             name="categoryId"
             onChange={onChangeAccount}
-            className="w-[80%] bg-neutral-100 px-3 py-2 rounded-full"
-            placeholder={
-              popup.update
-                ? String(popup.item.categoryId)
-                : `카테고리 번호를 입력해주세요.`
-            }
-          />
+            defaultValue=""
+          >
+            <option value="" selected>
+              카테고리 선택
+            </option>
+            {categories.map((item: any, index) => (
+              <option
+                value={item.id}
+                key={`item-${index}`}
+                selected={
+                  popup.update ? item.id === popup.item.categoryId : false
+                }
+              >
+                {item.name}
+              </option>
+            ))}
+          </select>
         </div>
         <div className="flex items-center mb-2">
           <span className="w-[20%] inline-block">제목</span>

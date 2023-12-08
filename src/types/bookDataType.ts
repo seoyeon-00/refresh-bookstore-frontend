@@ -1,6 +1,6 @@
 export type bookDataType = {
   id?: number;
-  categoryId: number;
+  categoryId: string | number;
   title: string;
   author: string;
   publisher: string;
@@ -10,5 +10,5 @@ export type bookDataType = {
   price: number;
   imagePath: string;
   isBestSeller: boolean;
-  originalISBN?: string;
+  originalISBN?: string | undefined;
 };
