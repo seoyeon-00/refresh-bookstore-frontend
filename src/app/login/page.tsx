@@ -3,18 +3,21 @@
 import RefreshAnimation from "@/components/Home/RefreshAnimation";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { FormEvent } from "react";
+import React, { FormEvent, useState } from "react";
 import { loginUser } from "@/api/auth";
 import AlertIcon from "@/components/Common/Icons/AlertIcon";
+import { ClipLoader } from "react-spinners";
+import IsLoading from "@/components/Common/IsLoading";
 
 const LoginPage = () => {
   const emailInput = React.useRef<HTMLInputElement>(null);
   const passwordInput = React.useRef<HTMLInputElement>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const router = useRouter();
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
-
+    setIsLoading(true);
     const data = {
       email: emailInput.current!.value,
       password: passwordInput.current!.value,
@@ -22,12 +25,14 @@ const LoginPage = () => {
 
     const status = await loginUser(data);
     if (status === 200) {
+      setIsLoading(false);
       router.push("/"); // 메인 화면으로 이동
     }
   };
 
   return (
     <div className="w-full h-[80vh] flex flex-col justify-start items-center">
+      {isLoading && <IsLoading />}
       <div className="w-[80%] h-[80px] mt-5 font-black text-3xl text-dark_green flex flex-col justify-center items-end ">
         로그인
       </div>
