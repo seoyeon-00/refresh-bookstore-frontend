@@ -35,7 +35,7 @@ export default function Home() {
         setProductDataArray(productDataArray);
         setCategoryLength(result.pagination.totalPages);
 
-        return getCategory({ page: 0, size: 10 });
+        return getCategory({ page: 0, size: 20 });
       })
       .then((result) => {
         const categoryDataArray = result;
