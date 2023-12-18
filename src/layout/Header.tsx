@@ -12,6 +12,8 @@ import { AuthContext } from "../contexts/AuthContext";
 import { getUser } from "@/api/auth";
 import { userDataType } from "@/types/userDataType";
 import { ClipLoader } from "react-spinners";
+import { useRecoilState } from "recoil";
+import { productStore } from "@/stores";
 
 type useStateProps = {
   isLogin: boolean | null;
@@ -20,7 +22,10 @@ type useStateProps = {
 
 const Header = () => {
   const currentURI = usePathname();
-  const [searchState, setSearchState] = useState(false);
+  const [searchState, setSearchState] = useRecoilState(
+    productStore.searchPopupState
+  );
+
   const [slogan, setSlogan] = useState("일상");
   const [isLoading, setIsLoading] = useState(true);
   const [userData, setUserData] = useState<useStateProps>({
@@ -96,7 +101,8 @@ const Header = () => {
     <div className="w-full overflow-hidden relative">
       {searchState ? (
         <>
-          <div
+          <Search />
+          {/* <div
             className=" w-full h-[130px] transition-all duration-500 "
             style={headerStyle}
           ></div>
@@ -140,7 +146,7 @@ const Header = () => {
                 <AccountIcon color="#16a263" width="50px" isLoggedIn={false} />
               </div>
             </div>
-          </div>
+          </div> */}
         </>
       ) : (
         <>

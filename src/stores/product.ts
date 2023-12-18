@@ -26,3 +26,8 @@ export const productPopupState = atom<StateProps>({
     },
   },
 });
+
+export const searchPopupState = atom<boolean>({
+  key: "searchPopupState",
+  default: false,
+});
