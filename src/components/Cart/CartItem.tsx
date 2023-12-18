@@ -1,3 +1,5 @@
+"use client";
+
 import { ChangeEvent, ForwardedRef, forwardRef, useEffect } from "react";
 import { useRecoilState } from "recoil";
 import { cartStore } from "../../stores";

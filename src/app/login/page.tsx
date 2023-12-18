@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import React, { FormEvent, useState } from "react";
 import { loginUser } from "@/api/auth";
 import AlertIcon from "@/components/Common/Icons/AlertIcon";
-import { ClipLoader } from "react-spinners";
 import IsLoading from "@/components/Common/IsLoading";
 
 const LoginPage = () => {
