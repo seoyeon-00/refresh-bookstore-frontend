@@ -130,7 +130,7 @@ const OrderCreate = () => {
 
   const data = {
     userName: name,
-    email: userData?.user?.email,
+    email: userData?.user?.email || null,
     deliveryFee: 0,
     shippingStatus: "PREPARING",
     userPhone: phone,
@@ -140,6 +140,7 @@ const OrderCreate = () => {
     orderRequest: deliveryRequest,
     totalPrice: 0,
     orderItems: orderItem(),
+    orderNumber: "",
   };
 
   const submitHandler = async (event: FormEvent) => {

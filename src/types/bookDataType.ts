@@ -1,5 +1,5 @@
 export type bookDataType = {
-  id?: number;
+  id?: string;
   categoryId: string | number;
   title: string;
   author: string;

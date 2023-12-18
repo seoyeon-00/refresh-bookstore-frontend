@@ -1,9 +1,6 @@
 "use client";
 
-import Book from "@/components/Common/Book";
 import React, { useEffect, useState } from "react";
-import books from "../../../../public/mock-data/products.json";
-import { truncateText } from "@/utils/truncateText";
 import Logo from "@/components/Common/Logo";
 import AlertIcon from "@/components/Common/Icons/AlertIcon";
 import PlusIcon from "@/components/Common/Icons/PlusIcon";
@@ -15,6 +12,7 @@ import { bookDataType } from "@/types/bookDataType";
 import { getProductByISBN } from "@/api/product";
 import { getCategory } from "@/api/category";
 import { ClipLoader } from "react-spinners";
+import { cartStateType } from "@/types/cartStateType";
 
 interface BookDetailProps {
   params: {
@@ -102,7 +100,6 @@ const BookDetail: React.FC<BookDetailProps> = ({ params }) => {
 
       if (userConfirmation) {
         router.push("/cart");
-      } else {
       }
     }
   };
