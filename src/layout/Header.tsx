@@ -34,8 +34,8 @@ const Header = () => {
   });
 
   let num = 1;
-
-  const isToken = localStorage.getItem("token");
+  const isToken =
+    typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
   useEffect(() => {
     const fetchData = async () => {

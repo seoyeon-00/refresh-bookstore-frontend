@@ -2,12 +2,17 @@ import { getCookie } from "cookies-next";
 import { API_BASE_URL } from "@/constants/path";
 import axios, { AxiosError, AxiosInstance } from "axios";
 import { getUser, getUserData, requestToken } from "./auth";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { AuthContext } from "@/contexts/AuthContext";
 
 export const apiClient = (): AxiosInstance => {
-  let accessToken = localStorage.getItem("token");
-  let refreshToken = getCookie("refresh-token");
+  // let accessToken = localStorage.getItem("token");
+  // let refreshToken = getCookie("refresh-token");
+
+  let accessToken =
+    typeof window !== "undefined" ? localStorage.getItem("token") : null;
+  let refreshToken =
+    typeof window !== "undefined" ? getCookie("refresh-token") : null;
 
   const api = axios.create({
     baseURL: API_BASE_URL,
