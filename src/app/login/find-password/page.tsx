@@ -10,6 +10,7 @@ const FindPasswordPage = () => {
   const [date, setDate] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
+  const isDataCheck = email !== "" && date !== "";
   const data = {
     email: email,
     birth: date,
@@ -63,7 +64,10 @@ const FindPasswordPage = () => {
         <div className="flex justify-end mt-5">
           <button
             onClick={FindPasswordHandler}
-            className="bg-point text-white px-5 py-2 rounded-full text-sm"
+            className={`text-white px-5 py-2 rounded-full text-sm ${
+              !isDataCheck ? "bg-neutral-600" : "bg-point"
+            }`}
+            disabled={!isDataCheck}
           >
             임시 비밀번호 발급
           </button>
