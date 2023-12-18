@@ -16,6 +16,11 @@ type updateRoleType = {
   role: string;
 };
 
+type findPasswordType = {
+  email: string;
+  birth: string;
+};
+
 export const updateUser = async (data: updateType) => {
   const response = await apiClient().put(`/api/user`, data);
   return response;
@@ -37,4 +42,23 @@ export const updateUserRole = async (data: updateRoleType) => {
 export const deleteUser = async (id: number) => {
   const response = await apiClient().delete(`/api/user/admin/${id}`);
   return response;
+};
+
+export const findPassword = async (data: findPasswordType) => {
+  try {
+    const response = await fetch(`/api/user/temporary`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (response.ok) {
+      const findPassword = await response.json();
+      return findPassword;
+    }
+  } catch (error: any) {
+    console.error(`Error: ${error.message}`);
+  }
 };
