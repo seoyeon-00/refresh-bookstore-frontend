@@ -19,7 +19,6 @@ export const getProduct = async ({ page, size }: getProductType) => {
     if (response.ok) {
       const productData = await response.json();
       return productData;
-    } else {
     }
   } catch (error) {
     console.error(error);
@@ -89,6 +88,24 @@ export const getProductByISBN = async ({ isbn }: { isbn: string }) => {
       const productByISBNData = await response.json();
       return productByISBNData;
     } else {
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const getSeatchProduct = async (keyword: string) => {
+  try {
+    const response = await fetch(`/api/products/search?keyword=${keyword}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (response.ok) {
+      const searchProduct = await response.json();
+      return searchProduct;
     }
   } catch (error) {
     console.error(error);
