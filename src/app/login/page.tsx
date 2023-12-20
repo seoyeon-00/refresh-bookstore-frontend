@@ -26,6 +26,8 @@ const LoginPage = () => {
     if (status === 200) {
       setIsLoading(false);
       router.push("/"); // 메인 화면으로 이동
+    } else {
+      setIsLoading(false);
     }
   };
 
