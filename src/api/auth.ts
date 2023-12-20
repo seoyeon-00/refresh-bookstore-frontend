@@ -30,7 +30,10 @@ export const loginUser = async (data: any) => {
       var tenMinutesLater = now.getTime() + tenMinutes;
       const item = { value: loginData.accessToken, expires: tenMinutesLater };
 
-      localStorage.setItem("token", JSON.stringify(item));
+      if (typeof window !== "undefined") {
+        localStorage.setItem("token", JSON.stringify(item));
+      }
+
       setCookie("refresh-token", loginData.refreshToken, {
         expires: expiryDate,
         secure: true,
