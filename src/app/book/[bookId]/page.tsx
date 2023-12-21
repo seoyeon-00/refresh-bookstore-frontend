@@ -121,7 +121,10 @@ const BookDetail: React.FC<BookDetailProps> = ({ params }) => {
           const data = await response.json();
 
           console.log(data);
-          router.push("/order-create");
+          const queryString = new URLSearchParams({
+            book: params.bookId,
+          }).toString();
+          router.push(`/order-create?${queryString}`);
         } else {
           throw new Error("error");
         }
