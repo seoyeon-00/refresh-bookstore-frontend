@@ -140,7 +140,7 @@ const BookDetail: React.FC<BookDetailProps> = ({ params }) => {
           <ClipLoader color="#1DC078" size={50} />
         </div>
       ) : detailData ? (
-        <div>
+        <div className="w-[100%]">
           <div className="w-full flex flex-row justify-between items-start">
             <div className="w-[45%] h-[400px] border border-light_gray flex justify-center items-center relative rounded-xl bg-[#f9f9f9]">
               <img
