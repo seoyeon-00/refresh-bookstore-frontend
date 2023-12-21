@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  ChangeEvent,
-  FormEvent,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { ChangeEvent, FormEvent, useContext, useEffect, useState } from "react";
 import { useRecoilValue, useRecoilState } from "recoil";
 import OrderCreateItem from "../../components/order-create/OrderCreateItem";
 import { cartState } from "../../stores/cart";
@@ -19,11 +12,16 @@ import { orderCreate } from "@/api/order";
 import { AuthContext } from "@/contexts/AuthContext";
 import ClipLoader from "react-spinners/ClipLoader";
 import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
+import { getProductByISBN } from "@/api/product";
+import { bookDataType } from "@/types/bookDataType";
 
 const OrderCreate = () => {
   const userData = useContext(AuthContext);
   const router = useRouter();
+  const params = useSearchParams();
 
+  const [directOrder, setDirectOrder] = useState<bookDataType[]>([]);
   const [mounted, setMounted] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [inputCheck, setInputCheck] = useState({
@@ -46,13 +44,31 @@ const OrderCreate = () => {
   const [deliveryRequest, seDeliveryRequest] = useState<string>("");
   const [writeRequest, setWriteRequest] = useState<string>("");
 
+  const bookParam = params.get("book");
+
   useEffect(() => {
     setMounted(true);
     setIsLoading(false);
+
+    if (bookParam) {
+      getProductByISBN({ isbn: bookParam })
+        .then((result) => {
+          const productDetailData = result;
+          setIsLoading(false);
+          setDirectOrder([productDetailData]);
+        })
+        .catch((error) => {
+          console.error(error);
+          setIsLoading(false);
+        });
+    }
   }, []);
 
   const cart = useRecoilValue(cartState);
-  const priceArr = cart.map((item) => item.amount * item.price);
+  const dataCheck = bookParam ? directOrder : cart;
+  const priceArr = dataCheck.map(
+    (item) => (bookParam ? 1 : (item.amount as number)) * item.price
+  );
   const priceSum = priceArr.reduce((a, b) => a + b, 0);
   const deliveryFee = priceSum > 50000 || priceSum === 0 ? 0 : 3000;
   const [inputVisible, setInputVisible] = useState(false);
@@ -60,10 +76,10 @@ const OrderCreate = () => {
   // 결제 상품에 필요한 데이터 추출
   const orderItem = () => {
     const arr: { isbn: string; amount: number }[] = [];
-    cart.map((item) => {
+    dataCheck.map((item) => {
       arr.push({
         isbn: item.isbn,
-        amount: item.amount,
+        amount: bookParam ? 1 : (item.amount as number),
       });
     });
 
@@ -143,6 +159,8 @@ const OrderCreate = () => {
     orderNumber: "",
   };
 
+  console.log(data);
+
   const submitHandler = async (event: FormEvent) => {
     event.preventDefault();
     const result = await orderCreate(data);
@@ -170,7 +188,7 @@ const OrderCreate = () => {
           </div>
           <div className="bg-[#f9f9f9] py-3 px-2 mt-3">
             {!isLoading ? (
-              cart.map((item) => (
+              dataCheck.map((item) => (
                 <OrderCreateItem
                   key={item.isbn}
                   isbn={item.isbn}
@@ -178,7 +196,7 @@ const OrderCreate = () => {
                   title={item.title}
                   author={item.author}
                   price={item.price}
-                  amount={item.amount}
+                  amount={bookParam ? 1 : (item.amount as number)}
                 />
               ))
             ) : (

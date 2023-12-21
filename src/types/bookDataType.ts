@@ -11,4 +11,5 @@ export type bookDataType = {
   imagePath: string;
   isBestSeller: boolean;
   originalISBN?: string | undefined;
+  amount?: number | undefined;
 };
