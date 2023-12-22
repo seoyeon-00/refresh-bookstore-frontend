@@ -37,7 +37,6 @@ const MyPage = () => {
   const [birth, setBirth] = useState<string>("");
 
   useEffect(() => {
-    console.log(userData?.user);
     setAddressZipcode(address.zonecode);
     setAddressAddress(address.address);
   }, [address]);

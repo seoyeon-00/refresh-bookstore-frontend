@@ -54,6 +54,13 @@ const Header = () => {
     };
 
     fetchData(); // 데이터 로딩
+
+    if (!isToken) {
+      setUserData({
+        isLogin: false,
+        user: null,
+      });
+    }
   }, [isToken]);
 
   useEffect(() => {
