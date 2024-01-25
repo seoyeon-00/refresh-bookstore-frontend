@@ -2,10 +2,8 @@ import { setCookie, deleteCookie } from "cookies-next";
 import { toast } from "react-hot-toast";
 import { apiClient } from "./apiClient";
 
-interface refreshTypes {
+interface RefreshTypes {
   refreshToken: string;
-  email: string | undefined;
-  password: string | undefined;
 }
 
 export const loginUser = async (data: any) => {
@@ -53,26 +51,20 @@ export const logoutUser = async () => {
   deleteCookie("refresh-token");
 };
 
-export const requestToken = async ({
-  refreshToken,
-  email,
-  password,
-}: refreshTypes) => {
+export const requestToken = async ({ refreshToken }: RefreshTypes) => {
   try {
     const response = await fetch("/api/user/refresh", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${refreshToken}`,
       },
       body: JSON.stringify({
         refreshToken: refreshToken,
-        email: email,
-        password: password,
       }),
     });
 
     const requestTokenData = await response.json();
-    console.log(requestTokenData);
 
     if (response.ok) {
       console.log("리프레시 토큰! 재발급");
