@@ -13,13 +13,18 @@ export const apiClient = (): AxiosInstance => {
     baseURL: API_BASE_URL,
   });
 
-  api.interceptors.request.use((config) => {
-    if (accessToken) {
-      const item = JSON.parse(accessToken);
-      config.headers.Authorization = `Bearer ${item.value}`;
+  api.interceptors.request.use(
+    (config) => {
+      if (accessToken) {
+        const item = JSON.parse(accessToken);
+        config.headers.Authorization = `Bearer ${item.value}`;
+      }
+      return config;
+    },
+    async (error) => {
+      return Promise.reject(error);
     }
-    return config;
-  });
+  );
 
   api.interceptors.response.use(
     async (res) => {
