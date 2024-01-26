@@ -15,6 +15,7 @@ import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 import { getProductByISBN } from "@/api/product";
 import { bookDataType } from "@/types/bookDataType";
+import useInputValidation from "@/hooks/useInputValidation";
 
 const OrderCreate = () => {
   const userData = useContext(AuthContext);
@@ -24,11 +25,6 @@ const OrderCreate = () => {
   const [directOrder, setDirectOrder] = useState<bookDataType[]>([]);
   const [mounted, setMounted] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [inputCheck, setInputCheck] = useState({
-    name: "",
-    phone: "",
-    address: "",
-  });
   const [address, setAddress] = useState({
     address: "",
     zonecode: "",
@@ -36,6 +32,8 @@ const OrderCreate = () => {
   const [popup, setPopup] = useRecoilState(
     postCodePopupStore.postCodePopupState
   );
+  const { inputCheck, validateName, validatePhoneNumber, validateAdress } =
+    useInputValidation();
   const [name, setName] = useState<string>("");
   const [phone, setPhone] = useState<string>("");
   const [addressZipcode, setAddressZipcode] = useState<string>("");
@@ -108,42 +106,6 @@ const OrderCreate = () => {
     setPopup(!popup);
   };
 
-  // validation
-  const validateName = (value: string) => {
-    let error = "";
-    if (value.length == 1) {
-      error = "2글자 이상 입력하세요.";
-      setInputCheck((prevState) => ({ ...prevState, name: error }));
-    } else {
-      setInputCheck((prevState) => ({ ...prevState, name: "" }));
-    }
-  };
-
-  const validatePhone = (value: string) => {
-    var phoneNumberPattern = /^\d{3}-\d{4}-\d{4}$/;
-    let error = "";
-    if (
-      !phoneNumberPattern.test(value) &&
-      value.length > 0 &&
-      value.length <= 12
-    ) {
-      error = "올바른 번호를 입력해주세요.";
-      setInputCheck((prevState) => ({ ...prevState, phone: error }));
-    } else {
-      setInputCheck((prevState) => ({ ...prevState, phone: "" }));
-    }
-  };
-
-  const validateAdress = (value: string) => {
-    let error = "";
-    if (value.length === 1) {
-      error = "올바른 번호를 입력해주세요.";
-      setInputCheck((prevState) => ({ ...prevState, address: error }));
-    } else {
-      setInputCheck((prevState) => ({ ...prevState, address: "" }));
-    }
-  };
-
   const data = {
     userName: name,
     email: userData?.user?.email || null,
@@ -158,8 +120,6 @@ const OrderCreate = () => {
     orderItems: orderItem(),
     orderNumber: "",
   };
-
-  console.log(data);
 
   const submitHandler = async (event: FormEvent) => {
     event.preventDefault();
@@ -239,14 +199,14 @@ const OrderCreate = () => {
                   onChange={(e) => {
                     const newPhoneNumber = e.target.value;
                     setPhone(autoHyphen(newPhoneNumber));
-                    validatePhone(newPhoneNumber);
+                    validatePhoneNumber(newPhoneNumber);
                   }}
                   maxLength={13}
                   placeholder="연락처를 입력해주세요."
                 />
                 <div className="absolute top-2 right-3 text-xs font-medium text-neutral-500">
-                  {inputCheck.phone !== "" ? (
-                    <div>{inputCheck.phone}</div>
+                  {inputCheck.phoneNumber !== "" ? (
+                    <div>{inputCheck.phoneNumber}</div>
                   ) : null}
                 </div>
               </div>
