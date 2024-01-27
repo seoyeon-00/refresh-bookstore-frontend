@@ -33,7 +33,7 @@ const LoginPage = () => {
 
   return (
     <div className="w-full h-[80vh] flex flex-col justify-start items-center">
-      {isLoading && <IsLoading />}
+      {isLoading && <IsLoading>Loading...</IsLoading>}
       <div className="w-[80%] h-[80px] mt-5 font-black text-3xl text-dark_green flex flex-col justify-center items-end ">
         로그인
       </div>
