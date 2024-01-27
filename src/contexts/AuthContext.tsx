@@ -29,8 +29,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     isLoading: true,
   });
 
+  const accessToken = localStorage.getItem("token");
+
   useEffect(() => {
-    const accessToken = localStorage.getItem("token");
     const refreshToken = getCookie("refresh-token") || "";
 
     const getUserState = async () => {
@@ -59,7 +60,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     };
 
     getUserState();
-  }, []);
+  }, [accessToken]);
 
   return (
     <AuthContext.Provider value={userData}>{children}</AuthContext.Provider>

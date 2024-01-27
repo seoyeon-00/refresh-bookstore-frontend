@@ -32,7 +32,7 @@ const FindPasswordPage = () => {
 
   return (
     <div className="pt-[50px]">
-      {isLoading && <IsLoading />}
+      {isLoading && <IsLoading>Loading...</IsLoading>}
       <p className="font-semibold text-2xl">비밀번호 찾기</p>
       <p className="text-xs text-neutral-500 mt-1">
         해당 이메일로 임시 비밀번호가 발송됩니다.
