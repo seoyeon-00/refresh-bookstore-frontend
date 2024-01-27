@@ -7,17 +7,13 @@ import { updateOrder } from "@/api/order";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { orderDataType } from "@/types/orderDataType";
+import useInputValidation from "@/hooks/useInputValidation";
 
 type orderDataProps = {
   orderData: orderDataType | null;
 };
 
 const OrderUpdateModal = ({ orderData }: orderDataProps) => {
-  const [inputCheck, setInputCheck] = useState({
-    name: "",
-    phone: "",
-    address: "",
-  });
   const [address, setAddress] = useState({
     address: "",
     zonecode: "",
@@ -60,41 +56,9 @@ const OrderUpdateModal = ({ orderData }: orderDataProps) => {
     } else setInputVisible(false);
   };
 
-  // validation
-  const validateName = (value: string) => {
-    let error = "";
-    if (value.length == 1) {
-      error = "2글자 이상 입력하세요.";
-      setInputCheck((prevState) => ({ ...prevState, name: error }));
-    } else {
-      setInputCheck((prevState) => ({ ...prevState, name: "" }));
-    }
-  };
-
-  const validatePhone = (value: string) => {
-    var phoneNumberPattern = /^\d{3}-\d{4}-\d{4}$/;
-    let error = "";
-    if (
-      !phoneNumberPattern.test(value) &&
-      value.length > 0 &&
-      value.length <= 12
-    ) {
-      error = "올바른 번호를 입력해주세요.";
-      setInputCheck((prevState) => ({ ...prevState, phone: error }));
-    } else {
-      setInputCheck((prevState) => ({ ...prevState, phone: "" }));
-    }
-  };
-
-  const validateAdress = (value: string) => {
-    let error = "";
-    if (value.length === 1) {
-      error = "올바른 번호를 입력해주세요.";
-      setInputCheck((prevState) => ({ ...prevState, address: error }));
-    } else {
-      setInputCheck((prevState) => ({ ...prevState, address: "" }));
-    }
-  };
+  // 이름, 전화번호, 주소 Validation
+  const { inputCheck, validateName, validatePhoneNumber, validateAdress } =
+    useInputValidation();
 
   const isCheckEmpty =
     Object.values(inputCheck).every((error) => error === "") &&
@@ -128,6 +92,7 @@ const OrderUpdateModal = ({ orderData }: orderDataProps) => {
 
     if (result.status === 200) {
       toast.success("주문정보 수정이 완료되었습니다.");
+      setOrderUpdatePopup(!orderUpdatePopup);
       router.push("/mypage/order-list");
     } else {
       toast.error("주문 생성 실패");
@@ -173,13 +138,15 @@ const OrderUpdateModal = ({ orderData }: orderDataProps) => {
                 onChange={(e) => {
                   const newPhoneNumber = e.target.value;
                   setPhone(autoHyphen(newPhoneNumber));
-                  validatePhone(newPhoneNumber);
+                  validatePhoneNumber(newPhoneNumber);
                 }}
                 maxLength={13}
                 placeholder={orderData?.userPhone}
               />
               <div className="absolute top-2 right-3 text-xs font-medium text-neutral-500">
-                {inputCheck.phone !== "" ? <div>{inputCheck.phone}</div> : null}
+                {inputCheck.phoneNumber !== "" ? (
+                  <div>{inputCheck.phoneNumber}</div>
+                ) : null}
               </div>
             </div>
           </div>
