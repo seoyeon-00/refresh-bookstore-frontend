@@ -1,5 +1,4 @@
 import React from "react";
-import { EnumType } from "typescript";
 
 interface CircularBlurType {
   width: string;
