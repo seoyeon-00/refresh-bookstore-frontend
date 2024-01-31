@@ -57,7 +57,7 @@ export const requestToken = async ({ refreshToken }: RefreshTypes) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${refreshToken}`,
+        //Authorization: `Bearer ${refreshToken}`,
       },
       body: JSON.stringify({
         refreshToken: refreshToken,
