@@ -28,14 +28,30 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     user: null,
     isLoading: true,
   });
-
-  const accessToken = localStorage.getItem("token");
+  const [token, setToken] = useState<{
+    access: string | null;
+    refresh: string | null;
+  }>({
+    access: null,
+    refresh: null,
+  });
 
   useEffect(() => {
-    const refreshToken = getCookie("refresh-token") || "";
+    if (typeof window !== "undefined") {
+      // 클라이언트 측에서만 동작하는 코드
+      const accessToken = localStorage.getItem("token");
+      const refreshToken = getCookie("refresh-token") || "";
 
+      setToken({
+        access: accessToken,
+        refresh: refreshToken,
+      });
+    }
+  }, []);
+
+  useEffect(() => {
     const getUserState = async () => {
-      if (accessToken) {
+      if (token.access && token.refresh) {
         console.log("재발급");
         const userInfo = await getUser();
         setUserData({
@@ -43,13 +59,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           user: userInfo.data.data,
           isLoading: false,
         });
-        // } else if (!accessToken && refreshToken) {
-        //   const userInfo = await getUser();
-        //   setUserData({
-        //     isLogin: true,
-        //     user: userInfo.data.data,
-        //     isLoading: false,
-        //   });
       } else {
         setUserData({
           isLogin: false,
@@ -60,7 +69,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     };
 
     getUserState();
-  }, [accessToken]);
+  }, [token.access]);
 
   return (
     <AuthContext.Provider value={userData}>{children}</AuthContext.Provider>
