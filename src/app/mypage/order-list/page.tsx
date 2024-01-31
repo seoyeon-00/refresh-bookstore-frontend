@@ -6,6 +6,7 @@ import { getOrderByUser } from "@/api/order";
 import { AuthContext } from "@/contexts/AuthContext";
 import ClipLoader from "react-spinners/ClipLoader";
 import { orderDataType } from "@/types/orderDataType";
+import NoneItem from "@/components/Common/NoneItem";
 
 const OrderList = () => {
   const [orderList, setOrderList] = useState<orderDataType[] | null>(null);
@@ -47,10 +48,14 @@ const OrderList = () => {
         ) : (
           <div>
             {orderList &&
-              orderList.map((item, index) => (
-                <div key={`order-${index}`}>
-                  <OrderListItem item={item} />
-                </div>
+              (orderList.length > 0 ? (
+                orderList.map((item, index) => (
+                  <div key={`order-${index}`}>
+                    <OrderListItem item={item} />
+                  </div>
+                ))
+              ) : (
+                <NoneItem width={100}>주문내역이 없습니다.</NoneItem>
               ))}
           </div>
         )}
