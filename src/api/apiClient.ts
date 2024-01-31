@@ -35,7 +35,7 @@ export const apiClient = (): AxiosInstance => {
       console.log("access 토큰 만료!");
 
       // api 요청 실패 시, refreshToken을 통해 accessToken 갱신
-      if (error.response.status === 404 || error) {
+      if (error) {
         try {
           const data = await getUserData();
           console.log(data);
