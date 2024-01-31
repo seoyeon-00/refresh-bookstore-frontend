@@ -15,6 +15,7 @@ import { getProductByISBN } from "@/api/product";
 import OrderUpdateModal from "@/components/order-detail/OrderUpdateModal";
 import { useRecoilState } from "recoil";
 import { postCodePopupStore } from "@/stores";
+import { dateFormat } from "@/utils/dateFormat";
 
 const OrderDetail = () => {
   const searchParams = useSearchParams();
@@ -22,7 +23,6 @@ const OrderDetail = () => {
   const mockData = books.slice(0, 2);
   const [orderData, setOrderData] = useState<orderDataType | null>(null);
   const [product, setProduct] = useState<bookDataType[] | []>([]);
-  const [updateModal, setUpdateModal] = useState<boolean>(false);
   const [orderUpdatePopup, setOrderUpdatePopup] = useRecoilState(
     postCodePopupStore.orderUpdatePopupState
   );
@@ -43,8 +43,6 @@ const OrderDetail = () => {
       getProductByISBN({ isbn: item.isbn })
         .then((result) => {
           const productDate = result;
-
-          console.log(productDate);
           setProduct((prevItem) => [...prevItem, productDate]);
         })
         .catch((error) => {
@@ -52,11 +50,6 @@ const OrderDetail = () => {
         });
     });
   }, [orderData]);
-
-  const orderDate = () => {
-    const findIndex = orderData?.createdAt.indexOf("T");
-    return orderData?.createdAt.substring(0, findIndex).replaceAll("-", ".");
-  };
 
   const orderUpdateHandler = () => {
     setOrderUpdatePopup(!orderUpdatePopup);
@@ -75,7 +68,9 @@ const OrderDetail = () => {
             </div>
             <div className="ml-2 font-medium">주문 날짜</div>
           </div>
-          <p className="text-[15px] font-normal">{orderDate()}</p>
+          <p className="text-[15px] font-normal">
+            {dateFormat(orderData?.createdAt as string)}
+          </p>
         </div>
         <div className="flex items-center mb-1">
           <div className="w-[20%] font-semibold text-[15px] flex flex-row items-center">

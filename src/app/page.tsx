@@ -12,7 +12,7 @@ import { bookDataType } from "@/types/bookDataType";
 import ClipLoader from "react-spinners/ClipLoader";
 import NextIcon from "@/components/Common/Icons/NextIcon";
 import PrevIcon from "@/components/Common/Icons/prevIcon";
-import NoneProduct from "@/components/Common/NoneProduct";
+import NoneItem from "@/components/Common/NoneItem";
 
 export default function Home() {
   const [productDataArray, setProductDataArray] = useState<bookDataType[]>([]);
@@ -186,7 +186,7 @@ export default function Home() {
                   return null;
                 })
               ) : (
-                <NoneProduct />
+                <NoneItem width={100}>상품이 없습니다.</NoneItem>
               ))}
           </div>
           <div className="flex w-[320px] justify-between mx-auto m-[30px]">

@@ -25,6 +25,7 @@ import Pagination from "@/components/Common/Pagination";
 import Product from "@/components/Common/Product";
 import { productStore } from "@/stores";
 import { useRecoilState } from "recoil";
+import NoneItem from "@/components/Common/NoneItem";
 
 type paginationType = {
   totalPages: number;
@@ -119,8 +120,6 @@ const AdminPage = () => {
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
   };
-
-  console.log(currentPage);
 
   const createCategoryHandler = async () => {
     const data = {
@@ -232,14 +231,20 @@ const AdminPage = () => {
                 </div>
                 <div>
                   {userData &&
-                    userData.map((item, index) => (
-                      <div key={`item-${index}`}>
-                        <UserItem
-                          fetchUser={fetchUser}
-                          index={index}
-                          item={item}
-                        />
-                      </div>
+                    (userData.length > 0 ? (
+                      userData.map((item, index) => (
+                        <div key={`item-${index}`}>
+                          <UserItem
+                            fetchUser={fetchUser}
+                            index={index}
+                            item={item}
+                          />
+                        </div>
+                      ))
+                    ) : (
+                      <NoneItem width={100}>
+                        유저 데이터가 존재하지 않습니다.
+                      </NoneItem>
                     ))}
                 </div>
               </div>
@@ -270,11 +275,21 @@ const AdminPage = () => {
                   </button>
                 </div>
                 <div>
-                  {productData?.map((item, index) => (
-                    <div key={`item-${index}`}>
-                      <ProductItem fetchProduct={fetchProduct} item={item} />
-                    </div>
-                  ))}
+                  {productData &&
+                    (productData.length > 0 ? (
+                      productData?.map((item, index) => (
+                        <div key={`item-${index}`}>
+                          <ProductItem
+                            fetchProduct={fetchProduct}
+                            item={item}
+                          />
+                        </div>
+                      ))
+                    ) : (
+                      <NoneItem width={100}>
+                        상품이 존재하지 않습니다. 상품을 추가해주세요.
+                      </NoneItem>
+                    ))}
                 </div>
                 <div className="flex justify-center mt-10">
                   {productPagination && (
@@ -327,18 +342,23 @@ const AdminPage = () => {
                   ) : null}
                 </div>
                 <div className="flex flex-wrap">
-                  {categoryData?.map((item, index) => (
-                    <div
-                      key={`item-${index}`}
-                      className="w-[50%] px-[3px] py-[1px]"
-                    >
-                      <CategoryItem
-                        item={item}
-                        deleteCategoryHandler={deleteCategoryHandler}
-                        updateCategoryHander={updateCategoryHander}
-                      />
-                    </div>
-                  ))}
+                  {categoryData &&
+                    (categoryData?.length > 0 ? (
+                      categoryData?.map((item, index) => (
+                        <div
+                          key={`item-${index}`}
+                          className="w-[50%] px-[3px] py-[1px]"
+                        >
+                          <CategoryItem
+                            item={item}
+                            deleteCategoryHandler={deleteCategoryHandler}
+                            updateCategoryHander={updateCategoryHander}
+                          />
+                        </div>
+                      ))
+                    ) : (
+                      <NoneItem width={100}>카테고리 목록이 없습니다.</NoneItem>
+                    ))}
                 </div>
               </div>
             )}
@@ -361,15 +381,20 @@ const AdminPage = () => {
                   <div className="w-[5%]">상세</div>
                 </div>
                 <div>
-                  {orderData?.map((item, index) => (
-                    <div key={`item-${index}`}>
-                      <OrderItem
-                        index={index}
-                        item={item}
-                        orderDelete={() => deleteOrderHandler(item)}
-                      />
-                    </div>
-                  ))}
+                  {orderData &&
+                    (orderData?.length > 0 ? (
+                      orderData?.map((item, index) => (
+                        <div key={`item-${index}`}>
+                          <OrderItem
+                            index={index}
+                            item={item}
+                            orderDelete={() => deleteOrderHandler(item)}
+                          />
+                        </div>
+                      ))
+                    ) : (
+                      <NoneItem width={100}>주문 내역이 없습니다.</NoneItem>
+                    ))}
                 </div>
               </div>
             )}
