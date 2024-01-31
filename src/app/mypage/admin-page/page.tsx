@@ -121,8 +121,6 @@ const AdminPage = () => {
     setCurrentPage(newPage);
   };
 
-  console.log(currentPage);
-
   const createCategoryHandler = async () => {
     const data = {
       name: categoryValue,
