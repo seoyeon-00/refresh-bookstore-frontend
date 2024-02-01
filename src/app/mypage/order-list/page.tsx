@@ -30,8 +30,6 @@ const OrderList = () => {
     }
   }, [userData]);
 
-  console.log(orderList);
-
   return (
     <section className="border-l border-light_gray min-h-[70vh] p-[2.5rem] flex-1">
       <div className="font-semibold text-lg mb-7">

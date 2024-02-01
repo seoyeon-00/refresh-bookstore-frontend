@@ -1,7 +1,7 @@
 import { getCookie } from "cookies-next";
 import { API_BASE_URL } from "@/constants/path";
 import axios, { AxiosError, AxiosInstance } from "axios";
-import { getUserData, requestToken } from "./auth";
+import { requestToken } from "./auth";
 
 export const apiClient = (): AxiosInstance => {
   let accessToken =
@@ -37,9 +37,6 @@ export const apiClient = (): AxiosInstance => {
       // api 요청 실패 시, refreshToken을 통해 accessToken 갱신
       if (error) {
         try {
-          const data = await getUserData();
-          console.log(data);
-
           const refreshData = {
             refreshToken: refreshToken as string,
           };
