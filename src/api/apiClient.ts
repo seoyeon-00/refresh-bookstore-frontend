@@ -31,7 +31,6 @@ export const apiClient = (): AxiosInstance => {
       return res;
     },
     async (error) => {
-      console.log(error);
       const originalRequest = error.config;
       console.log("access 토큰 만료!");
 
