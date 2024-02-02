@@ -57,7 +57,6 @@ export const requestToken = async ({ refreshToken }: RefreshTypes) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        //Authorization: `Bearer ${refreshToken}`,
       },
       body: JSON.stringify({
         refreshToken: refreshToken,
@@ -93,7 +92,7 @@ export const requestToken = async ({ refreshToken }: RefreshTypes) => {
 };
 
 export const getUser = async () => {
-  const response = await apiClient().get("api/user/info");
+  const response = await apiClient().get("/api/user/info");
   return response;
 };
 

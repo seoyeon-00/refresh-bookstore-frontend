@@ -11,6 +11,7 @@ export const apiClient = (): AxiosInstance => {
 
   const api = axios.create({
     baseURL: API_BASE_URL,
+    withCredentials: true,
   });
 
   api.interceptors.request.use(
@@ -22,6 +23,7 @@ export const apiClient = (): AxiosInstance => {
       return config;
     },
     async (error) => {
+      console.log(error);
       return Promise.reject(error);
     }
   );

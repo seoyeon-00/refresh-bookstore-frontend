@@ -129,19 +129,19 @@ const OrderItem = ({ item, index, orderDelete }: OrderItemProps) => {
       {isContent ? (
         <div className="mt-6">
           <div>
-            <h4 className="font-semibold mb-1">주문 정보</h4>
-            <div className="bg-white p-3">
-              <div className="flex mb-1">
+            <h4 className="font-semibold mb-3 text-base"> 주문 정보</h4>
+            <div className="bg-white p-4 rounded-sm">
+              <div className="flex mb-2">
                 <div className="w-[12%]">주문자 </div>
                 <div>{item.userName}</div>
               </div>
-              <div className="flex mb-1">
+              <div className="flex mb-2">
                 <div className="w-[12%]">배송지 </div>
                 <div>
                   ({item.postalCode}) {item.address} {item.detailAddress}
                 </div>
               </div>
-              <div className="flex mb-1">
+              <div className="flex mb-2">
                 <div className="w-[12%]">연락처 </div>
                 <div>{item.userPhone}</div>
               </div>
@@ -152,7 +152,7 @@ const OrderItem = ({ item, index, orderDelete }: OrderItemProps) => {
             </div>
           </div>
           <div className="mt-6">
-            <h4 className="font-semibold mb-1">주문 상품</h4>
+            <h4 className="font-semibold mb-3 text-base">주문 상품</h4>
             {product.map((item, index) => (
               <div key={`product-${index}`}>
                 <ProductDetailItem item={item.data} amount={item.amount} />
