@@ -22,6 +22,7 @@ export const apiClient = (): AxiosInstance => {
       return config;
     },
     async (error) => {
+      console.log(error);
       return Promise.reject(error);
     }
   );
