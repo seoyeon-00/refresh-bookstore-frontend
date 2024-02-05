@@ -7,7 +7,11 @@ import RecoilRootWrapper from "../providers/RecoilRootWrapper";
 import ToasterProvider from "@/providers/ToasterProvider";
 import { AuthProvider } from "@/contexts/AuthContext";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+  preload: true,
+});
 
 export const metadata = {
   title: "Refresh Books",
@@ -21,7 +25,7 @@ export default function RootLayout({
 }) {
   return (
     <html>
-      <body>
+      <body className={inter.className}>
         <ToasterProvider />
         <RecoilRootWrapper>
           <AuthProvider>

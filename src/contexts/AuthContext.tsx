@@ -4,6 +4,8 @@ import { getUser } from "@/api/auth";
 import { userDataType } from "@/types/userDataType";
 import React, { createContext, useEffect, useState } from "react";
 import { getCookie } from "cookies-next";
+import { useRecoilValue } from "recoil";
+import { loginState } from "@/stores/login";
 
 type AuthProviderProps = {
   children: React.ReactNode;
@@ -35,6 +37,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     access: null,
     refresh: null,
   });
+  const isLogin = useRecoilValue(loginState);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -47,7 +50,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         refresh: refreshToken,
       });
     }
-  }, []);
+  }, [isLogin.isLogin]);
 
   useEffect(() => {
     const getUserState = async () => {
