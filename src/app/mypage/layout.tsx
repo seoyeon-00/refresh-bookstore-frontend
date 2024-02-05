@@ -1,16 +1,22 @@
 "use client";
 
 import { AuthContext } from "@/contexts/AuthContext";
+import { loginStore } from "@/stores";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useContext } from "react";
 import { toast } from "react-hot-toast";
+import { useRecoilState } from "recoil";
 
 const MyPageLayout = ({ children }: { children: React.ReactNode }) => {
   const path = usePathname().split("/").slice(-1)[0];
   const userData = useContext(AuthContext);
+  const [login, setlogin] = useRecoilState(loginStore.loginState);
 
   const logOutHandler = () => {
+    setlogin({
+      isLogin: false,
+    });
     localStorage.removeItem("token");
     toast.success("로그아웃 완료!");
   };

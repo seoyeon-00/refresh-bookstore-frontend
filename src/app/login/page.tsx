@@ -7,10 +7,13 @@ import React, { FormEvent, useState } from "react";
 import { loginUser } from "@/api/auth";
 import AlertIcon from "@/components/Common/Icons/AlertIcon";
 import IsLoading from "@/components/Common/IsLoading";
+import { useRecoilState } from "recoil";
+import { loginStore } from "@/stores";
 
 const LoginPage = () => {
   const emailInput = React.useRef<HTMLInputElement>(null);
   const passwordInput = React.useRef<HTMLInputElement>(null);
+  const [login, setLogin] = useRecoilState(loginStore.loginState);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const router = useRouter();
 
@@ -26,6 +29,9 @@ const LoginPage = () => {
     if (status === 200) {
       setIsLoading(false);
       router.push("/"); // 메인 화면으로 이동
+      setLogin({
+        isLogin: true,
+      });
     } else {
       setIsLoading(false);
     }

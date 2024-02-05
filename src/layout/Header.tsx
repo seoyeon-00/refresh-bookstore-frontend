@@ -9,59 +9,18 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState, useContext } from "react";
 import { AuthContext } from "../contexts/AuthContext";
-import { getUser } from "@/api/auth";
-import { userDataType } from "@/types/userDataType";
-import { ClipLoader } from "react-spinners";
 import { useRecoilState } from "recoil";
 import { productStore } from "@/stores";
-
-type useStateProps = {
-  isLogin: boolean | null;
-  user: userDataType | null;
-};
 
 const Header = () => {
   const currentURI = usePathname();
   const [searchState, setSearchState] = useRecoilState(
     productStore.searchPopupState
   );
-
   const [slogan, setSlogan] = useState("일상");
-  const [isLoading, setIsLoading] = useState(true);
-  const [userData, setUserData] = useState<useStateProps>({
-    isLogin: null,
-    user: null,
-  });
+  const userData = useContext(AuthContext);
 
   let num = 1;
-  const isToken =
-    typeof window !== "undefined" ? localStorage.getItem("token") : null;
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setIsLoading(true);
-        const userInfo = await getUser();
-        setUserData({
-          isLogin: true,
-          user: userInfo.data.data,
-        });
-      } catch (error) {
-        setIsLoading(false);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchData(); // 데이터 로딩
-
-    if (!isToken) {
-      setUserData({
-        isLogin: false,
-        user: null,
-      });
-    }
-  }, [isToken]);
 
   useEffect(() => {
     const slogans = ["일상", "경력", "삶", "내일"];
@@ -153,27 +112,21 @@ const Header = () => {
                   <SearchIcon color="#16a263" width="50px" />
                 </div>
                 <CartIcon color="#16a263" width="50px" isFull={false} />
-                {isLoading ? (
-                  <div>
-                    <ClipLoader color="#1DC078" size={20} />
-                  </div>
-                ) : (
-                  <>
-                    {userData?.isLogin ? (
-                      <AccountIcon
-                        color="#16a263"
-                        width="50px"
-                        isLoggedIn={true}
-                      />
-                    ) : (
-                      <AccountIcon
-                        color="#16a263"
-                        width="50px"
-                        isLoggedIn={false}
-                      />
-                    )}
-                  </>
-                )}
+                <>
+                  {userData?.isLogin ? (
+                    <AccountIcon
+                      color="#16a263"
+                      width="50px"
+                      isLoggedIn={true}
+                    />
+                  ) : (
+                    <AccountIcon
+                      color="#16a263"
+                      width="50px"
+                      isLoggedIn={false}
+                    />
+                  )}
+                </>
               </div>
             </div>
           </div>
