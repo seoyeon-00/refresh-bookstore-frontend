@@ -13,6 +13,8 @@ import ClipLoader from "react-spinners/ClipLoader";
 import NextIcon from "@/components/Common/Icons/NextIcon";
 import PrevIcon from "@/components/Common/Icons/prevIcon";
 import NoneItem from "@/components/Common/NoneItem";
+import ErrorBoundary from "@/components/Common/ErrorBoundary";
+import FallbackComponent from "@/components/Common/FallbackComponent";
 
 export default function Home() {
   const [productDataArray, setProductDataArray] = useState<bookDataType[]>([]);
@@ -166,28 +168,30 @@ export default function Home() {
             )}
           </div>
           <div className="w-full h-auto flex flex-row flex-wrap justify-start gap-5 items-start">
-            {!isLoading &&
-              (productDataArray.length > 0 ? (
-                productDataArray.map((book, index) => {
-                  if (
-                    currentCategory === "전체" ||
-                    categories[Number(book.categoryId)] === currentCategory
-                  ) {
-                    return (
-                      <div key={`bookItem-${index}`}>
-                        <BookCatalogue
-                          key={index}
-                          book={book}
-                          category={categories[Number(book.categoryId)]}
-                        />
-                      </div>
-                    );
-                  }
-                  return null;
-                })
-              ) : (
-                <NoneItem width={100}>상품이 없습니다.</NoneItem>
-              ))}
+            <ErrorBoundary fallbackComponent={FallbackComponent}>
+              {!isLoading &&
+                (productDataArray.length > 0 ? (
+                  productDataArray.map((book, index) => {
+                    if (
+                      currentCategory === "전체" ||
+                      categories[Number(book.categoryId)] === currentCategory
+                    ) {
+                      return (
+                        <div key={`bookItem-${index}`}>
+                          <BookCatalogue
+                            key={index}
+                            book={book}
+                            category={categories[Number(book.categoryId)]}
+                          />
+                        </div>
+                      );
+                    }
+                    return null;
+                  })
+                ) : (
+                  <NoneItem width={100}>상품이 없습니다.</NoneItem>
+                ))}
+            </ErrorBoundary>
           </div>
           <div className="flex w-[320px] justify-between mx-auto m-[30px]">
             <button
