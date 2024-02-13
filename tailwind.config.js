@@ -1,3 +1,5 @@
+const { keyframes } = require("styled-components");
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
@@ -25,6 +27,21 @@ module.exports = {
         small: "14px",
         semi_micro: "12px",
         micro: "10px",
+      },
+      animation: {
+        up: "up 1s ease-in-out forwards",
+      },
+      keyframes: {
+        up: {
+          "0%": {
+            transform: "translateY(6px)",
+            opacity: 0,
+          },
+          "100%": {
+            transform: "translateY(0)",
+            opacity: 1,
+          },
+        },
       },
     },
   },
