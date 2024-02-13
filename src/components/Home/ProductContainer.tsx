@@ -77,6 +77,7 @@ const ProductContainer = () => {
     }
   }, [categories.allPage]);
 
+  // 에러가 감지되면 ErrorBoundary fallbackUI 보여준다.
   if (error) {
     throw error;
   }
@@ -100,7 +101,7 @@ const ProductContainer = () => {
                   categories.currentCategory
               ) {
                 return (
-                  <div key={`bookItem-${index}`}>
+                  <div key={`bookItem-${index}`} className="animate-up">
                     <BookCatalogue
                       key={index}
                       book={book}

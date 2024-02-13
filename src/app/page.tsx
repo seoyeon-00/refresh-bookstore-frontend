@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { getProduct, getProductByCategoryAll } from "@/api/product";
 import Categories from "@/components/Home/Categories";
 import { useRecoilState } from "recoil";

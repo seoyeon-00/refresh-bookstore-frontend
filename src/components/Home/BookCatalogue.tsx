@@ -10,7 +10,7 @@ interface BookCatalogueProps {
 
 const BookCatalogue: React.FC<BookCatalogueProps> = ({ book, category }) => {
   return (
-    <div className="w-[180px] h-[300px] flex flex-col justify-start items-center rounded-2xl relative m-1 mb-5 ">
+    <div className="w-[180px] h-[300px] flex flex-col justify-start items-center rounded-2xl relative m-1 mb-5">
       <Link
         className="w-full h-full flex flex-col justify-start items-center relative"
         href={`/book/${book.isbn}`}
