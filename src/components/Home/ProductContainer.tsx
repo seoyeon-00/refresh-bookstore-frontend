@@ -101,7 +101,7 @@ const ProductContainer = () => {
                   categories.currentCategory
               ) {
                 return (
-                  <div key={`bookItem-${index}`} className="animate-up ">
+                  <div key={`bookItem-${index}`} className="animate-up">
                     <BookCatalogue
                       key={index}
                       book={book}
