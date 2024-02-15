@@ -10,7 +10,6 @@ type CategoriesProps = {
 };
 
 const Categories = ({ selectCategoryHandler }: CategoriesProps) => {
-  //const [categories, setCategories] = useState(["전체"]);
   const [isLoading, setIsLoading] = useState(true);
   const [categories, setCategories] = useRecoilState(categoryState);
   const [error, setError] = useState(null);
@@ -43,7 +42,7 @@ const Categories = ({ selectCategoryHandler }: CategoriesProps) => {
   }, []);
 
   if (error) {
-    throw error;
+    return error;
   }
 
   return (

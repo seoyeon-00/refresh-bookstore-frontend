@@ -19,9 +19,12 @@ export const getProduct = async ({ page, size }: getProductType) => {
     if (response.ok) {
       const productData = await response.json();
       return productData;
+    } else {
+      // 서버 응답이 OK가 아닌 경우 에러 처리
+      throw Error("Failed to fetch products");
     }
   } catch (error) {
-    console.error(error);
+    throw error;
   }
 };
 
