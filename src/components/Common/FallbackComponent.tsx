@@ -13,6 +13,7 @@ const FallbackComponent = (props: ErrorFallbackProps) => {
       <h2 className="align-middle font-semibold text-base">
         잘못된 접근 방식입니다.
       </h2>
+      <div>{props.error.toString()}</div>
       <button
         className="bg-point text-[#fff] p-3 rounded-md mt-[20px] font-medium"
         onClick={() => props.reset()}
