@@ -19,9 +19,11 @@ export const getCategory = async ({ page, size }: getCategoryType) => {
       const categoryData = await response.json();
       return categoryData;
     } else {
+      // 서버 응답이 OK가 아닌 경우 에러 처리
+      throw Error("Failed to fetch categories");
     }
-  } catch (error) {
-    console.error("");
+  } catch (error: any) {
+    throw error;
   }
 };
 
