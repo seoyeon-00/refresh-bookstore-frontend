@@ -48,9 +48,7 @@ export default function Home() {
     <div>
       <div className="w-full flex flex-col justify-start items-center">
         <div className="w-full p-4 border-b border-light_green flex flex-row justify-start flex-wrap my-5 gap-[5px]">
-          <ErrorBoundary fallbackComponent={FallbackComponent}>
-            <Categories selectCategoryHandler={selectCategoryHandler} />
-          </ErrorBoundary>
+          <Categories selectCategoryHandler={selectCategoryHandler} />
         </div>
         <p className="w-full m-12 flex flex-col justify-center items-center font-md text-lg text-point">
           &apos;{categories.currentCategory}&apos; 카테고리의 책입니다.

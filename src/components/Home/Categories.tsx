@@ -12,7 +12,6 @@ type CategoriesProps = {
 const Categories = ({ selectCategoryHandler }: CategoriesProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [categories, setCategories] = useRecoilState(categoryState);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
     setIsLoading(true);
@@ -34,16 +33,12 @@ const Categories = ({ selectCategoryHandler }: CategoriesProps) => {
         }));
       })
       .catch((error) => {
-        setError(error);
+        throw Error(error);
       })
       .finally(() => {
         setIsLoading(false);
       });
   }, []);
-
-  if (error) {
-    return error;
-  }
 
   return (
     <>
