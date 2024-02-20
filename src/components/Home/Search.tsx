@@ -28,12 +28,12 @@ const Search = () => {
   return (
     <div className="z-[999999999] postmodal fixed bg-point overflow-hidden bg-opacity-40 flex justify-center backdrop-blur-md backdrop-filter items-center animate-graduallySizeUp">
       <p
-        className="fixed top-0 right-0 m-4 text-large cursor-pointer text-white"
+        className="fixed top-0 right-0 m-4 text-large cursor-pointer text-white opacity-0 animate-[up_1s_2s_ease-in-out_forwards]"
         onClick={() => setPopup(!popup)}
       >
         ╳
       </p>
-      <div className="w-[80%] h-[500px] overflow-y-scroll bg-white p-10 rounded-md opacity-0 animate-[up_1s_0.6s_ease-in-out_forwards]">
+      <div className="w-[80%] h-[500px] overflow-y-scroll bg-white p-10 rounded-md opacity-0 animate-[up_1s_2.3s_ease-in-out_forwards]">
         <div className="relative">
           <input
             value={keyword}

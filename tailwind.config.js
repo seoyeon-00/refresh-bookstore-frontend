@@ -28,7 +28,7 @@ module.exports = {
       },
       animation: {
         up: "up 1s ease-in-out forwards",
-        graduallySizeUp: "graduallySizeUp 1s ease-in-out forwards",
+        graduallySizeUp: "graduallySizeUp 2.5s ease-in-out forwards",
       },
       keyframes: {
         up: {
@@ -43,12 +43,22 @@ module.exports = {
         },
         graduallySizeUp: {
           "0%": {
-            width: "10px",
-            height: "10px",
+            width: "0px",
+            height: "0px",
             borderRadius: "100px",
             transformOrigin: "center center",
             left: "50%",
             top: "50%",
+          },
+          "40%": {
+            width: "500px",
+            height: "500px",
+            borderRadius: "500px",
+            transformOrigin: "center center",
+            left: "50%",
+            top: "50%",
+            marginLeft: "-250px",
+            marginTop: "-250px",
           },
           "100%": {
             width: "100vw",
