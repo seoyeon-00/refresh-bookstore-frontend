@@ -5,7 +5,7 @@ import { truncateText } from "@/utils/truncateText";
 
 interface BookCatalogueProps {
   book: bookDataType;
-  category: string;
+  category?: string;
 }
 
 const BookCatalogue: React.FC<BookCatalogueProps> = ({ book, category }) => {

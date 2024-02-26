@@ -10,6 +10,7 @@ import { useRecoilState } from "recoil";
 import { categoryState } from "@/stores/category";
 import BookCatalogue from "./BookCatalogue";
 import { ClipLoader } from "react-spinners";
+import ProductList from "./ProductList";
 
 const ProductContainer = () => {
   const [productDataArray, setProductDataArray] = useState<bookDataType[]>([]);
@@ -115,6 +116,9 @@ const ProductContainer = () => {
           ) : (
             <NoneItem width={100}>상품이 없습니다.</NoneItem>
           ))}
+      </div>
+      <div>
+        <ProductList />
       </div>
       <div className="flex w-[320px] justify-between mx-auto m-[30px]">
         <button
