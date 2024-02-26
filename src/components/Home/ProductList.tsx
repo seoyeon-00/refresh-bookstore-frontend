@@ -1,32 +1,19 @@
-import BookCatalogue from "./BookCatalogue";
 import { bookDataType } from "@/types/bookDataType";
-import { getProduct } from "@/api/product";
+import { getProduct2 } from "@/api/product";
 
-function ProductList({ data }: { data?: bookDataType[] }) {
-  return (
-    <div>
-      <div> {!data && <p>데이터 로딩 중...</p>}</div>
-      <div className="w-full h-auto flex flex-row flex-wrap justify-start gap-5 items-start">
-        {Array.isArray(data) &&
-          data.map((book, index) => {
-            return (
-              <div key={`bookItem-${index}`} className="animate-up">
-                <BookCatalogue key={index} book={book} />
-              </div>
-            );
-          })}
+export default async function ProductList() {
+  try {
+    const data = await getProduct2({ page: 0, size: 10 });
+    const product: bookDataType[] = data.products;
+    return (
+      <div>
+        <div> {!product && <p>데이터 로딩 중...</p>}</div>
+        <h1>Your Data:</h1>
+        {product &&
+          product?.map((item) => <div key={item.id}>{item.title}</div>)}
       </div>
-    </div>
-  );
+    );
+  } catch (error: any) {
+    return <div>Error fetching data: {error.message}</div>;
+  }
 }
-
-export async function getStaticProps() {
-  const data = await getProduct({ page: 0, size: 10 });
-  return {
-    props: {
-      data,
-    },
-  };
-}
-
-export default ProductList;
