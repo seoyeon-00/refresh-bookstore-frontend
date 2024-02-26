@@ -9,12 +9,23 @@ type getProductType = {
 
 export const getProduct2 = async ({ page, size }: getProductType) => {
   try {
-    const response = await fetch(`/api/products?page=${page}&size=${size}`, {
-      cache: "no-store",
-    });
+    const response = await fetch(
+      `https://port-0-refresh-bookstore-20zynm2mlk1daxmm.sel4.cloudtype.app/api/products?page=${page}&size=${size}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        cache: "no-store",
+      }
+    );
+
     if (response.ok) {
       const productData = await response.json();
       return productData;
+    } else {
+      // 서버 응답이 OK가 아닌 경우 에러 처리
+      throw Error("Failed to fetch products");
     }
   } catch (error) {
     throw error;
@@ -28,7 +39,6 @@ export const getProduct = async ({ page, size }: getProductType) => {
       headers: {
         "Content-Type": "application/json",
       },
-      cache: "no-store",
     });
 
     if (response.ok) {

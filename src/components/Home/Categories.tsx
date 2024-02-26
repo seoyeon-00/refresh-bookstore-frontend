@@ -13,6 +13,7 @@ const Categories = ({ selectCategoryHandler }: CategoriesProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [categories, setCategories] = useRecoilState(categoryState);
 
+  console.log(categories);
   useEffect(() => {
     setIsLoading(true);
 
