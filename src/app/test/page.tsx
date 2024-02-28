@@ -1,9 +1,7 @@
-import Categories from "@/components/Home/Categories";
-import ProductList from "@/components/Home/ProductList";
-import { bookDataType } from "@/types/bookDataType";
 import { getProduct2 } from "@/api/product";
 import { getCategory } from "@/api/category";
 import ProductContainer2 from "@/components/Home/ProductContainer2";
+import Categories2 from "@/components/Home/Categories2";
 
 const Test = async () => {
   const [category, data] = await Promise.all([
@@ -14,7 +12,7 @@ const Test = async () => {
   return (
     <div>
       <div className="w-full p-4 border-b border-light_green flex flex-row justify-start flex-wrap my-5 gap-[5px]">
-        <Categories />
+        <Categories2 />
       </div>
       <ProductContainer2 initialProduct={data} category={category} />
     </div>
