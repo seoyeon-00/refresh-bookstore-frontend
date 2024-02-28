@@ -31,6 +31,7 @@ const Pagination = ({
         disabled={currentPage === 0}
         onClick={() => onPageChange(currentPage - 1)}
         className="flex justify-center items-center rounded-full w-[32px] h-[32px] border-[1px] border-solid border-gray"
+        aria-label="Previous Page"
       >
         <PrevIcon width="7px" color="#777" />
       </button>
@@ -58,6 +59,7 @@ const Pagination = ({
         disabled={currentPage === totalPages}
         onClick={() => onPageChange(currentPage + 1)}
         className="flex justify-center items-center rounded-full w-[32px] h-[32px] border-[1px] border-solid border-gray"
+        aria-label="Next Page"
       >
         <NextIcon width="7px" color="#777" />
       </button>

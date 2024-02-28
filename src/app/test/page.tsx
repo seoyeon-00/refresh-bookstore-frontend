@@ -12,7 +12,7 @@ const Test = async () => {
   return (
     <div>
       <div className="w-full p-4 border-b border-light_green flex flex-row justify-start flex-wrap my-5 gap-[5px]">
-        <Categories2 />
+        <Categories2 category={category} />
       </div>
       <ProductContainer2 initialProduct={data} category={category} />
     </div>

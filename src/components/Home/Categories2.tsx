@@ -1,14 +1,22 @@
 "use client";
 
-import { getCategory } from "@/api/category";
 import { getProduct, getProductByCategoryAll } from "@/api/product";
 import { categoryState } from "@/stores/category";
 import { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 
-const Categories2 = () => {
-  const [isLoading, setIsLoading] = useState(true);
+type CategoriesProps = {
+  category: [{ id: number; name: string }];
+};
+
+const Categories2 = ({ category }: CategoriesProps) => {
   const [categories, setCategories] = useRecoilState(categoryState);
+
+  const arr = category.map((item) => item.name);
+
+  if (!arr.includes("전체")) {
+    arr.unshift("전체");
+  }
 
   const selectCategoryHandler = async (index: number, category: string) => {
     setCategories((prevCategories) => ({
@@ -43,30 +51,11 @@ const Categories2 = () => {
   };
 
   useEffect(() => {
-    setIsLoading(true);
-
-    getCategory({ page: 0, size: 20 })
-      .then((result) => {
-        const categoryDataArray = result;
-        const categoryStateData = categoryDataArray.map(
-          (item: any) => item.name
-        );
-        if (!categoryStateData.includes("전체")) {
-          categoryStateData.unshift("전체");
-        }
-
-        setCategories((prevCategories) => ({
-          ...prevCategories,
-          currentCategory: "전체",
-          categories: categoryStateData,
-        }));
-      })
-      .catch((error) => {
-        throw Error(error);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
+    setCategories((prevCategories) => ({
+      ...prevCategories,
+      currentCategory: "전체",
+      categories: arr,
+    }));
   }, []);
 
   return (

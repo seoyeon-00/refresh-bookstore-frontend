@@ -15,7 +15,7 @@ const AccountIcon: React.FC<AccountIconProps> = ({
   return (
     <div>
       {isLoggedIn === true ? (
-        <Link href="/mypage">
+        <Link href="/mypage" aria-label="Go to my page">
           <svg
             className="cursor-pointer hover:opacity-70"
             width={width}
