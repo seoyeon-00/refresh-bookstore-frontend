@@ -86,7 +86,7 @@ const Header = () => {
               className="w-full transition-all duration-500 "
               style={headerLogoStyle}
             >
-              <Link href="/">
+              <Link href="/" aria-label="Go to home page">
                 <Logo color="#16a263" width="150px" />
                 {currentURI === "/" ? (
                   <span className="w-full -left-[40%] absolute text-sm text-center mt-3 flex flex-row justify-center items-center text-green-700">

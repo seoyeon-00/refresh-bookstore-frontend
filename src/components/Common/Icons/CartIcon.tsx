@@ -10,7 +10,7 @@ interface CartProps {
 const CartIcon: React.FC<CartProps> = ({ width, color, isFull }) => {
   return (
     <div>
-      <Link href="/cart">
+      <Link href="/cart" aria-label="Go to cart page">
         {isFull === true ? (
           <svg
             className="cursor-pointer hover:opacity-70"

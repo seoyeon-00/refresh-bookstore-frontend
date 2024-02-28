@@ -20,6 +20,7 @@ const PaginationSlash = ({
         }}
         disabled={currentPage === 0}
         className="flex justify-center items-center rounded-full w-[40px] h-[40px] border-[1px] border-solid border-gray"
+        aria-label="Previous Page"
       >
         <PrevIcon width="8px" color="#777" />
       </button>
@@ -34,6 +35,7 @@ const PaginationSlash = ({
         }}
         disabled={currentPage === Number(totalPages) - 1}
         className="flex justify-center items-center rounded-full w-[40px] h-[40px] border-[1px] border-solid border-gray"
+        aria-label="Next Page"
       >
         <NextIcon width="8px" color="#777" />
       </button>
