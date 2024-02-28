@@ -13,3 +13,13 @@ export type bookDataType = {
   originalISBN?: string | undefined;
   amount?: number | undefined;
 };
+
+export type paginationProduct = {
+  pagination: {
+    totalPages: number;
+    currentPage: number;
+    pageSize: number;
+    totalItems: number;
+  };
+  products: bookDataType[];
+};
