@@ -8,13 +8,16 @@ type getCategoryType = {
 
 export const getCategory = async ({ page, size }: getCategoryType) => {
   try {
-    const response = await fetch(`/api/categories?page=${page}&size=${size}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      cache: "no-store",
-    });
+    const response = await fetch(
+      `https://port-0-refresh-bookstore-20zynm2mlk1daxmm.sel4.cloudtype.app/api/categories?page=${page}&size=${size}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        cache: "no-store",
+      }
+    );
 
     if (response.ok) {
       const categoryData = await response.json();

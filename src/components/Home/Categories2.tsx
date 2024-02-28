@@ -1,17 +1,46 @@
 "use client";
 
 import { getCategory } from "@/api/category";
+import { getProduct, getProductByCategoryAll } from "@/api/product";
 import { categoryState } from "@/stores/category";
 import { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 
-type CategoriesProps = {
-  selectCategoryHandler: (index: number, category: string) => void;
-};
-
-const Categories = ({ selectCategoryHandler }: CategoriesProps) => {
+const Categories2 = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [categories, setCategories] = useRecoilState(categoryState);
+
+  const selectCategoryHandler = async (index: number, category: string) => {
+    setCategories((prevCategories) => ({
+      ...prevCategories,
+      currentCategory: category,
+    }));
+
+    getProductByCategoryAll(index)
+      .then((result) => {
+        if (index === 0) {
+          getProduct({ page: 0, size: 10 })
+            .then((result) => {
+              setCategories((prevCategories) => ({
+                ...prevCategories,
+                allPage: result.pagination.totalPages,
+              }));
+            })
+            .catch((error) => {
+              console.error(error);
+            });
+        } else {
+          const totalPage: number = Math.ceil(result.length / 10);
+          setCategories((prevCategories) => ({
+            ...prevCategories,
+            allPage: totalPage,
+          }));
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
 
   useEffect(() => {
     setIsLoading(true);
@@ -56,4 +85,4 @@ const Categories = ({ selectCategoryHandler }: CategoriesProps) => {
   );
 };
 
-export default Categories;
+export default Categories2;
