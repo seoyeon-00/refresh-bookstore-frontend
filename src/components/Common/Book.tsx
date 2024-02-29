@@ -1,4 +1,5 @@
 import { bookDataType } from "@/types/bookDataType";
+import Image from "next/image";
 import React from "react";
 
 interface BookProps {
@@ -6,6 +7,7 @@ interface BookProps {
 }
 
 const Book: React.FC<BookProps> = ({ book }) => {
+  const path = book.imagePath.slice(2);
   return (
     <div className=" left-5 relative w-full m-3 flex flex-row justify-center items-center">
       <div className=" top-[10px] left-[8px] bg-black w-[100px] h-[140px] absolute opacity-[0.15] blur-sm"></div>
@@ -14,9 +16,12 @@ const Book: React.FC<BookProps> = ({ book }) => {
       <div className=" absolute left-[27px] top-[145px] w-[100px] h-[6px] -skew-x-[30deg] bg-gradient-to-r from-light_gray to-gray  border-light_gray"></div>
       <div className=" absolute left-[21px] top-0 w-[100px] h-[145px] cursor-pointer skew-x-6 hover:drop-shadow-lg duration-100 hover:skew-x-0 hover:scale-[1.3] hover:z-10 bg-point overflow-hidden object-cover transition-all">
         <div className="inset-0 w-full h-[150px] bg-gradient-to-tr from-transparent hover:opacity-0 transition-all from-30% to-90% to-black opacity-[0.3] absolute "></div>
-        <img
-          src={`${book.imagePath}`}
-          className="w-full h-full"
+        <Image
+          width={0}
+          height={0}
+          sizes="100vw"
+          src={`${path}`}
+          className="w-full h-[150px]"
           alt={book.title}
         />
       </div>
