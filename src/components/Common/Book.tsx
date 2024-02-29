@@ -23,6 +23,7 @@ const Book: React.FC<BookProps> = ({ book }) => {
           src={`${path}`}
           className="w-full h-[150px]"
           alt={book.title}
+          priority
         />
       </div>
     </div>
