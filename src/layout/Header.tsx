@@ -23,9 +23,9 @@ const Header = () => {
 
   let num = 1;
 
-  const SearchModal = dynamic(() => import("@/components/Home/Search"), {
-    loading: () => <p>Loading...</p>,
-  });
+  // const SearchModal = dynamic(() => import("@/components/Home/Search"), {
+  //   loading: () => <p>Loading...</p>,
+  // });
 
   useEffect(() => {
     const slogans = ["일상", "경력", "삶", "내일"];
@@ -71,7 +71,7 @@ const Header = () => {
   return (
     <div className="w-full overflow-hidden relative">
       <>
-        {searchState ? <SearchModal /> : null}
+        {searchState ? <Search /> : null}
         <div
           className=" w-full h-[130px] transition-all duration-500 "
           style={headerStyle}
