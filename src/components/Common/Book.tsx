@@ -7,7 +7,10 @@ interface BookProps {
 }
 
 const Book: React.FC<BookProps> = ({ book }) => {
-  const path = book.imagePath.slice(2);
+  const path = book.imagePath.includes("aladin")
+    ? book.imagePath
+    : book.imagePath.slice(2);
+
   return (
     <div className=" left-5 relative w-full m-3 flex flex-row justify-center items-center">
       <div className=" top-[10px] left-[8px] bg-black w-[100px] h-[140px] absolute opacity-[0.15] blur-sm"></div>
