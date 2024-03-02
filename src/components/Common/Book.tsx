@@ -18,13 +18,13 @@ const Book: React.FC<BookProps> = ({ book }) => {
       <div className=" absolute left-[15px]   top-[3px] w-[8px] h-[145px] skew-x-6 -skew-y-[50deg] bg-gradient-to-t from-[#f9f9f9] to-light_gray"></div>
       <div className=" absolute left-[27px] top-[145px] w-[100px] h-[6px] -skew-x-[30deg] bg-gradient-to-r from-light_gray to-gray  border-light_gray"></div>
       <div className=" absolute left-[21px] top-0 w-[100px] h-[145px] cursor-pointer skew-x-6 hover:drop-shadow-lg duration-100 hover:skew-x-0 hover:scale-[1.3] hover:z-10 bg-point overflow-hidden object-cover transition-all">
-        <div className="inset-0 w-full h-[150px] bg-gradient-to-tr from-transparent hover:opacity-0 transition-all from-30% to-90% to-black opacity-[0.3] absolute "></div>
+        <div className="inset-0 bg-gradient-to-tr from-transparent hover:opacity-0 transition-all from-30% to-90% to-black opacity-[0.3] absolute"></div>
         <Image
           width={0}
           height={0}
           sizes="100vw"
-          src={`${path}`}
           className="w-full h-[150px]"
+          src={path}
           alt={book.title}
           priority
         />

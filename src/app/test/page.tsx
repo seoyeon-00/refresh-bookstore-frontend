@@ -13,6 +13,7 @@ const Test = async () => {
 
   const Banner = dynamic(() => import("@/components/Home/Banner"), {
     loading: () => <ClipLoader />,
+    ssr: false,
   });
 
   return (
