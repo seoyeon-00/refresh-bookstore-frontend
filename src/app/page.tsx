@@ -8,6 +8,8 @@ import { categoryState } from "@/stores/category";
 import ProductContainer from "@/components/Home/ProductContainer";
 import ErrorBoundary from "@/components/Common/ErrorBoundary";
 import FallbackComponent from "@/components/Common/FallbackComponent";
+import dynamic from "next/dynamic";
+import { ClipLoader } from "react-spinners";
 
 export default function Home() {
   const [categories, setCategories] = useRecoilState(categoryState);
@@ -44,6 +46,14 @@ export default function Home() {
       });
   };
 
+  const Banner = dynamic(() => import("@/components/Home/Banner"), {
+    loading: () => (
+      <div className="flex justify-center h-[300px] items-center">
+        <ClipLoader color="#1DC078" size={50} />
+      </div>
+    ),
+  });
+
   return (
     <div>
       <div className="w-full flex flex-col justify-start items-center">
@@ -59,6 +69,7 @@ export default function Home() {
           </ErrorBoundary>
         </div>
       </div>
+      <Banner />
     </div>
   );
 }

@@ -11,7 +11,6 @@ import React, { useEffect, useState, useContext } from "react";
 import { AuthContext } from "../contexts/AuthContext";
 import { useRecoilState } from "recoil";
 import { productStore } from "@/stores";
-import dynamic from "next/dynamic";
 
 const Header = () => {
   const currentURI = usePathname();
@@ -22,10 +21,6 @@ const Header = () => {
   const userData = useContext(AuthContext);
 
   let num = 1;
-
-  // const SearchModal = dynamic(() => import("@/components/Home/Search"), {
-  //   loading: () => <p>Loading...</p>,
-  // });
 
   useEffect(() => {
     const slogans = ["일상", "경력", "삶", "내일"];
@@ -71,7 +66,7 @@ const Header = () => {
   return (
     <div className="w-full overflow-hidden relative">
       <>
-        {searchState ? <Search /> : null}
+        {searchState && <Search />}
         <div
           className=" w-full h-[130px] transition-all duration-500 "
           style={headerStyle}
