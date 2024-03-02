@@ -38,8 +38,6 @@ const Product = ({ fetchProduct }: ProductProps) => {
     description: "",
   });
 
-  console.log(account);
-
   const getDefaultBookData = (): bookDataType => ({
     categoryId: 1,
     title: "",
